@@ -13,13 +13,13 @@ export class Ball {
     // this.y = 200;
   }
 
-  draw(ctx, stageWidth, stageHeight, blockX, blockY) {
+  draw(ctx, stageWidth, stageHeight, blockPosX, blockPosY, blockSizeX, blockSizeY) {
     this.x += this.vx;
     this.y += this.vy;
 
     this.bounceWindow(stageWidth, stageHeight);
 
-    this.bounceBlock(blockX, blockY);
+    this.bounceBlock(blockPosX, blockPosY, blockSizeX, blockSizeY);
 
     ctx.fillStyle = '#fdd700';
     ctx.beginPath();
@@ -42,11 +42,11 @@ export class Ball {
     }
   }
 
-  bounceBlock(blockX, blockY) {
-    const minX = blockX - this.radius;
-    const maxX = blockX + 100 + this.radius;
-    const minY = blockY - this.radius;
-    const maxY = blockY + 100 + this.radius;
+  bounceBlock(blockPosX, blockPosY, blockSizeX, blockSizeY) {
+    const minX = blockPosX - this.radius;
+    const maxX = blockPosX + blockSizeX + this.radius;
+    const minY = blockPosY - this.radius;
+    const maxY = blockPosY + blockSizeY + this.radius;
 
     if(this.x > minX && this.x < maxX && this.y > minY && this.y < maxY) {
       const x1 = Math.abs(minX - this.x);
