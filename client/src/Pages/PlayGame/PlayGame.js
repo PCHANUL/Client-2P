@@ -84,14 +84,17 @@ const PlayGame = ({ currentGame }) => {
 
   return (
     <div className={classes.space}>
-      <Paper style={{height: '1000px'}}>
-          {
+      <Paper style={{height: '500px'}}>
+        <Game />
+
+        
+          {/* {
             currentGame === 1
             ? <MoleGame />
             : <Game />
               
             
-          }
+          } */}
 
         
         {/* <Grid container direction="row" justify="space-evenly" alignItems="center">

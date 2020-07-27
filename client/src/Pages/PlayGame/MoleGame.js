@@ -7,7 +7,7 @@ import { Block } from './Block';
 import { Ball } from './Ball'
 import { isDeleteExpression } from 'typescript';
 
-import { Mole } from './Mole'
+import { Mole } from './mole'
 import hemmer from '../../images/hemmer.png'
 import clicked from '../../images/clicked.png'
 

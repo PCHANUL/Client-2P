@@ -12,41 +12,37 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.background.paper,
     border: '1px solid #000',
     boxShadow: theme.shadows[5],
-    // padding: theme.spacing(2, 4, 3),
-    // width: document.body.clientWidth / 2,
-    // height: document.body.clientHeight * 10,
-    
     margin: theme.spacing(3, 3),
   }
 });
 
-let blockX
-let dx = 10
+let blockPosX
+let blockPosY
+let dy = 10
 let preKey
 
 document.addEventListener('keydown', (e) => {
-  // dx까지의 모든 수를 더해줍니다.
-  if(e.keyCode === 39){
-    dx += 15
-    blockX += dx
+  // dy까지의 모든 수를 더해줍니다.
+  if(e.keyCode === 40){
+    dy += 15
+    blockPosY += dy
     
-  } else if(e.keyCode === 37){
-    blockX -= dx
-    dx += 15
+  } else if(e.keyCode === 38){
+    dy += 15
+    blockPosY -= dy
   }
 })
 
 document.addEventListener('keyup', (e) => {
-  if(e.keyCode === 39 ){
-    console.log('blockX: ', dx, blockX);
-    for(let i; i<dx; i++){
-      blockX += i
+  if(e.keyCode === 40 ){
+    console.log('blockPosY: ', dy, blockPosY);
+    for(let i; i<dy; i++){
+      blockPosY += i
     }
-    
-    console.log('blockX: ', dx, blockX);
-    dx = 10;
-  } else if(e.keyCode === 37){
-    dx = 10;
+    dy = 10;
+  } else if(e.keyCode === 38 ){
+    console.log('blockPosY: ', dy, blockPosY);
+    dy = 10;
   }
 })
 
@@ -65,11 +61,12 @@ class Game extends Component {
     this.ctx = null;
     this.stageWidth = null;
     this.stageHeight = null;
-    blockX = 300;
-    this.blockY = 300;
+    blockPosX = 50;
+    blockPosY = 300;
+    this.blockSizeX = 10;
+    this.blockSizeY = 100;
 
-    this.ball = new Ball(document.body.clientWidth / 1.5, document.body.clientHeight / 1.5, 6, 5)
-    this.block = new Block(100, 100, blockX, this.blockY, document.body.clientHeight / 1.5, document.body.clientHeight / 1.5);
+    
   }
   
   
@@ -79,15 +76,16 @@ class Game extends Component {
     this.canvas = document.getElementById('canvas');
     this.ctx = this.canvas.getContext('2d');
 
+    
     // 화면크기 재설정 이벤트
     window.addEventListener('resize', this.resize.bind(this), false);
     this.resize();
+
+    this.ball = new Ball(document.body.clientWidth / 1.5, document.body.clientHeight / 1.5, 6, 5)
+    this.block = new Block(this.blockSizeX, this.blockSizeY, blockPosX, blockPosY, document.body.clientHeight / 1.5, document.body.clientHeight / 1.5);
+    
     window.requestAnimationFrame(this.animate.bind(this));
-
-
-    document.addEventListener('mousedown', (e) => {
-      this.mousePressed(e.pageX/1.5 , e.pageY/1.5, blockX, this.blockY)
-    }, false)
+    
   } 
  
   // 화면크기 재설정 함수
@@ -95,32 +93,29 @@ class Game extends Component {
     this.stageWidth = document.body.clientWidth;
     this.stageHeight = document.body.clientHeight;
  
+    // 화면크기, 블록크기 설정
     this.canvas.width = this.stageWidth / 1.5;
     this.canvas.height = this.stageHeight / 1.5;
+    this.blockSizeX = this.canvas.width / 30;
+    this.blockSizeY = this.canvas.height / 3;
 
     this.setState({ width: this.canvas.width, height: this.canvas.height })
   }
 
-  mousePressed(mouseX, mouseY, posX, posY) {
-    this.block.clicked(mouseX, mouseY, posX, posY);
-    this.block.draw(this.ctx, blockX)
-  }
-
-
   animate(t) {
-    if(blockX < 0){
-      blockX = 0
+    // 벽돌 충돌감지
+    if(blockPosY < 0){
+      blockPosY = 0
+    } else if(blockPosY > this.canvas.height - 100){
+      blockPosY = this.canvas.height - 100
     }
-
-    if(blockX > this.canvas.width - 100){
-      blockX = this.canvas.width - 100
-    }
+    
     
     window.requestAnimationFrame(this.animate.bind(this));
     this.ctx.clearRect(0, 0, this.stageWidth, this.stageHeight)
-    this.block.draw(this.ctx, blockX)
+    this.block.draw(this.ctx, blockPosY)
 
-    this.ball.draw(this.ctx, this.canvas.width, this.canvas.height, blockX, this.blockY) 
+    this.ball.draw(this.ctx, this.canvas.width, this.canvas.height, blockPosX, blockPosY, this.blockSizeX, this.blockSizeY) 
   }
 
   render() {

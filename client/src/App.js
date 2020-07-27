@@ -26,7 +26,7 @@ class App extends Component {
   render() {
     return (
       <div className='App'>
-        <Nav />
+        {/* <Nav />
         <Switch>
           <Route exact path='/'>
             <Login />
@@ -40,12 +40,12 @@ class App extends Component {
           <Route path='/waitingroom'>
             <WaitingRoom />
           </Route>
-          <Route path='/playgame'>
+          <Route path='/playgame'> */}
             <PlayGame />
-          </Route>
+          {/* </Route>
         </Switch>
 
-        <MakeGame />
+        <MakeGame /> */}
       </div>
     );
   }
