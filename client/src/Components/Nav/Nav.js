@@ -69,7 +69,7 @@ class Nav extends Component {
     try {
       const response = await axios({
         method: 'post',
-        url: 'http://localhost:3001/users/signout',
+        url: 'http://3.34.178.78:3001/users/signout',
         withCredentials: true,
       })
       console.log(response)

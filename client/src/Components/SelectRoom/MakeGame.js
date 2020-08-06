@@ -76,7 +76,7 @@ function MakeGame({ isMaking, makeRoomsClose }) {
     try {
       const response = await axios({
         method: 'post',
-        url: 'http://localhost:3001/rooms/makeroom',
+        url: 'http://3.34.178.78:3001/rooms/makeroom',
         data: {
           gameCode: selectedGame ? selectedGame : cookie.load('selectedGame'),
           roomName: roomName,

@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 import cookie from 'react-cookies';
 
 import './WaitingRoom.css';
-let socket = io.connect('http://localhost:3002');
+let socket = io.connect('http://13.125.163.76:3002');
 
 const WaitingRoom = (props) => {
   const { roomUsers, chat } = props.waitingRoom;

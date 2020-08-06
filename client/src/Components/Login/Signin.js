@@ -39,7 +39,7 @@ class Signin extends Component {
     try {
       const response = await axios({
         method: 'post',
-        url: 'http://localhost:3001/users/signin',
+        url: 'http://3.34.178.78:3001/users/signin',
         data: {
           userId: userId,
           password: password,
@@ -57,7 +57,7 @@ class Signin extends Component {
     try {
       const response = await axios({
         method: 'get',
-        url: 'http://localhost:3001/users/mypage',
+        url: 'http://3.34.178.78:3001/users/mypage',
         withCredentials: true,
       })
       return response

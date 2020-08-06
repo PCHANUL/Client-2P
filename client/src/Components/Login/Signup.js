@@ -26,7 +26,7 @@ const axios = require('axios')
     try {
       const response = await axios({
         method: 'post',
-        url: 'http://localhost:3001/users/signup',
+        url: 'http://3.34.178.78:3001/users/signup',
         data: {
           userId: userId,
           nickname: nickname,

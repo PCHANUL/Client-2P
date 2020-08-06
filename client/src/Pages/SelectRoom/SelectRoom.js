@@ -193,7 +193,7 @@ const mapReduxDispatchToReactProps = (dispatch) => {
         if (cookie.load('selectedGame') !== '0') {
           const response = await axios({
             method: 'get',
-            url: 'http://localhost:3001/rooms/roomlist',
+            url: 'http://3.34.178.78:3001/rooms/roomlist',
             withCredentials: true,
           });
           cb(response.data);

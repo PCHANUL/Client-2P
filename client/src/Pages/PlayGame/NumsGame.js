@@ -154,7 +154,7 @@ class NumsGame extends Component {
     
 
     // socket connection endpoint
-    this.socket = io('http://localhost:3002');
+    this.socket = io('http://3.35.37.171:3006');
 
     for (let i = 0; i < 14; i++) {
       this.numPad.push(
