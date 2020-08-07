@@ -75,7 +75,7 @@ const socketSubscribe = (dispatch) => {
     socket.emit('leave');
     socket.removeAllListeners();
     alert('호스트가 방에서 나갔습니다');
-    setTimeout(() => window.location.replace('http://localhost:3000/selectRoom'), 2000);
+    setTimeout(() => window.location.replace('http://project-2p.s3-website.ap-northeast-2.amazonaws.com/selectRoom'), 2000);
   });
 };
 

@@ -99,7 +99,7 @@ class Game extends Component {
       rivalAvatar: avatar2,
       userAvatar: avatar,
     };
-    this.socket = socketio.connect('http://localhost:3000');
+    this.socket = socketio.connect('http://15.164.170.101:3005');
     //초기화
     this.canvas = null;
     this.ctx = null;
@@ -150,10 +150,6 @@ class Game extends Component {
   }
 
   componentDidMount() {
-<<<<<<< HEAD
-    socket = socketio.connect('http://15.164.170.101:3005');
-=======
->>>>>>> 6b1033f690aa1562836bf6ad26b51cf1316d3856
     (() => {
       this.socket.emit('joinRoom', {
         username: cookie.load('username'),
@@ -236,19 +232,11 @@ class Game extends Component {
       });
     });
 
-<<<<<<< HEAD
-    socket.on('moveLeft', () => {
-      this.RivalPosX += this.RivalSizeX;
-    });
-    socket.on('moveRight', () => {
-      this.RivalPosX -= this.RivalSizeX;
-=======
     this.socket.on('moveLeft', () => {
       this.RivalPosX += this.blockSizeX;
     });
     this.socket.on('moveRight', () => {
       this.RivalPosX -= this.blockSizeX;
->>>>>>> 6b1033f690aa1562836bf6ad26b51cf1316d3856
     });
     this.socket.on('hit', (res) => {
       this.setState({ myScore: res });

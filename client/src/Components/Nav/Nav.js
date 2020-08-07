@@ -112,7 +112,7 @@ class Nav extends Component {
   leaveRoomHandler = async () => {
     axios({
       method: 'post',
-      url: 'http://localhost:3001/rooms/leaveroom',
+      url: 'http://3.34.178.78:3001/rooms/leaveroom',
       data: {
         roomId: cookie.load('selectedRoom'),
         gameCode: cookie.load('selectedGame'),
