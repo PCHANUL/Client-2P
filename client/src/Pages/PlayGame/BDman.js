@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import Gameover from '../../Components/PlayGame/Gameover'
+ 
+import {
+  Paper,
+  Typography,
+  Tooltip,
+  Fab,
+  Grid,
+  GridList,
+  GridListTile
+} from '@material-ui/core';
 
-import Paper from '@material-ui/core/Paper';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
+import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions'
 
 import { withStyles } from '@material-ui/core/styles';
 import { Block } from './BDBlock';
@@ -15,7 +23,6 @@ import { Bullet } from './Bullet'
 import { isDeleteExpression } from 'typescript';
 import cookie from 'react-cookies';
 import socketio from 'socket.io-client';
-import { Grid } from '@material-ui/core';
 
 import avatar from '../../images/bald.png';
 import avatar2 from '../../images/gas-mask.png';
@@ -52,7 +59,29 @@ const styles = (theme) => ({
   reloadText: {
     color: '#fff',
     marginRight: '40px'
-  }
+  },
+  absolute: {
+    position: 'fixed',
+    bottom: theme.spacing(2),
+    right: theme.spacing(3),
+  },
+  rootroot: {
+    position: 'fixed',
+    right: '1%',
+    bottom: '100px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    overflow: 'hidden',
+    backgroundColor: theme.palette.background.paper,
+  },
+  gridList: {
+    width: 200,
+    height: 450,
+  },
+  icon: {
+    color: 'rgba(255, 255, 255, 0.54)',
+  },
 });
 
 class Game extends Component {
@@ -72,6 +101,13 @@ class Game extends Component {
 
       // winner
       winner: '',
+
+      // emoji action
+      showEmojis: false,
+      isActive: false,
+      rivalAvatar: avatar2,
+      userAvatar: avatar,
+
     }
 
     //초기화
@@ -116,6 +152,11 @@ class Game extends Component {
     // mouse aim
     this.aim = 0;
 
+    // get emoji
+    this.tileData = [];
+    this.props.gifEmoji.map((item) => {
+      this.tileData.push({ img: item })
+    })
   }
 
   componentDidMount() {
@@ -180,10 +221,10 @@ class Game extends Component {
     });
 
     socket.on('moveLeft', () => {
-      this.RivalPosX += this.blockSizeX;
+      this.RivalPosX += this.RivalSizeX;
     });
     socket.on('moveRight', () => {
-      this.RivalPosX -= this.blockSizeX;
+      this.RivalPosX -= this.RivalSizeX;
     });
     socket.on('hit', (res) => {
       this.setState({ myScore: res });
@@ -351,6 +392,22 @@ class Game extends Component {
     )
   }
 
+  activeEmoji(gif) {
+    this.setState({ userAvatar: gif });
+    socket.emit('sendEmoji', (JSON.stringify(gif)));
+
+    setTimeout(() => {
+      this.setState({ userAvatar: avatar, isActive: !this.state.isActive });
+    }, 2500);
+  }
+
+  activeRivalEmoji(gif) {
+    this.setState({ rivalAvatar: gif });
+    setTimeout(() => {
+      this.setState({ rivalAvatar: avatar2 })
+    }, 2500)
+  }
+
 
   render() {
     const { classes } = this.props;
@@ -361,7 +418,7 @@ class Game extends Component {
         <Grid item>
           <Paper className={classes.root} style={{ marginRight: '20px', marginLeft: '40px' }}>
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img src={avatar2} className={classes.avatar}></img>
+              <img src={this.state.rivalAvatar} className={classes.avatar}></img>
               <Typography className={classes.pos} variant='h5' component='h2'>
                 {'Rival'}
               </Typography>
@@ -391,7 +448,7 @@ class Game extends Component {
         <Grid item>
           <Paper className={classes.root} style={{ marginRight: '40px', zIndex: 1 }}>
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img src={avatar} className={classes.avatar}></img>
+              <img src={this.state.userAvatar} className={classes.avatar}></img>
               <Typography className={classes.pos} variant='h5' component='h2'>
                 {'you'}
               </Typography>
@@ -408,7 +465,34 @@ class Game extends Component {
                 : null
             }
           </Typography>
-
+          <Tooltip title='이모티콘' aria-label='add' onClick={() => this.setState({ showEmojis: !this.state.showEmojis })}>
+            <Fab color='secondary' className={this.props.classes.absolute}>
+              <EmojiEmotionsIcon />
+            </Fab>
+          </Tooltip>
+            <div className={classes.rootroot}>
+              {
+                this.state.showEmojis
+                ? <GridList cellHeight={180} className={classes.gridList}>
+                    {
+                      this.tileData.map((tile) => (
+                      <GridListTile key={tile.img} style={{ height: '100px'}} 
+                        onClick={() => {
+                          console.log('this.state.showEmojis: ', this.state.isActive);
+                          if(this.state.isActive === false) {
+                            this.activeEmoji(tile.img)
+                            this.setState({ showEmojis: !this.state.showEmojis, isActive: !this.state.isActive })
+                          }
+                        }}
+                      >
+                        <img src={tile.img} alt={tile.title} style={{ width: '70px', height: '70px'}} />
+                      </GridListTile>
+                      ))
+                    }
+                  </GridList>
+                : null
+              }
+            </div>
         </Grid>
       </Grid>
     );
@@ -417,5 +501,11 @@ class Game extends Component {
 Game.propsTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(Game);
+
+const mapReduxStateToReactProps = (state) => {
+  return {
+    gifEmoji: state.currentGame.gif
+  }
+}
+export default connect(mapReduxStateToReactProps)(withStyles(styles)(Game));
 

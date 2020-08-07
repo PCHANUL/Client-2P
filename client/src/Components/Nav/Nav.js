@@ -10,7 +10,7 @@ import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 
 import Mypage from './Mypage';
 
-const axios = require('axios')
+const axios = require('axios');
 
 const styles = (theme) => ({
   root: {
@@ -78,6 +78,20 @@ class Nav extends Component {
     }
   }
 
+  getData = async() => {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: 'http://3.34.178.78:3001/users/mypage',
+        withCredentials: true,
+      })
+      console.log(response)
+      return response
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   handleOpenClose = () => {
     this.setState({ open: !this.state.open })
   };
@@ -119,7 +133,10 @@ class Nav extends Component {
                     {
                       cookie.load('username')
                       ? <div>
-                          <Button color='inherit' onClick={this.handleOpenClose}>
+                          <Button color='inherit' onClick={async () => {
+                            this.resData = await this.getData()
+                            this.handleOpenClose()
+                          }}>
                             Mypage
                           </Button>
                           <Button
@@ -143,7 +160,7 @@ class Nav extends Component {
                     <ContactSupport />
                   </IconButton>
                   <Modal open={this.state.open} onClose={this.handleOpenClose}>
-                    <Mypage></Mypage>
+                    <Mypage userData={this.resData} />
                   </Modal>
                 </Toolbar>
               )

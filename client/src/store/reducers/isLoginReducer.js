@@ -3,7 +3,20 @@ import * as actionTypes from '../actions';
 const initialState = {
   isLogin: false,
   username: '',
-  avatar: '',
+  avatar: [
+    'https://image.flaticon.com/icons/svg/3231/3231482.svg', // 
+    'https://image.flaticon.com/icons/svg/3231/3231430.svg',
+    'https://image.flaticon.com/icons/svg/3231/3231596.svg',
+    'https://image.flaticon.com/icons/svg/3231/3231653.svg',
+    'https://image.flaticon.com/icons/svg/3231/3231647.svg', //
+    'https://image.flaticon.com/icons/svg/3231/3231511.svg', 
+    'https://image.flaticon.com/icons/svg/3231/3231623.svg',
+    'https://image.flaticon.com/icons/svg/3231/3231472.svg',
+    'https://image.flaticon.com/icons/svg/3231/3231570.svg',
+    'https://image.flaticon.com/icons/svg/3231/3231488.svg', //
+    'https://image.flaticon.com/icons/svg/3231/3231552.svg', 
+    'https://image.flaticon.com/icons/svg/3231/3231444.svg',
+  ],
 };
 
 const reducer = (state = initialState, action) => {

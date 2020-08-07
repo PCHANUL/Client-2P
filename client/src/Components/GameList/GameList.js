@@ -42,16 +42,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const gameDescription = {
-  WhackAMole: {
-    desc: '두더지를 잡아라!',
+  moleGame: {
+    title: '두더지 잡기',
+    desc: '두더지를 잡아라! 에잇!',
     code: 1,
   },
-  Pong: {
-    desc: '핑핑핑퐁퐁퐁',
+  bidGame: {
+    title: '구슬동자',
+    desc: '핑핑핑슝슝슝',
     code: 2,
   },
-  FlipCard: {
-    desc: '사천성! 같은 카드를 뒤집어라!',
+  baseballGame: {
+    title: '숫자야구',
+    desc: '원 스트라잌! 쓰리 볼!! ',
     code: 3,
   },
 };
@@ -83,7 +86,7 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
             onMouseLeave={handlePopoverClose}
           >
             <Typography variant='h3'>
-              {gameName}
+              {gameDescription[gameName]['title']}
             </Typography>
             <Typography variant='body' color='textSecondary' component='p'>
               {gameDescription[gameName]['desc']}

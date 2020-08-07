@@ -1,12 +1,21 @@
 import React, { Component } from 'react';
-import io from 'socket.io-client';
+import { connect } from 'react-redux'
+import socketio from 'socket.io-client';
 import PropTypes from 'prop-types';
 import cookie from 'react-cookies';
 import Gameover from '../../Components/PlayGame/Gameover';
 import MoleScoreCard from '../../Components/PlayGame/MoleScoreCard';
 
-import Paper from '@material-ui/core/Paper';
-import { Grid, Typography } from '@material-ui/core';
+import { 
+  Paper,
+  Grid, 
+  Fab,
+  Tooltip,
+  GridList,
+  GridListTile,
+  Typography,
+} from '@material-ui/core';
+import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import { withStyles } from '@material-ui/core/styles';
 import { isDeleteExpression } from 'typescript';
 
@@ -42,6 +51,25 @@ const styles = (theme) => ({
   pos: {
     color: '#000'
   },
+  absolute: {
+    position: 'fixed',
+    bottom: theme.spacing(2),
+    right: theme.spacing(3),
+  },
+  rootroot: {
+    position: 'fixed',
+    right: '1%',
+    bottom: '100px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    overflow: 'hidden',
+    backgroundColor: theme.palette.background.paper,
+  },
+  gridList: {
+    width: 200,
+    height: 450,
+  },
 
 });
 
@@ -61,6 +89,12 @@ class MoleGame extends Component {
       width: (document.body.clientWidth / 4),
       height: (document.body.clientWidth / 4),
       currentMole: 0,
+
+      // emoji
+      userAvatar: avatar,
+      rivalAvatar: avatar2,
+      showEmojis: false,
+      isActive: false,
     };
     this.canvas = null;
     this.ctx = null;
@@ -77,13 +111,18 @@ class MoleGame extends Component {
     this.gifCount = 0;
 
     // socket connection endpoint
-    this.socket = io('http://13.125.22.16:3009');
+    this.socket = socketio.connect('http://13.125.22.16:3009');
 
     for (let i = 0; i < 16; i++) {
       moles.push(
         new Mole(this.state.width, this.state.height, 15, i)
       );
     }
+
+    this.tileData = [];
+    this.props.gifEmoji.map((item) => {
+      this.tileData.push({ img: item })
+    })
   }
 
   componentDidMount() {
@@ -101,9 +140,9 @@ class MoleGame extends Component {
       'mousedown',
       (e) => {
         this.mousePressed(e.layerX, e.layerY);
-        for(let i=0; i<16; i++){
-          this.randomMole(i)
-        }
+        // for(let i=0; i<16; i++){
+        //   this.randomMole(i)
+        // }
         this.cursorClick = true;
       },
       false
@@ -178,6 +217,7 @@ class MoleGame extends Component {
   mousePressed(mouseX, mouseY) {
     for (let i = 0; i < moles.length; i++) {
       let clickedMole = moles[i].clicked(mouseX, mouseY, i, this.ctx);
+      console.log(clickedMole)
       if (clickedMole) {
         const data = {
           gameRoomId: 'someRoomId',
@@ -226,6 +266,22 @@ class MoleGame extends Component {
     this.setState({ width: this.canvas.width, height: this.canvas.height });
   }
 
+  activeEmoji(gif) {
+    this.setState({ userAvatar: gif });
+    // this.socket.emit('sendEmoji', (JSON.stringify(gif)));
+
+    setTimeout(() => {
+      this.setState({ userAvatar: avatar, isActive: !this.state.isActive });
+    }, 2500);
+  }
+
+  activeRivalEmoji(gif) {
+    this.setState({ rivalAvatar: gif });
+    setTimeout(() => {
+      this.setState({ rivalAvatar: avatar2 })
+    }, 2500)
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -236,7 +292,7 @@ class MoleGame extends Component {
         <Grid item>
           <Paper className={classes.root} style={{ marginLeft: '40px' }}> 
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img src={avatar2} className={classes.avatar}></img>
+              <img src={this.state.rivalAvatar} className={classes.avatar}></img>
               <Typography className={classes.pos} variant='h5' component='h2'>
                 {'Rival'}
               </Typography>
@@ -250,7 +306,7 @@ class MoleGame extends Component {
         <Paper id='paper' style={{
             width: this.state.width,
             height: this.state.height,
-            cursor: 'none',
+            // cursor: 'none',
           }} className={classes.Paper} >
           <canvas id='canvas' />
           <img id='hemmer' src={hemmer} style={{ width: '40px', display: 'none' }} />
@@ -260,7 +316,7 @@ class MoleGame extends Component {
         <Grid item>
           <Paper className={classes.root} style={{ marginRight: '40px' }}> 
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img src={avatar} className={classes.avatar}></img>
+              <img src={this.state.userAvatar} className={classes.avatar}></img>
               <Typography className={classes.pos} variant='h5' component='h2'>
                 {'you'}
               </Typography>
@@ -271,10 +327,35 @@ class MoleGame extends Component {
           </Paper>
         </Grid>
 
-        {/* <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <MoleScoreCard score={this.state.myScore} player={cookie.load('username')} />
-          <MoleScoreCard score={this.state.opponentScore} player={this.state.opponentUsername} />
-        </div> */}
+        <Tooltip title='이모티콘' aria-label='add' onClick={() => this.setState({ showEmojis: !this.state.showEmojis })}>
+          <Fab color='secondary' className={this.props.classes.absolute}>
+            <EmojiEmotionsIcon />
+          </Fab>
+        </Tooltip>
+
+        <div className={classes.rootroot}>
+          {
+            this.state.showEmojis
+            ? <GridList cellHeight={180} className={classes.gridList}>
+                {
+                  this.tileData.map((tile) => (
+                  <GridListTile key={tile.img} style={{ height: '100px'}} 
+                    onClick={() => {
+                      console.log('this.state.showEmojis: ', this.state.isActive);
+                      if(this.state.isActive === false) {
+                        this.activeEmoji(tile.img)
+                        this.setState({ showEmojis: !this.state.showEmojis, isActive: !this.state.isActive })
+                      }
+                    }}
+                  >
+                    <img src={tile.img} alt={tile.title} style={{ width: '70px', height: '70px'}} />
+                  </GridListTile>
+                  ))
+                }
+              </GridList>
+            : null
+          }
+        </div>
       </Grid>
     );
   }
@@ -284,4 +365,9 @@ MoleGame.propsTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(MoleGame);
+const mapReduxStateToReactProps = (state) => {
+  return {
+    gifEmoji: state.currentGame.gif
+  }
+}
+export default connect(mapReduxStateToReactProps)(withStyles(styles)(MoleGame));

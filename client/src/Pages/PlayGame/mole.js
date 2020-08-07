@@ -40,11 +40,15 @@ export class Mole {
 
     // 두더지의 행동을 위한 변수
     this.show = false;
+
+    
   }
 
   clicked(mouseX, mouseY, index, ctx) {
-    let objToMouseX = Math.pow(this.x - mouseX, 2);
-    let objToMouseY = Math.pow(this.y - mouseY, 2);
+    let objX = this.x + this.radius * 3
+    let objY = this.y + this.radius * 3
+    let objToMouseX = Math.pow(objX - mouseX, 2);
+    let objToMouseY = Math.pow(objY - mouseY, 2);
     let objToMouseResult = Math.sqrt(objToMouseX + objToMouseY); // 거리측정
     if (objToMouseResult < this.diameter) {
       if (this.show) {

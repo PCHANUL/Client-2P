@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
 import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -6,7 +7,7 @@ import {
   MobileStepper, 
   Paper, Collapse, IconButton, Typography, Button, 
 } from '@material-ui/core';
-import { VictoryBar, VictoryLabel } from 'victory';
+import { VictoryBar, VictoryLabel, VictoryChart, VictoryTheme, VictoryPolarAxis } from 'victory';
 
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
@@ -19,6 +20,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import avatar from '../../images/avatar.png'
 import cookie from 'react-cookies'
 
+const axios = require('axios');
 
 function getModalStyle() {
   const top = 50;
@@ -92,99 +94,107 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-function createDate(game, played, won, tied) {
-  return { game, played, won, tied };
-}
-
-const rows = [
-  createDate('Mole', 50, 30, 5),
-  createDate('Tile', 20, 15, 1),
-  createDate('Pong', 100, 60, 10),
-];
-
-const tutorialSteps = [
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231454.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231493.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231553.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231596.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231653.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231623.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231436.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231511.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231589.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231676.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231460.svg',
-  },
-  {
-    imgPath:
-      'https://image.flaticon.com/icons/svg/3231/3231482.svg',
-  },
-];
-
 let sampleData = [
-  {x: "두더지잡기", y: 5},
-  {x: "구슬동자", y: 7},
-  {x: "숫자야구", y: 3},
+  
 ]
 
-function Mypage() {
+let avatarId = Number(cookie.load('avatarId'));
+
+function Mypage({ avatar, userData }) {
   const classes = useStyles();
   const theme = useTheme();
   const [modalStyle] = React.useState(getModalStyle);
   const [expanded, setExpanded] = React.useState(false);
   const [isSetAvatar, setAvatar] = React.useState(false);
-  const [activeStep, setActiveStep] = React.useState(0);
-  const maxSteps = tutorialSteps.length;
+  const [currentAvatar, changeAvatar] = React.useState(avatar[avatarId]);
+  const [userGameData, GameData] = React.useState([]);
+  
+  // 아바타 갯수
+  const maxSteps = avatar.length;
+
+  const createData = (mole, bid, baseball) => {
+    return [
+      {x: '구슬동자', y: bid},
+      {x: '숫자야구', y: baseball},
+      {x: '두더지잡기', y: mole},
+    ]
+  }
+
+  // 1 : molegame
+  // 2 : bidgame
+  // 3 : baseballgame
+
+  const getUserGameData = () => {
+    let gameNames = ['molegame', 'bidman', 'baseballgame']
+
+    let winRate = [];
+
+    let sample = {
+      nickname: "유저닉네임",
+      avatar: "유저프로필이미지번호",
+      molegame:{
+          play: 10,
+          win: 2,
+          tie: "비긴 수",
+          lose: "진 수"
+      },
+      bidman:{
+          play: 30,
+          win: 10,
+          tie: "비긴 수",
+          lose: "진 수"
+      },
+      baseballgame:{
+          play: 10,
+          win: 2,
+          tie: "비긴 수",
+          lose: "진 수"
+      },
+  }
+
+    gameNames.map((game) => {
+      // let gameData = userData.data[game]
+      let gameData = sample[game]
+      winRate.push(Math.floor(gameData.win / gameData.play * 10))
+    })
+    
+    console.log(winRate)
+    
+    GameData(createData(winRate[0], winRate[1], winRate[2]))
+  }
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   }
-
+  
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    avatarId += 1
+    changeAvatar(avatar[avatarId])
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    avatarId -= 1
+    changeAvatar(avatar[avatarId])
   };
 
-  const changeAvatar = () => {
-    console.log(activeStep)
+  const putAvatarData = async (id) => {
+    try {
+      const response = await axios({
+        method: 'put',
+        url: 'http://3.34.178.78:3001/users/mypage',
+        data: {
+          userId: cookie.load('username'),
+          avatarId: avatarId,
+        },
+        withCredentials: true,
+      })
+      cookie.save('avatarId', avatarId, { path: '/' })
+    } catch (err) {
+      console.log(err)
+    }
   }
   
-
+  console.log(userGameData)
   return (
       <Card style={modalStyle} className={classes.paper}>
         <CardHeader
@@ -194,30 +204,30 @@ function Mypage() {
         <div className={classes.imgroot}>
           <img
             className={classes.img}
-            src={tutorialSteps[activeStep].imgPath}
-            alt={tutorialSteps[activeStep].label}
+            src={currentAvatar}
+            alt='유저 아바타'
           />
           {
             isSetAvatar
             ? <div>
                 <Button variant="contained" color="primary" style={{ marginLeft: '45px' }} onClick={() => {
                   setAvatar(false)
-                  changeAvatar()
+                  putAvatarData(avatarId)
                 }}>아바타 바꾸기</Button>
                 <MobileStepper
                   style={{ marginLeft: '-20px'}}
                   steps={maxSteps}
                   position="static"
                   variant="text"
-                  activeStep={activeStep}
+                  activeStep={avatarId}
                   nextButton={
-                    <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                    <Button size="small" onClick={handleNext} disabled={avatarId === maxSteps - 1}>
                       Next
                       {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
                     </Button>
                   }
                   backButton={
-                    <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                    <Button size="small" onClick={handleBack} disabled={avatarId === 0}>
                       {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
                       Back
                     </Button>
@@ -237,7 +247,10 @@ function Mypage() {
             className={clsx(classes.expand, {
               [classes.expandOpen]: expanded,
             })}
-            onClick={handleExpandClick}
+            onClick={() => {
+              handleExpandClick();
+              getUserGameData();
+            }}
             aria-expanded={expanded}
             aria-label="score"
           >
@@ -245,22 +258,39 @@ function Mypage() {
           </IconButton>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <VictoryBar polar
-          data={sampleData}
-          labels={(item) => {
-            return `${item.datum.xName} ${item.datum.y * 10}%`
-          }}
-          width={400} height={400}
-          domain={{ x: [0, 7], y: [0, 7] }}
-          style={{ 
-            data: { fill: "#c43a31", stroke: "black", strokeWidth: 4 },
-            // labels: { fill: "white" } 
-          }}
-          // labelComponent={<VictoryLabel dy={30} />}
-          />
+          {
+            userGameData[0]
+            ? <VictoryChart polar
+                theme={VictoryTheme.material}
+              >
+                <VictoryPolarAxis/>
+                <VictoryBar 
+                    polar
+                    theme={VictoryTheme.material}
+                    data={userGameData}
+                    labels={({ datum }) => `${datum.y}0%`}
+                    domain={{ 
+                      y: [0, 10] 
+                    }}
+                    style={{ 
+                      data: { fill: "#c43a31", stroke: "black", strokeWidth: 2 },
+                    }}
+                  />
+              </VictoryChart>
+            : <Typography variant='h4' component='h2'>
+                플레이 기록이 <br /> 존재하지 않습니다
+              </Typography>
+          }
+          
         </Collapse>
       </Card>
   )
 }
 
-export default Mypage
+const mapReduxStateToReactProps = (state) => {
+  return {
+    avatar: state.login.avatar
+  }
+}
+
+export default connect(mapReduxStateToReactProps)(Mypage)

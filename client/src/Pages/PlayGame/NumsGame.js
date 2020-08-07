@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import io from 'socket.io-client';
 import PropTypes from 'prop-types';
 import cookie from 'react-cookies';
@@ -21,10 +22,6 @@ import clicked from '../../images/clicked.png';
 
 import avatar from '../../images/bald.png'
 import avatar2 from '../../images/gas-mask.png'
-import E1 from '../../images/emoji/1.gif'
-import E2 from '../../images/emoji/2.gif'
-import E3 from '../../images/emoji/3.gif'
-import E4 from '../../images/emoji/4.gif'
 
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
@@ -32,9 +29,8 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
-
-
-
+import socketio from 'socket.io-client';
+let socket;
 
 const styles = (theme) => ({
   Paper: {
@@ -72,6 +68,7 @@ const styles = (theme) => ({
   rootroot: {
     position: 'fixed',
     right: '1%',
+    bottom: '100px',
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
@@ -139,22 +136,15 @@ class NumsGame extends Component {
     this.result = false;
 
     this.numPad = [];
-
+    
     let gifImages = [];
 
-    let getGifImages = require.context('../../images/emoji', false, /.*\.gif$/);
-    getGifImages.keys().forEach(function (key) {
-      gifImages.push(getGifImages(key));
-    })
+    
+    this.tileData = [];
 
-    this.tileData = []
-    gifImages.map((item) => {
+    this.props.gifEmoji.map((item) => {
       this.tileData.push({ img: item })
     })
-    
-
-    // socket connection endpoint
-    this.socket = io('http://3.35.37.171:3006');
 
     for (let i = 0; i < 14; i++) {
       this.numPad.push(
@@ -164,6 +154,14 @@ class NumsGame extends Component {
   }
 
   componentDidMount() {
+    socket = socketio.connect('http://3.35.37.171:3006');
+    (() => {
+      socket.emit('joinRoom', {
+        username: cookie.load('username'),
+        room: cookie.load('selectedRoom'),
+      });
+    })();
+
     this.canvas = document.getElementById('canvas');
     this.ctx = this.canvas.getContext('2d');
     this.hemmer = document.getElementById('hemmer');
@@ -212,89 +210,55 @@ class NumsGame extends Component {
       this.cursorEnter = false;
     });
 
-    // 키입력 이벤트
-    document.addEventListener('keydown', (e) => {
-      if(e.keyCode === 81){
-        this.out = !this.out
-      }
-      if(e.keyCode === 87){
-        this.result = !this.result
-      }
-      if(e.keyCode === 84){
-        let a = !this.state.myTurn
-        this.turnChange(a)
-      }
-      if(e.keyCode === 69){
-        this.activeRivalEmoji(this.tileData[1].img)
-      }
-
-      // 처리된 데이터를 받는다.
-      if(e.keyCode === 65){   // Rival data
-        // let input = { number: 1234, result: '1S 3B'}
-        let input = { number: '----', result: '-- --'}
-        this.getRivalData(input)
-      }
-      if(e.keyCode === 83){   // My data
-        let input = { number: 1234, result: '1S 3B'}
-        this.getMyData(input)
-      }
-      if(e.keyCode === 68){   // No data
-        let input = { number: '----', result: '-- --'}
-        this.getMyData(input)
-      }
-      
-    });
-
-    // socket connection
-    this.socket.emit('gameStart', cookie.load('username'), 'someRoomId');
-    this.socket.on('generateMole', (index) => {
-      this.setState({ currentMole: this.state.currentMole + 1 });
-      this.randomMole(index);
-    });
-    this.socket.on('updateScore', (data) => {
-      /**
-       * data = {
-       *    index: 0~15,
-       *    score: {
-       *      player1: 0,
-       *      player2: 10,
-       *    }
-       * }
-       */
-      this.numPad[data.index].hideMole();
-      const [player1, player2] = Object.keys(data.score);
-      if (player1 === cookie.load('username')) {
-        this.setState({ myScore: data.score[player1], opponentScore: data.score[player2] });
+    socket.on('res', (data) => {
+      console.log(data);
+      if(data.username === cookie.load('username')){
+        this.setState({ board: false })
+        let input = { number: data.num, result: data.res}
+        this.setState({ myNums: [...this.state.myNums, input]})
+        this.result = true;
+        this.inputResult()
       } else {
-        this.setState({ myScore: data.score[player2], opponentScore: data.score[player1] });
+        this.setState({ board: false })
+        let input = { number: data.num, result: data.res }
+        this.setState({ RivalNums: [...this.state.RivalNums, input] })
+        this.out = true;
+        this.inputResult()
       }
     });
 
-    this.socket.on('gameover', (data) => {
-      // data = username
-      this.setState({ winner: data });
+    socket.on('turn', (username) => {
+      if(username === cookie.load('username')){ //본인 차례
+        this.turnChange(true);
+      } else {  //상대방 차례
+        this.turnChange(false);
+      }
+    });
+
+    socket.on('stop', () => {
+      console.log('stop');
+      clearInterval(this.timer);
+    });
+
+    socket.on('end', (winner) => {
+      if(winner === null){
+        this.setState({winner: 'Computer'});
+      } else {
+        this.setState({ winner: winner });
+      }
+    });
+
+    socket.on('getEmoji', (data) => {
+      this.activeRivalEmoji(JSON.parse(data));
     });
     
-    this.socket.on('init', ([usernames, currentMole, score]) => {
-      const opponentUsername = usernames.filter((username) => cookie.load('username') !== username);
-      const players = Object.keys(score);
-      let myScore, opponentScore;
-      players.forEach((player) => {
-        if (player === cookie.load('username')) {
-          myScore = score[player];
-        } else {
-          opponentScore = score[player];
-        }
-      });
-      this.setState({ opponentUsername, currentMole, myScore, opponentScore });
-    });
   }
 
   
 
   componentWillUnmount() {
     this.numPad = [];
-    this.socket.disconnect();
+    socket.disconnect();
   }
 
   eraseAll() {
@@ -335,7 +299,13 @@ class NumsGame extends Component {
               })
               // 서버로 전송
               console.log(result)
-
+              socket.emit('submit', {
+                username: cookie.load('username'),
+                room: cookie.load('selectedRoom'),
+                arr: result.split('').map(i => {
+                  return parseInt(i);
+                })
+              });
               // 입력된 버튼 초기화
               this.eraseAll()
               // 현황판을 끈다
@@ -351,16 +321,6 @@ class NumsGame extends Component {
             this.setState({ resultPad: [ ...this.state.resultPad, clickedMole]})
           }
         }
-
-
-        // socket data
-        const data = {
-          gameRoomId: 'someRoomId',
-          currentMole: this.state.currentMole,
-          username: cookie.load('username'),
-          index: clickedMole,
-        };
-        this.socket.emit('moleClick', data);
       }
     }
   }
@@ -518,10 +478,10 @@ class NumsGame extends Component {
 
   turnChange(isMyturn) {
     this.setState({ myTurn: isMyturn})
-    this.countdown()
+    this.countdown(isMyturn)
   }
 
-  countdown() {
+  countdown(t) {
     // 이전 카운트다운을 취소, 초기화
     clearInterval(this.timer)
     this.setState({ count: 60 })
@@ -530,13 +490,16 @@ class NumsGame extends Component {
     this.timer = setInterval(() => {
       this.setState({ count: this.state.count - 1})
       if(this.state.count === 0){
+        if(t) socket.emit('endTurn');
         clearInterval(this.timer)
       }
-    }, 1000);
+    }, 100);
   }
 
   activeEmoji(gif) {
     this.setState({ userAvatar: gif });
+    socket.emit('sendEmoji', (JSON.stringify(gif)));
+
     setTimeout(() => {
       this.setState({ userAvatar: avatar, isActive: !this.state.isActive });
     }, 2500);
@@ -641,7 +604,7 @@ class NumsGame extends Component {
             ? <GridList cellHeight={180} className={classes.gridList}>
                 {
                   this.tileData.map((tile) => (
-                  <GridListTile key={tile.img} style={{ height: '100px' }} 
+                  <GridListTile key={tile.img} style={{ height: '100px'}} 
                     onClick={() => {
                       console.log('this.state.showEmojis: ', this.state.isActive);
                       if(this.state.isActive === false) {
@@ -650,7 +613,7 @@ class NumsGame extends Component {
                       }
                     }}
                   >
-                    <img src={tile.img} alt={tile.title} style={{ width: '70px', height: '70px' }} />
+                    <img src={tile.img} alt={tile.title} style={{ width: '70px', height: '70px'}} />
                   </GridListTile>
                   ))
                 }
@@ -667,4 +630,10 @@ NumsGame.propsTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(NumsGame);
+const mapReduxStateToReactProps = (state) => {
+  return {
+    gifEmoji: state.currentGame.gif
+  };
+};
+
+export default connect(mapReduxStateToReactProps)(withStyles(styles)(NumsGame));
