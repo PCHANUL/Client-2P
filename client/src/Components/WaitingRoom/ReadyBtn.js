@@ -26,13 +26,13 @@ const readyTheme = {
   boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
 };
 
-const BtnContent = ({ readyHandler, isReady, username, currentUsername }) => {
+const BtnContent = ({ readyHandler, isReady, username, currentUsername, roomUsers }) => {
   const classes = useStyles();
   return (
     <button
       type='button'
       onClick={() => {
-        if (currentUsername === username) {
+        if (currentUsername === username && roomUsers.length === 2) {
           readyHandler(username);
         }
       }}
@@ -43,12 +43,13 @@ const BtnContent = ({ readyHandler, isReady, username, currentUsername }) => {
   );
 };
 
-const ReadyBtn = ({ isReady, readyHandler, username }) => {
+const ReadyBtn = ({ isReady, readyHandler, username, roomUsers }) => {
   return (
     <div style={{ marginBottom: '15px' }}>
       <ThemeProvider theme={isReady ? readyTheme : getReadyTheme}>
         <BtnContent
           readyHandler={readyHandler}
+          roomUsers={roomUsers}
           isReady={isReady}
           username={username}
           currentUsername={cookie.load('username')}
@@ -61,6 +62,7 @@ const ReadyBtn = ({ isReady, readyHandler, username }) => {
 const mapStateToProps = (state) => {
   return {
     login: state.login,
+    roomUsers: state.waitingRoom.roomUsers,
   };
 };
 export default connect(mapStateToProps)(ReadyBtn);

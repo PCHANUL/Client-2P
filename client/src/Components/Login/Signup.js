@@ -17,7 +17,7 @@ const axios = require('axios')
     let result = await requestSignup(username, nickname, password)
     if(result.data.message) {
       cookie.save('username', nickname, { path: '/' })
-      cookie.save('avatarId', null, { path: '/' })
+      cookie.save('avatarId', 0, { path: '/' })
       window.location.reload();
     }
   }

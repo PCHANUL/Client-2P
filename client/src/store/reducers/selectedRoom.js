@@ -12,7 +12,6 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    
     case actionTypes.CHANGE_CURRENT_GAME:
       return {
         ...state,
@@ -40,7 +39,7 @@ const reducer = (state = initialState, action) => {
       //     pong.push(createDate(room.gameCode, room.roomName, true, room.isLocked, room.userNum === 1 ? false : true));
       //   }
       // })
-      
+
       return {
         ...state,
         roomList: action.payload,

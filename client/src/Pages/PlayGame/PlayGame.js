@@ -1,23 +1,15 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import cookie from 'react-cookies'
+
+import  Paper from '@material-ui/core/Paper';
+import { withStyles } from '@material-ui/core/styles';
+
 import NumsGame from './NumsGame';
 import BDman from './BDman';
 import MoleGame from './MoleGame';
-import Paper from '@material-ui/core/Paper';
-import { withStyles } from '@material-ui/core/styles';
-import CardMedia from '@material-ui/core/CardMedia';
-import Card from '@material-ui/core/Card';
-import Typography from '@material-ui/core/Typography';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import Grid from '@material-ui/core/Grid';
 
-import user1 from '../../images/avatar.png';
-import user2 from '../../images/avatar2.png';
-import cookie from 'react-cookies'
-import { withRouter } from 'react-router-dom';
 
 const styles = (theme) => ({
   paper: {
@@ -87,7 +79,6 @@ class PlayGame extends Component {
         color: '#000',
         pos: '90px',
         shadow: '-40px 0px 100px 0px #5c0200, 30px 0px 100px 0px #5e5d00',
-        // shadow: '1px 1px 200px 0px #737373',
       }, {
         tag: <NumsGame />,
         color: '#f0f0f0',
@@ -97,22 +88,41 @@ class PlayGame extends Component {
     ];
   }
 
+  componentWillMount() {
+    if (!cookie.load('selectedGame')) {
+      this.props.history.push('/selectgame')
+    } else if (!cookie.load('selectedRoom')) {
+      this.props.history.push('/selectroom')
+    } else if (!cookie.load('isPlaying')) {
+      this.props.history.push('/waitingroom')
+    }
+  }
+
+  componentWillUnmount() {
+    cookie.remove('isPlaying', { path: '/' })
+  }
+
   render(){
     const { classes } = this.props;
-    console.log('cookie.loa: ', cookie.load('selectedGame'));
-
-    
-
     return (
       <div>
-        <div className={classes.space} style={{ backgroundColor: this.games[cookie.load('selectedGame')]['color'] }}>
-          <Paper className={classes.paper} style={{ 
-            paddingTop: this.games[cookie.load('selectedGame')]['pos'],
-            boxShadow: this.games[cookie.load('selectedGame')]['shadow'],
-          }}>
-            { this.games[cookie.load('selectedGame')]['tag'] }
-          </Paper> 
-        </div>
+        {
+          cookie.load('selectedGame')
+          ? <div 
+              className={classes.space} 
+              style={{ backgroundColor: this.games[cookie.load('selectedGame')]['color'] }}
+            >
+              <Paper 
+                className={classes.paper} 
+                style={{ 
+                  paddingTop: this.games[cookie.load('selectedGame')]['pos'],
+                  boxShadow: this.games[cookie.load('selectedGame')]['shadow'],
+                }}>
+                  { this.games[cookie.load('selectedGame')]['tag'] }
+              </Paper> 
+            </div>
+          : null
+        }
       </div>
     );
   }

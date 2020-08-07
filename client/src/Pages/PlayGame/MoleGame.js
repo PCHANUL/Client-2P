@@ -1,20 +1,12 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import socketio from 'socket.io-client';
 import PropTypes from 'prop-types';
 import cookie from 'react-cookies';
 import Gameover from '../../Components/PlayGame/Gameover';
 import MoleScoreCard from '../../Components/PlayGame/MoleScoreCard';
 
-import { 
-  Paper,
-  Grid, 
-  Fab,
-  Tooltip,
-  GridList,
-  GridListTile,
-  Typography,
-} from '@material-ui/core';
+import { Paper, Grid, Fab, Tooltip, GridList, GridListTile, Typography } from '@material-ui/core';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import { withStyles } from '@material-ui/core/styles';
 import { isDeleteExpression } from 'typescript';
@@ -23,9 +15,8 @@ import { Mole } from './mole';
 import hemmer from '../../images/hemmer.png';
 import clicked from '../../images/clicked.png';
 
-import avatar from '../../images/bald.png'
-import avatar2 from '../../images/gas-mask.png'
-
+import avatar from '../../images/bald.png';
+import avatar2 from '../../images/gas-mask.png';
 
 const styles = (theme) => ({
   Paper: {
@@ -34,7 +25,7 @@ const styles = (theme) => ({
     // boxShadow: theme.shadows[20],
     backgroundColor: 'white',
     margin: theme.spacing(3, 3),
-    background: '#00babd'
+    background: '#00babd',
   },
   root: {
     width: theme.spacing(25),
@@ -44,12 +35,12 @@ const styles = (theme) => ({
     borderRadius: '30px',
   },
   avatar: {
-    width: theme.spacing(15), 
-    height: theme.spacing(13), 
-    marginLeft: '10px'
+    width: theme.spacing(15),
+    height: theme.spacing(13),
+    marginLeft: '10px',
   },
   pos: {
-    color: '#000'
+    color: '#000',
   },
   absolute: {
     position: 'fixed',
@@ -70,7 +61,6 @@ const styles = (theme) => ({
     width: 200,
     height: 450,
   },
-
 });
 
 let blockX;
@@ -86,8 +76,8 @@ class MoleGame extends Component {
       myScore: 0,
       opponentScore: 0,
       opponentUsername: '',
-      width: (document.body.clientWidth / 4),
-      height: (document.body.clientWidth / 4),
+      width: document.body.clientWidth / 4,
+      height: document.body.clientWidth / 4,
       currentMole: 0,
 
       // emoji
@@ -114,15 +104,13 @@ class MoleGame extends Component {
     this.socket = socketio.connect('http://13.125.22.16:3009');
 
     for (let i = 0; i < 16; i++) {
-      moles.push(
-        new Mole(this.state.width, this.state.height, 15, i)
-      );
+      moles.push(new Mole(this.state.width, this.state.height, 15, i));
     }
 
     this.tileData = [];
     this.props.gifEmoji.map((item) => {
-      this.tileData.push({ img: item })
-    })
+      this.tileData.push({ img: item });
+    });
   }
 
   componentDidMount() {
@@ -217,7 +205,6 @@ class MoleGame extends Component {
   mousePressed(mouseX, mouseY) {
     for (let i = 0; i < moles.length; i++) {
       let clickedMole = moles[i].clicked(mouseX, mouseY, i, this.ctx);
-      console.log(clickedMole)
       if (clickedMole) {
         const data = {
           gameRoomId: 'someRoomId',
@@ -278,8 +265,8 @@ class MoleGame extends Component {
   activeRivalEmoji(gif) {
     this.setState({ rivalAvatar: gif });
     setTimeout(() => {
-      this.setState({ rivalAvatar: avatar2 })
-    }, 2500)
+      this.setState({ rivalAvatar: avatar2 });
+    }, 2500);
   }
 
   render() {
@@ -290,7 +277,7 @@ class MoleGame extends Component {
         {this.state.winner !== '' ? <Gameover winner={this.state.winner} /> : null}
 
         <Grid item>
-          <Paper className={classes.root} style={{ marginLeft: '40px' }}> 
+          <Paper className={classes.root} style={{ marginLeft: '40px' }}>
             <Grid container direction='column' justify='center' alignItems='center'>
               <img src={this.state.rivalAvatar} className={classes.avatar}></img>
               <Typography className={classes.pos} variant='h5' component='h2'>
@@ -303,18 +290,22 @@ class MoleGame extends Component {
           </Paper>
         </Grid>
 
-        <Paper id='paper' style={{
+        <Paper
+          id='paper'
+          style={{
             width: this.state.width,
             height: this.state.height,
             // cursor: 'none',
-          }} className={classes.Paper} >
+          }}
+          className={classes.Paper}
+        >
           <canvas id='canvas' />
           <img id='hemmer' src={hemmer} style={{ width: '40px', display: 'none' }} />
           <img id='clicked' src={clicked} style={{ width: '40px', display: 'none' }} />
         </Paper>
 
         <Grid item>
-          <Paper className={classes.root} style={{ marginRight: '40px' }}> 
+          <Paper className={classes.root} style={{ marginRight: '40px' }}>
             <Grid container direction='column' justify='center' alignItems='center'>
               <img src={this.state.userAvatar} className={classes.avatar}></img>
               <Typography className={classes.pos} variant='h5' component='h2'>
@@ -327,34 +318,39 @@ class MoleGame extends Component {
           </Paper>
         </Grid>
 
-        <Tooltip title='이모티콘' aria-label='add' onClick={() => this.setState({ showEmojis: !this.state.showEmojis })}>
+        <Tooltip
+          title='이모티콘'
+          aria-label='add'
+          onClick={() => this.setState({ showEmojis: !this.state.showEmojis })}
+        >
           <Fab color='secondary' className={this.props.classes.absolute}>
             <EmojiEmotionsIcon />
           </Fab>
         </Tooltip>
 
         <div className={classes.rootroot}>
-          {
-            this.state.showEmojis
-            ? <GridList cellHeight={180} className={classes.gridList}>
-                {
-                  this.tileData.map((tile) => (
-                  <GridListTile key={tile.img} style={{ height: '100px'}} 
-                    onClick={() => {
-                      console.log('this.state.showEmojis: ', this.state.isActive);
-                      if(this.state.isActive === false) {
-                        this.activeEmoji(tile.img)
-                        this.setState({ showEmojis: !this.state.showEmojis, isActive: !this.state.isActive })
-                      }
-                    }}
-                  >
-                    <img src={tile.img} alt={tile.title} style={{ width: '70px', height: '70px'}} />
-                  </GridListTile>
-                  ))
-                }
-              </GridList>
-            : null
-          }
+          {this.state.showEmojis ? (
+            <GridList cellHeight={180} className={classes.gridList}>
+              {this.tileData.map((tile) => (
+                <GridListTile
+                  key={tile.img}
+                  style={{ height: '100px' }}
+                  onClick={() => {
+                    console.log('this.state.showEmojis: ', this.state.isActive);
+                    if (this.state.isActive === false) {
+                      this.activeEmoji(tile.img);
+                      this.setState({
+                        showEmojis: !this.state.showEmojis,
+                        isActive: !this.state.isActive,
+                      });
+                    }
+                  }}
+                >
+                  <img src={tile.img} alt={tile.title} style={{ width: '70px', height: '70px' }} />
+                </GridListTile>
+              ))}
+            </GridList>
+          ) : null}
         </div>
       </Grid>
     );
@@ -367,7 +363,7 @@ MoleGame.propsTypes = {
 
 const mapReduxStateToReactProps = (state) => {
   return {
-    gifEmoji: state.currentGame.gif
-  }
-}
+    gifEmoji: state.currentGame.gif,
+  };
+};
 export default connect(mapReduxStateToReactProps)(withStyles(styles)(MoleGame));

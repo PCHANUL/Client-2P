@@ -52,6 +52,7 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
   const [rooms, getRoomList] = React.useState([{}]);
 
   React.useEffect(() => {
+    console.log(history)
     if (!cookie.load('username')) {
       history.push('/');
     } else if (!cookie.load('selectedGame')) {
@@ -67,6 +68,8 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
     selectedGame(newValue);
     cookie.save('selectedGame', newValue, { path: '/' });
   };
+
+  const leaveRoomHandler = () => {};
 
   const emptyRoomList = (
     <Grid

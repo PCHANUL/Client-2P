@@ -116,7 +116,7 @@ function RoomList({
     })
       .then((res) => {
         if (res.data.message) {
-          cookie.save('selectedRoom', roomName, { path: '/' });
+          cookie.save('selectedRoom', roomId, { path: '/' });
           history.push('./waitingroom');
         } else {
           // when there are more than 2 ppl in the room already
