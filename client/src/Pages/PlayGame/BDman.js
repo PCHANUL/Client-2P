@@ -243,6 +243,14 @@ class Game extends Component {
       this.setState({ winner: winner });
     });
 
+    this.socket.on('connectError', () => {
+      // this.socket.disconnect();
+      alert('잘못된 접근입니다, 뒤로가기를 눌러주세요');
+    });
+    this.socket.on('getEmoji', (data) => {
+      this.activeRivalEmoji(JSON.parse(data));
+    });
+
     // 발사
     this.canvas.addEventListener('mousedown', (e) => {
       if (this.state.bullet > 0 && !this.state.isReload) {
@@ -293,6 +301,10 @@ class Game extends Component {
         this.preMousePos = e.layerX;
       }
     });
+  }
+
+  componentWillUnmount() {
+    this.socket.disconnect();
   }
 
   calc() {

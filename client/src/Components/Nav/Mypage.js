@@ -120,10 +120,6 @@ function Mypage({ avatar, userData }) {
     ]
   }
 
-  // 1 : molegame
-  // 2 : bidgame
-  // 3 : baseballgame
-
   const getUserGameData = () => {
     let gameNames = ['molegame', 'bidman', 'baseballgame']
 
@@ -211,9 +207,9 @@ function Mypage({ avatar, userData }) {
             isSetAvatar
             ? <div>
                 <Button variant="contained" color="primary" style={{ marginLeft: '45px' }} onClick={() => {
-                  setAvatar(false)
-                  putAvatarData(avatarId)
-                }}>아바타 바꾸기</Button>
+                      setAvatar(false)
+                      putAvatarData(avatarId)
+                    }}>아바타 바꾸기</Button>
                 <MobileStepper
                   style={{ marginLeft: '-20px'}}
                   steps={maxSteps}
@@ -234,7 +230,10 @@ function Mypage({ avatar, userData }) {
                   }
                 />
               </div>
-            : <Button variant="contained" style={{ marginLeft: '45px' }} onClick={() => setAvatar(true)}>아바타 바꾸기</Button>
+            : cookie.load('selectedRoom')
+              ? <Button variant="contained" color="primary" style={{ marginLeft: '45px' }} disabled >아바타 바꾸기</Button>
+              : <Button variant="contained" style={{ marginLeft: '45px' }} onClick={() => setAvatar(true)}>아바타 바꾸기</Button>
+                  
           }
           
 

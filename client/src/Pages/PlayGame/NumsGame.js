@@ -229,7 +229,13 @@ class NumsGame extends Component {
       } else {
         this.setState({ winner: winner });
       }
+      socket.disconnect();
     });
+
+    socket.on('connectError', () => {
+      // this.socket.disconnect();
+      alert('잘못된 접근입니다, 뒤로가기를 눌러주세요');
+    })
 
     socket.on('getEmoji', (data) => {
       this.activeRivalEmoji(JSON.parse(data));
