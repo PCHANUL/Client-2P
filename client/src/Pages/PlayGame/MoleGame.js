@@ -15,9 +15,6 @@ import { Mole } from './mole';
 import hemmer from '../../images/hemmer.png';
 import clicked from '../../images/clicked.png';
 
-import avatar from '../../images/bald.png';
-import avatar2 from '../../images/gas-mask.png';
-
 const styles = (theme) => ({
   Paper: {
     
@@ -78,8 +75,8 @@ class MoleGame extends Component {
       currentMole: 0,
 
       // emoji
-      userAvatar: avatar,
-      rivalAvatar: avatar2,
+      userAvatar: '',
+      rivalAvatar: '',
       showEmojis: false,
       isActive: false,
     };
@@ -152,11 +149,18 @@ class MoleGame extends Component {
     });
 
     // socket connection
-    this.socket.emit('gameStart', cookie.load('username'), 'someRoomId');
+    this.socket.emit(
+      'gameStart',
+      cookie.load('username'),
+      cookie.load('selectedRoom'),
+      cookie.load('avatarId')
+    );
+
     this.socket.on('generateMole', (index) => {
       this.setState({ currentMole: this.state.currentMole + 1 });
       this.randomMole(index);
     });
+
     this.socket.on('updateScore', (data) => {
       /**
        * data = {
@@ -175,11 +179,13 @@ class MoleGame extends Component {
         this.setState({ myScore: data.score[player2], opponentScore: data.score[player1] });
       }
     });
+
     this.socket.on('gameover', (data) => {
       // data = username
       this.setState({ winner: data });
     });
-    this.socket.on('init', ([usernames, currentMole, score]) => {
+
+    this.socket.on('init', ([usernames, currentMole, score, avatarIds]) => {
       const opponentUsername = usernames.filter((username) => cookie.load('username') !== username);
       const players = Object.keys(score);
       let myScore, opponentScore;
@@ -190,7 +196,18 @@ class MoleGame extends Component {
           opponentScore = score[player];
         }
       });
-      this.setState({ opponentUsername, currentMole, myScore, opponentScore });
+      this.setState({
+        opponentUsername,
+        currentMole,
+        myScore,
+        opponentScore,
+        userAvatar: this.props.avatar[avatarIds[cookie.load('username')]],
+        rivalAvatar: this.props.avatar[avatarIds[opponentUsername]],
+      });
+    });
+
+    this.socket.on('opponentGif', (gif) => {
+      this.activeRivalEmoji(gif);
     });
   }
 
@@ -204,7 +221,7 @@ class MoleGame extends Component {
       let clickedMole = moles[i].clicked(mouseX, mouseY, i, this.ctx);
       if (clickedMole) {
         const data = {
-          gameRoomId: 'someRoomId',
+          gameRoomId: cookie.load('selectedRoom'),
           currentMole: this.state.currentMole,
           username: cookie.load('username'),
           index: clickedMole,
@@ -251,24 +268,31 @@ class MoleGame extends Component {
   }
 
   activeEmoji(gif) {
+    const avatarBeforeChange = this.state.userAvatar;
+    const data = { gameRoomId: cookie.load('selectedRoom'), gif };
+    this.socket.emit('activateGif', data);
     this.setState({ userAvatar: gif });
     // this.socket.emit('sendEmoji', (JSON.stringify(gif)));
 
     setTimeout(() => {
-      this.setState({ userAvatar: avatar, isActive: !this.state.isActive });
+      this.setState({
+        userAvatar: avatarBeforeChange,
+        isActive: !this.state.isActive,
+      });
     }, 2500);
   }
 
   activeRivalEmoji(gif) {
+    const avatarBeforeChange = this.state.rivalAvatar;
+
     this.setState({ rivalAvatar: gif });
     setTimeout(() => {
-      this.setState({ rivalAvatar: avatar2 });
+      this.setState({ rivalAvatar: avatarBeforeChange });
     }, 2500);
   }
 
   render() {
-    const { classes } = this.props;
-
+    const { classes, avatar } = this.props;
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center' style={{ marginTop: `${this.state.width/4}px`}}>
         {this.state.winner !== '' ? <Gameover winner={this.state.winner} /> : null}
@@ -381,7 +405,6 @@ class MoleGame extends Component {
                   key={tile.img}
                   style={{ height: '100px' }}
                   onClick={() => {
-                    console.log('this.state.showEmojis: ', this.state.isActive);
                     if (this.state.isActive === false) {
                       this.activeEmoji(tile.img);
                       this.setState({
@@ -408,6 +431,7 @@ MoleGame.propsTypes = {
 
 const mapReduxStateToReactProps = (state) => {
   return {
+    avatar: state.login.avatar,
     gifEmoji: state.currentGame.gif,
   };
 };

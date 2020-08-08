@@ -52,7 +52,7 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
   const [rooms, getRoomList] = React.useState([{}]);
 
   React.useEffect(() => {
-    console.log(history)
+    console.log(history);
     if (!cookie.load('username')) {
       history.push('/');
     } else if (!cookie.load('selectedGame')) {
@@ -201,6 +201,9 @@ const mapReduxDispatchToReactProps = (dispatch) => {
               gameCode: cookie.load('selectedGame'),
             },
             withCredentials: true,
+            params: {
+              gameCode: cookie.load('selectedGame'),
+            },
           });
           cb(response.data);
           dispatch({ type: 'GET_ROOMS', payload: response.data });

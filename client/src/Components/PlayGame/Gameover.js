@@ -12,12 +12,10 @@ import victoryEffect from '../../images/victoryEffect.gif';
 import loseEffect from '../../images/loseEffect.gif';
 import computer from '../../images/computer.gif';
 
-
-
 const useStyles = makeStyles({
   root: {
-    width: `${document.body.clientWidth/1.5}px`,
-    heigh: `${document.body.clientWidth/4}px`,
+    width: `${document.body.clientWidth / 1.5}px`,
+    heigh: `${document.body.clientWidth / 4}px`,
     opacity: 0.9,
     zIndex: 100,
     position: 'fixed',
@@ -42,44 +40,34 @@ function Gameover({ winner }) {
   }, [timer]);
 
   return (
-    <Card className={classes.root} 
+    <Card
+      className={classes.root}
       style={{
-        background: `${
-          winner === cookie.load('username')
-          ? '#fff'
-          : '#000'
-        }`,
-    }}>
+        background: `${winner === cookie.load('username') ? '#fff' : '#000'}`,
+      }}
+    >
       <CardActionArea>
         <CardMedia
           component='img'
           alt='Contemplative Reptile'
           image={
             winner === cookie.load('username')
-            ? victoryEffect
-            : winner === 'Computer'
+              ? victoryEffect
+              : winner === 'Computer'
               ? computer
               : loseEffect
           }
           style={{
-            height: `${document.body.clientWidth/4}px`,
-            opacity: `${
-              winner === cookie.load('username')
-              ? '100%'
-              : '30%'
-            }`
+            height: `${document.body.clientWidth / 4}px`,
+            opacity: `${winner === cookie.load('username') ? '100%' : '30%'}`,
           }}
         />
         <CardContent>
-          <Typography 
-            gutterBottom 
+          <Typography
+            gutterBottom
             style={{
-              fontSize: `${document.body.clientWidth/10}px`,
-              color: `${
-                winner === cookie.load('username')
-                ? '#000'
-                : '#fff'
-              }`,
+              fontSize: `${document.body.clientWidth / 10}px`,
+              color: `${winner === cookie.load('username') ? '#000' : '#fff'}`,
               position: 'fixed',
               top: '50%',
               left: '50%',
@@ -87,25 +75,19 @@ function Gameover({ winner }) {
               lineHeight: '80%',
             }}
           >
-            {
-              winner === cookie.load('username') 
+            {winner === cookie.load('username')
               ? 'Victory!'
               : winner === 'Computer'
-                ? 'Human lose'
-                : 'You lose'
-            }
+              ? 'Human lose'
+              : 'You lose'}
           </Typography>
-          <Typography 
-            variant='body2' 
-            color='textSecondary' 
-            component='h2' 
+          <Typography
+            variant='body2'
+            color='textSecondary'
+            component='h2'
             variant='h5'
             style={{
-              color: `${
-                winner === cookie.load('username')
-                ? '#000'
-                : '#fff'
-              }`
+              color: `${winner === cookie.load('username') ? '#000' : '#fff'}`,
             }}
           >
             {timer}초 후 대기방으로 이동합니다.

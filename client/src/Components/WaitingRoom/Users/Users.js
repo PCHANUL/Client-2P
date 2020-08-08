@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -8,26 +9,23 @@ import ReadyBtn from '../ReadyBtn';
 const useStyles = makeStyles({
   root: {
     minWidth: 275,
+    minHeight: 200,
     margin: 15,
   },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
+  avatar: {
+    maxWidth: 100,
+    maxHeight: 100,
   },
 });
 
-export default function Users({ user, readyHandler }) {
+function Users({ user, readyHandler, avatar }) {
   const classes = useStyles();
 
   return (
     <Card className={classes.root} variant='outlined'>
       <CardContent>
-        <Typography className={classes.title} color='textSecondary' gutterBottom>
-          {user.userInfo.avatar}
-        </Typography>
-        <Typography className={classes.pos} variant='h5' component='h2'>
+        <img src={avatar[user.userInfo.avatar]} alt='user avatar' className={classes.avatar} />
+        <Typography variant='h5' component='h2'>
           {user.userInfo.username}
         </Typography>
       </CardContent>
@@ -39,3 +37,11 @@ export default function Users({ user, readyHandler }) {
     </Card>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    avatar: state.login.avatar,
+  };
+};
+
+export default connect(mapStateToProps)(Users);
