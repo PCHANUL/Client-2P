@@ -14,9 +14,8 @@ import MoleGame from './MoleGame';
 const styles = (theme) => ({
   paper: {
     backgroundColor: 'transparent',
-    
     width: theme.shadows[20],
-    height: theme.shadows[20],
+    
   },
   gameover: {
     backgroundColor: theme.palette.background.paper,
@@ -41,8 +40,9 @@ const styles = (theme) => ({
     margin: theme.spacing(3, 3),
   },
   space: {
-    height: '100vh',
+    height: document.body.clientHeight,
     display: 'flex',
+    height: '100vh',
     // alignItems: 'center',
     justifyContent: 'center',
   },
@@ -72,17 +72,17 @@ class PlayGame extends Component {
       {},{
         tag: <MoleGame />,
         color: '#00babd',
-        pos: '170px',
+        pos: 90,
         shadow: '1px 1px 100px 0px #00535c',
       }, {
         tag: <BDman />,
         color: '#000',
-        pos: '90px',
+        pos: 90,
         shadow: '-40px 0px 100px 0px #5c0200, 30px 0px 100px 0px #5e5d00',
       }, {
         tag: <NumsGame />,
         color: '#f0f0f0',
-        pos: '60px',
+        pos: 60,
         shadow: '1px 1px 100px 0px #d6d6d6',
       }
     ];
@@ -91,11 +91,13 @@ class PlayGame extends Component {
   componentWillMount() {
     if (!cookie.load('selectedGame')) {
       this.props.history.push('/selectgame')
-    } else if (!cookie.load('selectedRoom')) {
-      this.props.history.push('/selectroom')
-    } else if (!cookie.load('isPlaying')) {
-      this.props.history.push('/waitingroom')
-    }
+    } 
+    // else if (!cookie.load('selectedRoom')) {
+    //   this.props.history.push('/selectroom')
+    // } 
+    // else if (!cookie.load('isPlaying')) {
+    //   this.props.history.push('/waitingroom')
+    // }
   }
 
   componentWillUnmount() {
@@ -103,6 +105,7 @@ class PlayGame extends Component {
   }
 
   render(){
+    console.log(document)
     const { classes } = this.props;
     return (
       <div>
@@ -115,7 +118,8 @@ class PlayGame extends Component {
               <Paper 
                 className={classes.paper} 
                 style={{ 
-                  paddingTop: this.games[cookie.load('selectedGame')]['pos'],
+                  paddingTop: `${this.games[cookie.load('selectedGame')]['pos']}px`,
+                  height: `${Math.floor(document.body.clientHeight / 1.2) + this.games[cookie.load('selectedGame')]['pos']}px`,
                   boxShadow: this.games[cookie.load('selectedGame')]['shadow'],
                 }}>
                   { this.games[cookie.load('selectedGame')]['tag'] }

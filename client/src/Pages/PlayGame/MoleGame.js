@@ -20,16 +20,13 @@ import avatar2 from '../../images/gas-mask.png';
 
 const styles = (theme) => ({
   Paper: {
-    border: '20px solid #06cdd4',
-    borderRadius: '40px',
-    // boxShadow: theme.shadows[20],
+    
     backgroundColor: 'white',
     margin: theme.spacing(3, 3),
     background: '#00babd',
   },
   root: {
     width: theme.spacing(25),
-    // height: theme.spacing(20),
     padding: theme.spacing(4),
     backgroundColor: 'white',
     borderRadius: '30px',
@@ -235,9 +232,9 @@ class MoleGame extends Component {
     // 마우스가 canvas에 들어온 경우 망치이미지 생성
     if (this.cursorEnter) {
       if (this.cursorClick) {
-        this.ctx.drawImage(this.clickedCursor, this.cursorX - 20, this.cursorY - 40, 50, 50);
+        this.ctx.drawImage(this.clickedCursor, this.cursorX - 10, this.cursorY - 30, 50, 50);
       } else {
-        this.ctx.drawImage(this.hemmer, this.cursorX - 20, this.cursorY - 40, 50, 50);
+        this.ctx.drawImage(this.hemmer, this.cursorX - 10, this.cursorY - 30, 50, 50);
       }
     }
   }
@@ -273,17 +270,40 @@ class MoleGame extends Component {
     const { classes } = this.props;
 
     return (
-      <Grid container direction='row' justify='space-evenly' alignItems='center'>
+      <Grid container direction='row' justify='space-evenly' alignItems='center' style={{ marginTop: `${this.state.width/4}px`}}>
         {this.state.winner !== '' ? <Gameover winner={this.state.winner} /> : null}
 
         <Grid item>
-          <Paper className={classes.root} style={{ marginLeft: '40px' }}>
+          <Paper 
+            className={classes.root} 
+            style={{ 
+              marginLeft: '40px',
+              width: `${this.state.width / 2}px`,
+              height: `${this.state.width / 1.2}px`,
+            }}
+          >
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img src={this.state.rivalAvatar} className={classes.avatar}></img>
-              <Typography className={classes.pos} variant='h5' component='h2'>
+              <img 
+                src={this.state.rivalAvatar} 
+                style={{
+                  width: this.state.width/2,
+                  height: this.state.width/2.2,
+                }}
+              ></img>
+              <Typography 
+                className={classes.pos} 
+                style={{
+                  fontSize: `${this.state.width/15}px`
+                }}
+              >
                 {'Rival'}
               </Typography>
-              <Typography className={classes.pos} color='textSecondary' variant='h1' component='h1'>
+              <Typography 
+                className={classes.pos} 
+                style={{
+                  fontSize: `${this.state.width/5}px`
+                }}  
+              >
                 {this.state.opponentScore}
               </Typography>
             </Grid>
@@ -295,7 +315,9 @@ class MoleGame extends Component {
           style={{
             width: this.state.width,
             height: this.state.height,
-            // cursor: 'none',
+            borderRadius: `${this.state.width/6}px`,
+            border: `${this.state.width/11}px solid #06cdd4`,
+            cursor: 'none',
           }}
           className={classes.Paper}
         >
@@ -305,13 +327,36 @@ class MoleGame extends Component {
         </Paper>
 
         <Grid item>
-          <Paper className={classes.root} style={{ marginRight: '40px' }}>
+          <Paper 
+            className={classes.root} 
+            style={{ 
+              marginRight: '40px',
+              width: `${this.state.width / 2}px`,
+              height: `${this.state.width / 1.2}px`,
+            }}
+          >
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img src={this.state.userAvatar} className={classes.avatar}></img>
-              <Typography className={classes.pos} variant='h5' component='h2'>
-                {'you'}
+              <img 
+                src={this.state.userAvatar} 
+                style={{
+                  width: this.state.width/2,
+                  height: this.state.width/2.2,
+                }}
+              ></img>
+              <Typography 
+                className={classes.pos}
+                style={{
+                  fontSize: `${this.state.width/15}px`
+                }}
+              >
+                {cookie.load('username')}
               </Typography>
-              <Typography className={classes.pos} color='textSecondary' variant='h1' component='h1'>
+              <Typography 
+                className={classes.pos} 
+                style={{
+                  fontSize: `${this.state.width/5}px`
+                }}
+              >
                 {this.state.myScore}
               </Typography>
             </Grid>

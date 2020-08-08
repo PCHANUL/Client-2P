@@ -27,16 +27,16 @@ const styles = (theme) => ({
   },
   menuButton: {
     position: 'fixed',
-    right: '3%',
-    top: '2%',
+    right: '30px',
+    top: '15px',
   },
   title: {
     flexGrow: 1,
   },
   gobackButton: {
     position: 'fixed',
-    left: '3%',
-    top: '1%',
+    left: '20px',
+    top: '10px',
   },
 });
 
@@ -123,7 +123,7 @@ class Nav extends Component {
       .then((res) => {
         if (res.data.message) {
           cookie.remove('selectedRoom', { path: '/' });
-          this.props.history.push('./selectRoom');
+          this.props.history.push('./selectroom');
         }
       })
       .catch((err) => {
@@ -138,8 +138,8 @@ class Nav extends Component {
       cookie.remove('selectedGame', { path: '/' });
     } else if (location === '/waitingroom') {
       this.leaveRoomHandler();
-      // this.props.history.push('/selectroom');
-      // cookie.remove('selectedRoom', { path: '/' });
+      this.props.history.push('/selectroom');
+      cookie.remove('selectedRoom', { path: '/' });
     } else if (location === '/playgame') {
       this.props.history.push('/waitingroom');
       cookie.remove('isPlaying', { path: '/' });

@@ -128,8 +128,8 @@ export class KeyPad {
     } else {
       ctx.fillStyle = '#fff';
       ctx.shadowColor = '#c9c9c9';
-      ctx.shadowBlur = 8;
-      ctx.shadowOffsetY = -5;
+      ctx.shadowBlur = stageWidth/40;
+      ctx.shadowOffsetY = stageWidth/100 * -1;
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
       ctx.fill();

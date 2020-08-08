@@ -128,8 +128,8 @@ function MakeGame({ isMaking, makeRoomsClose }) {
             >
               <option aria-label='None' value='' />
               <option value={1}>두더지게임</option>
-              <option value={2}>핑퐁게임</option>
-              <option value={3}>사천성</option>
+              <option value={2}>구슬동자</option>
+              <option value={3}>숫자야구</option>
             </NativeSelect>
           </FormControl>
           <div>

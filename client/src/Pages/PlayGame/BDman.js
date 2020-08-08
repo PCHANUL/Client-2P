@@ -27,9 +27,9 @@ const styles = (theme) => ({
     margin: theme.spacing(3, 3),
   },
   root: {
-    width: theme.spacing(25),
+    // width: theme.spacing(25),
     // height: theme.spacing(20),
-    padding: theme.spacing(4, 4, 2, 2),
+    padding: theme.spacing(4, 4, 2, 4),
     backgroundColor: 'transparent',
     border: '2px solid #636363',
   },
@@ -39,10 +39,8 @@ const styles = (theme) => ({
     marginLeft: '10px',
   },
   magazine: {
-    width: theme.spacing(3),
-    height: theme.spacing(35),
     backgroundColor: 'transparent',
-    // border: '1px solid #fff',
+    border: '1px solid #fff',
   },
   pos: {
     color: '#fff',
@@ -311,7 +309,7 @@ class Game extends Component {
   resize() {
     this.stageWidth = document.body.clientWidth;
     this.stageHeight = document.body.clientHeight;
-
+    
     this.canvas.width = Math.floor(this.stageWidth / 4);
     this.canvas.height = Math.floor(this.stageHeight / 1.2);
 
@@ -414,9 +412,9 @@ class Game extends Component {
         <div
           style={{
             backgroundColor: '#ffff8c',
-            width: '10px',
-            height: '20px',
-            margin: '7px',
+            width: `${this.state.width/35}px`,
+            height: `${this.state.width/17.5}px`,
+            margin: `${this.state.width/33}px`,
           }}
         />
       );
@@ -447,13 +445,37 @@ class Game extends Component {
         {this.state.winner !== '' ? <Gameover winner={this.state.winner} /> : null}
 
         <Grid item>
-          <Paper className={classes.root} style={{ marginRight: '20px', marginLeft: '40px' }}>
+          <Paper 
+            className={classes.root} 
+            style={{ 
+              marginRight: '20px', 
+              marginLeft: '40px',
+              width: `${this.state.width / 2}px`,
+              height: `${this.state.width / 1.2}px`,
+            }}
+          >
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img src={this.state.rivalAvatar} className={classes.avatar}></img>
-              <Typography className={classes.pos} variant='h5' component='h2'>
+              <img 
+                src={this.state.rivalAvatar} 
+                style={{
+                  width: this.state.width/2,
+                  height: this.state.width/2.2,
+                }}
+              ></img>
+              <Typography 
+                className={classes.pos} 
+                style={{
+                  fontSize: `${this.state.width/15}px`
+                }}
+              >
                 {'Rival'}
               </Typography>
-              <Typography className={classes.pos} color='textSecondary' variant='h1' component='h1'>
+              <Typography 
+                className={classes.pos} 
+                style={{
+                  fontSize: `${this.state.width/5}px`
+                }}
+              >
                 {this.state.rivalScore}
               </Typography>
             </Grid>
@@ -466,29 +488,62 @@ class Game extends Component {
               width: this.state.width,
               height: this.state.height,
               boxShadow: '0px 0px 20px 0px #d6d6d6',
-              // boxShadow: '-5px -5px 20px 0px #5c0200, 0px 0px 30px 0px #d6d6d6, 5px 5px 20px 0px #b5af00',
             }}
             className={classes.Paper}
           >
             <canvas id='canvas' />
           </Paper>
         </Grid>
-        <Paper className={classes.magazine} style={{ zIndex: 1 }}>
+        <Paper 
+          className={classes.magazine} 
+          style={{
+            width:  `${this.state.width / 11}px`,
+            height: `${this.state.width / 1.1}px`,
+          }}
+        >
           {<Grid item>{this.makeBullet()}</Grid>}
         </Paper>
         <Grid item>
-          <Paper className={classes.root} style={{ marginRight: '40px', zIndex: 1 }}>
+          <Paper 
+              className={classes.root} 
+              style={{ 
+                marginRight: '40px', 
+                width: `${this.state.width / 2}px`,
+                height: `${this.state.width / 1.2}px`,
+              }}
+            >
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img src={this.state.userAvatar} className={classes.avatar}></img>
-              <Typography className={classes.pos} variant='h5' component='h2'>
-                {'you'}
+              <img 
+                src={this.state.userAvatar} 
+                style={{
+                  width: this.state.width/2,
+                  height: this.state.width/2.2,
+                }}
+              ></img>
+              <Typography 
+                className={classes.pos} 
+                style={{
+                  fontSize: `${this.state.width/15}px`
+                }}
+              >
+                {cookie.load('username')}
               </Typography>
-              <Typography className={classes.pos} variant='h1' component='h1'>
+              <Typography 
+                className={classes.pos} 
+                style={{
+                  fontSize: `${this.state.width/5}px`
+                }}
+              >
                 {this.state.myScore}
               </Typography>
             </Grid>
           </Paper>
-          <Typography className={classes.reloadText} variant='h5' component='h2'>
+          <Typography 
+            className={classes.reloadText} 
+            style={{
+              fontSize: `${this.state.width/15}px`
+            }}
+          >
             {this.state.isReload
               ? '재장전중'
               : this.state.bullet === 0

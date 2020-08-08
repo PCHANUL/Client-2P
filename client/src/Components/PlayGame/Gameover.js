@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from 'react';
+import cookie from 'react-cookies';
 import { withRouter, useHistory } from 'react-router-dom';
-import congratulations from './img/congratulations.png';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
+import congratulations from './img/congratulations.png';
+import victoryEffect from '../../images/victoryEffect.gif';
+import loseEffect from '../../images/loseEffect.gif';
+import computer from '../../images/computer.gif';
+
+
 
 const useStyles = makeStyles({
   root: {
-    maxWidth: 450,
-    maxHeigh: 350,
-    opacity: 0.97,
+    width: `${document.body.clientWidth/1.5}px`,
+    heigh: `${document.body.clientWidth/4}px`,
+    opacity: 0.9,
     zIndex: 100,
     position: 'fixed',
-    background: '#757ce8',
-    top: '35%',
+    top: '30%',
     left: '50%',
-    transform: 'translate(-50%, -50%)',
+    transform: 'translate(-50%, -20%)',
   },
 });
 
@@ -37,20 +42,72 @@ function Gameover({ winner }) {
   }, [timer]);
 
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root} 
+      style={{
+        background: `${
+          winner === cookie.load('username')
+          ? '#fff'
+          : '#000'
+        }`,
+    }}>
       <CardActionArea>
         <CardMedia
           component='img'
           alt='Contemplative Reptile'
-          height='140'
-          image={congratulations}
-          title='Contemplative Reptile'
+          image={
+            winner === cookie.load('username')
+            ? victoryEffect
+            : winner === 'Computer'
+              ? computer
+              : loseEffect
+          }
+          style={{
+            height: `${document.body.clientWidth/4}px`,
+            opacity: `${
+              winner === cookie.load('username')
+              ? '100%'
+              : '30%'
+            }`
+          }}
         />
-        <CardContent className={classes.box}>
-          <Typography gutterBottom variant='h3' component='h2'>
-            {winner === 'tie' ? '무승부' : `${winner} 승리!`}
+        <CardContent>
+          <Typography 
+            gutterBottom 
+            style={{
+              fontSize: `${document.body.clientWidth/10}px`,
+              color: `${
+                winner === cookie.load('username')
+                ? '#000'
+                : '#fff'
+              }`,
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              lineHeight: '80%',
+            }}
+          >
+            {
+              winner === cookie.load('username') 
+              ? 'Victory!'
+              : winner === 'Computer'
+                ? 'Human lose'
+                : 'You lose'
+            }
           </Typography>
-          <Typography variant='body2' color='textSecondary' component='h2' variant='h5'>
+          <Typography 
+            variant='body2' 
+            color='textSecondary' 
+            component='h2' 
+            variant='h5'
+            style={{
+              color: `${
+                winner === cookie.load('username')
+                ? '#000'
+                : '#fff'
+              }`
+            }}
+          >
             {timer}초 후 대기방으로 이동합니다.
           </Typography>
         </CardContent>

@@ -29,9 +29,6 @@ let socket;
 
 const styles = (theme) => ({
   Paper: {
-    // border: '20px solid #06cdd4',
-    borderRadius: '40px',
-    // boxShadow: theme.shadows[20],
     backgroundColor: 'white',
     margin: theme.spacing(3, 3),
     background: '#00babd',
@@ -39,7 +36,6 @@ const styles = (theme) => ({
   root: {
     padding: theme.spacing(2, 4, 4, 4),
     backgroundColor: 'white',
-    borderRadius: '30px',
     height: '100%',
   },
   avatar: {
@@ -94,7 +90,6 @@ class NumsGame extends Component {
       count: 60,
 
       resultPad: [],
-      rounds: [],
 
       RivalNums: [],
       myNums: [],
@@ -157,16 +152,6 @@ class NumsGame extends Component {
     this.hemmer = document.getElementById('hemmer');
     this.clickedCursor = document.getElementById('clicked');
 
-    let rows = [
-      this.createDate(2344, 1, 2, 1),
-      this.createDate(2344, 1, 2, 1),
-      this.createDate(2344, 1, 2, 1),
-      // this.createDate(2344, 1, 2, 1),
-      // this.createDate(2344, 1, 2, 1),
-    ];
-
-    this.setState({ rounds: rows });
-
     // 화면크기 재설정 이벤트
     this.resize();
     window.requestAnimationFrame(this.animate.bind(this));
@@ -195,15 +180,23 @@ class NumsGame extends Component {
       this.cursorEnter = false;
     });
 
+    // 서버에서 오는 결과
     socket.on('res', (data) => {
-      console.log(data);
+      console.log(data)
+      // 본인의 입력결과
       if (data.username === cookie.load('username')) {
+        if (data.num === '----') this.setState({ warning: this.state.warning + 1 });
+
         this.setState({ board: false });
         let input = { number: data.num, result: data.res };
         this.setState({ myNums: [...this.state.myNums, input] });
         this.result = true;
         this.inputResult();
-      } else {
+      } 
+      // 라이벌의 입력결과
+      else {
+        if (data.num === '----') this.setState({ warningRival: this.state.warningRival + 1 });
+
         this.setState({ board: false });
         let input = { number: data.num, result: data.res };
         this.setState({ RivalNums: [...this.state.RivalNums, input] });
@@ -290,7 +283,6 @@ class NumsGame extends Component {
                 result = result + String(item);
               });
               // 서버로 전송
-              console.log(result);
               socket.emit('submit', {
                 username: cookie.load('username'),
                 room: cookie.load('selectedRoom'),
@@ -425,7 +417,7 @@ class NumsGame extends Component {
     this.ctx.fillStyle = '#fff';
     this.ctx.lineWidth = 1;
     this.ctx.shadowColor = '#c9c9c9';
-    this.ctx.shadowBlur = 8;
+    this.ctx.shadowBlur = this.canvas.width/40;
     this.ctx.fillRect(
       this.state.width / 12,
       this.state.height / 15,
@@ -531,16 +523,34 @@ class NumsGame extends Component {
             className={classes.root}
             style={{
               marginLeft: '40px',
-              width: `${document.body.clientWidth / 9}px`,
+              borderRadius: `${this.state.width/10}px`,
+              width: `${this.state.width / 2}px`,
+              height: `${this.state.width / 1.2}px`,
               boxShadow: `0px 0px 20px 0px ${this.state.myTurn ? '#d6d6d6' : '#0067c2'}`,
             }}
           >
-            <Typography className={classes.pos} variant='h2' component='h2'>
+            <Typography 
+              className={classes.pos} 
+              style={{
+                fontSize: `${this.state.width/6}px`
+              }}
+            >
               {this.state.myTurn ? '대기' : this.state.count}
             </Typography>
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img src={this.state.rivalAvatar} className={classes.avatar}></img>
-              <Typography className={classes.pos} variant='h5' component='h2'>
+              <img 
+                src={this.state.rivalAvatar} 
+                style={{
+                  width: this.state.width/2,
+                  height: this.state.width/2.2,
+                }}
+              ></img>
+              <Typography 
+                className={classes.pos} 
+                style={{
+                  fontSize: `${this.state.width/15}px`
+                }}
+              >
                 {'Rival'}
               </Typography>
               {this.state.warningRival === 1 ? (
@@ -571,6 +581,7 @@ class NumsGame extends Component {
           style={{
             width: this.state.width,
             height: this.state.height,
+            borderRadius: `${this.state.width/10}px`,
             // cursor: 'none',
           }}
           className={classes.Paper}
@@ -585,27 +596,50 @@ class NumsGame extends Component {
             className={classes.root}
             style={{
               marginRight: '40px',
-              width: `${document.body.clientWidth / 9}px`,
+              borderRadius: `${this.state.width/10}px`,
+              width: `${this.state.width / 2}px`,
+              height: `${this.state.width / 1.2}px`,
               boxShadow: `0px 0px 20px 0px ${
                 this.state.wrongInput ? '#ff5c5c' : this.state.myTurn ? '#0067c2' : '#d6d6d6'
               }`,
             }}
           >
             {this.state.wrongInput ? (
-              <Typography className={classes.pos} variant='h6'>
+              <Typography 
+                className={classes.pos} 
+                style={{
+                  fontSize: `${this.state.width/10}px`
+                }}
+              >
                 4자리를
                 <br />
                 입력하세요
               </Typography>
             ) : (
-              <Typography className={classes.pos} variant='h2' component='h2'>
+              <Typography 
+              className={classes.pos} 
+              style={{
+                fontSize: `${this.state.width/6}px`
+              }}
+            >
                 {this.state.myTurn ? this.state.count : '대기'}
               </Typography>
             )}
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img src={this.state.userAvatar} className={classes.avatar}></img>
-              <Typography className={classes.pos} variant='h5' component='h2'>
-                {'you'}
+              <img 
+                src={this.state.userAvatar} 
+                style={{
+                  width: this.state.width/2,
+                  height: this.state.width/2.2,
+                }}
+              ></img>
+              <Typography 
+                className={classes.pos} 
+                style={{
+                  fontSize: `${this.state.width/15}px`
+                }}
+              >
+                {cookie.load('username')}
               </Typography>
               {this.state.warning === 1 ? (
                 <div
@@ -647,7 +681,6 @@ class NumsGame extends Component {
                   key={tile.img}
                   style={{ height: '100px' }}
                   onClick={() => {
-                    console.log('this.state.showEmojis: ', this.state.isActive);
                     if (this.state.isActive === false) {
                       this.activeEmoji(tile.img);
                       this.setState({
