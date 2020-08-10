@@ -21,6 +21,7 @@ function mapReduxDispatchToReactProps(dispatch) {
     // onPasswordType: (password) => dispatch({ type: actionTypes.PASSWORD_INPUT, payload: password }),
     socialLogin: async (userId, socialId, nickname) => {
       let result = await socialSignin(userId, socialId, nickname)
+      console.log('result.data.message: ', result.data.message);
       if(result.data.message) {
         let userData = await Mypage()
         cookie.save('username', userData.data.nickname, { path: '/' })

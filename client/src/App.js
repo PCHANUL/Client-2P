@@ -4,6 +4,11 @@ import './App.css';
 import { connect } from 'react-redux';
 import * as actionTypes from './store/actions';
 import cookie from 'react-cookies';
+import { 
+  Grow, 
+  Paper,
+  LinearProgress,
+} from '@material-ui/core'
 
 import Login from './containers/Login';
 import SelectGame from './Pages/SelectGame/SelectGame';
@@ -13,39 +18,95 @@ import Nav from './Components/Nav/Nav';
 
 import MakeGame from './Components/SelectRoom/MakeGame';
 import PlayGame from './Pages/PlayGame/PlayGame';
+import logo from './images/logo.png'
 
 const axios = require('axios');
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      checked: true,
+      loading: 0,
+    }
+
+    this.timer = setInterval(() => {
+      if (this.state.loading === 100) {
+        cookie.save('load', true, { path: '/' })
+        clearInterval(this.timer)
+      }
+      const diff = Math.random() * 10;
+      this.setState({ loading: Math.min(this.state.loading + diff, 100)})
+  }, 100);
+  }
   componentDidMount() {
     if (!cookie.load('username')) {
       this.props.history.push('/');
     }
   }
 
+
+
   render() {
+    
+
     return (
       <div className='App'>
-        <Nav />
-        <Switch>
-          <Route exact path='/'>
-            <Login />
-          </Route>
-          <Route path='/selectgame'>
-            <SelectGame />
-          </Route>
-          <Route path='/selectroom'>
-            <SelectRoom />
-          </Route>
-          <Route path='/waitingroom'>
-            <WaitingRoom />
-          </Route>
-          <Route path='/playgame'>
-            <PlayGame />
-          </Route>
-        </Switch>
-
-        <MakeGame />
+        {
+          cookie.load('load')
+          ? <div>
+              <Nav />
+              <Switch>
+                <Route exact path='/'>
+                  <Login />
+                </Route>
+                <Route path='/selectgame'>
+                  <SelectGame />
+                </Route>
+                <Route path='/selectroom'>
+                  <SelectRoom />
+                </Route>
+                <Route path='/waitingroom'>
+                  <WaitingRoom />
+                </Route>
+                <Route path='/playgame'>
+                  <PlayGame />
+                </Route>
+              </Switch>
+              <MakeGame />
+            </div>
+          : <div>
+              <Grow 
+                in={this.state.checked}
+                style={{ transformOrigin: '0 0 0' }}
+                {...(this.state.checked ? { timeout: 2000 } : {})}
+              >
+                <img
+                  src={logo} 
+                  style={{
+                    width: '30%',
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                />
+              </Grow>
+              
+              {/*  로딩바
+                <LinearProgress 
+                  variant="determinate" 
+                  value={this.state.loading} 
+                  style={{
+                    position: 'fixed',
+                    top: '70%',
+                    left: '25%',
+                    width: '50%',
+                  }}
+                /> 
+              */}
+            </div>
+        }
       </div>
     );
   }

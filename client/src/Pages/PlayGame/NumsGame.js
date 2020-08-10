@@ -98,11 +98,16 @@ class NumsGame extends Component {
       myTurn: true,
       wrongInput: false,
 
+      // emoji
       open: false,
-      userAvatar: avatar,
-      rivalAvatar: avatar2,
       showEmojis: false,
       isActive: false,
+
+      // userData
+      userName: '',
+      rivalName: '',
+      userAvatar: 0,
+      rivalAvatar: 0,
 
       warning: 0,
       warningRival: 0,
@@ -144,6 +149,7 @@ class NumsGame extends Component {
       socket.emit('joinRoom', {
         username: cookie.load('username'),
         room: cookie.load('selectedRoom'),
+        avatarId: cookie.load('avatarId'),
       });
     })();
 
@@ -179,6 +185,26 @@ class NumsGame extends Component {
     this.canvas.addEventListener('mouseleave', (e) => {
       this.cursorEnter = false;
     });
+
+    // 유저데이터 가져오기
+    socket.on('loadUsers', (data) => {
+      console.log(data)
+      for(let key in data){
+        if(data[key].username === cookie.load('username')){
+          this.setState({ 
+            userAvatar: this.props.avatarImg[data[key].avatarId],
+            userName: data[key].username
+          })
+          this.userAvatarId = data[key].avatarId  // 아바타아이디 백업
+        } else {
+          this.setState({
+            rivalAvatar: this.props.avatarImg[data[key].avatarId],
+            rivalName: data[key].username
+          })
+          this.rivalAvatarId = data[key].avatarId   // 아바타아이디 백업
+        }
+      }
+    })
 
     // 서버에서 오는 결과
     socket.on('res', (data) => {
@@ -506,14 +532,14 @@ class NumsGame extends Component {
     socket.emit('sendEmoji', JSON.stringify(gif));
 
     setTimeout(() => {
-      this.setState({ userAvatar: avatar, isActive: !this.state.isActive });
+      this.setState({ userAvatar: this.props.avatarImg[this.userAvatarId], isActive: !this.state.isActive });
     }, 2500);
   }
 
   activeRivalEmoji(gif) {
     this.setState({ rivalAvatar: gif });
     setTimeout(() => {
-      this.setState({ rivalAvatar: avatar2 });
+      this.setState({ rivalAvatar: this.props.avatarImg[this.rivalAvatarId] });
     }, 2500);
   }
 
@@ -531,7 +557,7 @@ class NumsGame extends Component {
               marginLeft: '40px',
               borderRadius: `${this.state.width/10}px`,
               width: `${this.state.width / 2}px`,
-              height: `${this.state.width / 1.2}px`,
+              height: `${this.state.width / 1.1}px`,
               boxShadow: `0px 0px 20px 0px ${this.state.myTurn ? '#d6d6d6' : '#0067c2'}`,
             }}
           >
@@ -554,27 +580,28 @@ class NumsGame extends Component {
               <Typography 
                 className={classes.pos} 
                 style={{
-                  fontSize: `${this.state.width/15}px`
+                  fontSize: `${this.state.width/15}px`,
+                  overflow: 'hidden',
                 }}
               >
-                {'Rival'}
+                {this.state.rivalName}
               </Typography>
               {this.state.warningRival === 1 ? (
                 <div
                   style={{
                     backgroundColor: 'yellow',
-                    width: '20px',
-                    height: '30px',
-                    border: '3px solid #000',
+                    width: `${document.body.clientWidth/80}px`,
+                    height: `${document.body.clientWidth/50}px`,
+                    border: `${document.body.clientWidth/400}px solid #000`,
                   }}
                 />
               ) : this.state.warningRival === 2 ? (
                 <div
                   style={{
                     backgroundColor: 'red',
-                    width: '20px',
-                    height: '30px',
-                    border: '3px solid #000',
+                    width: `${document.body.clientWidth/80}px`,
+                    height: `${document.body.clientWidth/50}px`,
+                    border: `${document.body.clientWidth/400}px solid #000`,
                   }}
                 />
               ) : null}
@@ -604,7 +631,7 @@ class NumsGame extends Component {
               marginRight: '40px',
               borderRadius: `${this.state.width/10}px`,
               width: `${this.state.width / 2}px`,
-              height: `${this.state.width / 1.2}px`,
+              height: `${this.state.width / 1.1}px`,
               boxShadow: `0px 0px 20px 0px ${
                 this.state.wrongInput ? '#ff5c5c' : this.state.myTurn ? '#0067c2' : '#d6d6d6'
               }`,
@@ -642,27 +669,29 @@ class NumsGame extends Component {
               <Typography 
                 className={classes.pos} 
                 style={{
-                  fontSize: `${this.state.width/15}px`
+                  fontSize: `${this.state.width/15}px`,
+                  width: this.state.width/2.5,
+                  overflow: 'hidden',
                 }}
               >
-                {cookie.load('username')}
+                {this.state.userName}
               </Typography>
               {this.state.warning === 1 ? (
                 <div
                   style={{
                     backgroundColor: 'yellow',
-                    width: '20px',
-                    height: '30px',
-                    border: '3px solid #000',
+                    width: `${document.body.clientWidth/80}px`,
+                    height: `${document.body.clientWidth/50}px`,
+                    border: `${document.body.clientWidth/400}px solid #000`,
                   }}
                 />
               ) : this.state.warning === 2 ? (
                 <div
                   style={{
                     backgroundColor: 'red',
-                    width: '20px',
-                    height: '30px',
-                    border: '3px solid #000',
+                    width: `${document.body.clientWidth/80}px`,
+                    height: `${document.body.clientWidth/50}px`,
+                    border: `${document.body.clientWidth/400}px solid #000`,
                   }}
                 />
               ) : null}
@@ -714,6 +743,7 @@ NumsGame.propsTypes = {
 const mapReduxStateToReactProps = (state) => {
   return {
     gifEmoji: state.currentGame.gif,
+    avatarImg: state.login.avatar,
   };
 };
 

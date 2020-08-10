@@ -105,7 +105,6 @@ class PlayGame extends Component {
   }
 
   render(){
-    console.log(document)
     const { classes } = this.props;
     return (
       <div>

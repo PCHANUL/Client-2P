@@ -35,7 +35,7 @@ class Signin extends Component {
 
 
   // LOGIN (post)
-  Login = async(userId, password) => {
+  Login = async(userId, password, nickname) => {
     try {
       const response = await axios({
         method: 'post',
@@ -43,6 +43,7 @@ class Signin extends Component {
         data: {
           userId: userId,
           password: password,
+          nickname: nickname
         },
         withCredentials: true,
       })

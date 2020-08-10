@@ -149,12 +149,13 @@ function Mypage({ avatar, userData }) {
   }
 
     gameNames.map((game) => {
-      // let gameData = userData.data[game]
-      let gameData = sample[game]
-      winRate.push(Math.floor(gameData.win / gameData.play * 10))
+      console.log(userData.data, game, userData.data[game])
+      let gameData = userData.data[game]
+      if(gameData){
+        winRate.push(Math.floor(gameData.win / gameData.play * 10))
+      }
     })
     
-    console.log(winRate)
     
     GameData(createData(winRate[0], winRate[1], winRate[2]))
   }
@@ -184,7 +185,6 @@ function Mypage({ avatar, userData }) {
         },
         withCredentials: true,
       })
-      cookie.save('avatarId', avatarId, { path: '/' })
     } catch (err) {
       console.log(err)
     }
@@ -209,6 +209,7 @@ function Mypage({ avatar, userData }) {
                 <Button variant="contained" color="primary" style={{ marginLeft: '45px' }} onClick={() => {
                       setAvatar(false)
                       putAvatarData(avatarId)
+                      cookie.save('avatarId', avatarId, { path: '/' })
                     }}>아바타 바꾸기</Button>
                 <MobileStepper
                   style={{ marginLeft: '-20px'}}

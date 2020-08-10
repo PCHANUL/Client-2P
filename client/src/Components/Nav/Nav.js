@@ -63,9 +63,6 @@ class Nav extends Component {
       if (e.keyCode === 66 && e.ctrlKey) {
         this.props.history.push('/playgame');
       }
-      if (e.keyCode === 116) {
-        console.log('awefawefawef');
-      }
     });
   }
 
@@ -75,6 +72,7 @@ class Nav extends Component {
     cookie.remove('avatarId', { path: '/' });
     cookie.remove('selectedGame', { path: '/' });
     cookie.remove('selectedRoom', { path: '/' });
+    cookie.remove('load', { path: '/' })
     window.location.reload();
   };
 
