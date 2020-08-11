@@ -24,6 +24,7 @@ const styles = (theme) => ({
     flexGrow: 1,
     position: 'fixed',
     width: '100%',
+    zIndex: 6,
   },
   menuButton: {
     position: 'fixed',

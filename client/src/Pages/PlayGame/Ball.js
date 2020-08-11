@@ -108,6 +108,7 @@ export class Ball {
         this.vy *= -1;
         // 스타트
         if (this.vx === 0) {
+          this.vy -= this.speed/2;
           console.log('this.blockPrePosX > blockPosX: ', this.blockPrePosX, blockPosX);
           if (this.blockPrePosX - (this.speed * 1.5) > blockPosX) {
             console.log('왼쪽으로 움직임')

@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom'
 import cookie from 'react-cookies'
 
-import WhackAMole from '../../images/molethumbnail.png';
-import Pong from '../../images/bidthumbnail.png';
-import FlipCard from '../../images/baseballthumbnail.png';
+import molethumbnail from '../../images/molethumbnail.png';
+import bidthumbnail from '../../images/bidthumbnail.png';
+import baseballthumbnail from '../../images/baseballthumbnail.png';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -34,13 +34,13 @@ const SelectGame = ({ isLogin }) => {
       <Grid className={ classes.flexContainer } container direction="column" justify="space-evenly" alignItems="center">
         <Grid container direction="row" justify="space-evenly" alignItems="center" >
           <Grid item style={{margin: '25px'}}>
-            <GameList image={WhackAMole} gameName='moleGame' />
+            <GameList image={molethumbnail} gameName='moleGame' />
           </Grid>
           <Grid item style={{margin: '25px'}}>
-            <GameList image={Pong} gameName='bidGame' />
+            <GameList image={bidthumbnail} gameName='bidGame' />
           </Grid>
           <Grid item style={{margin: '25px'}}>
-            <GameList image={FlipCard} gameName='baseballGame' />
+            <GameList image={baseballthumbnail} gameName='baseballGame' />
           </Grid>
         </Grid>
       </Grid>

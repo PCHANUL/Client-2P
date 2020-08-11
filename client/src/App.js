@@ -92,19 +92,6 @@ class App extends Component {
                   }}
                 />
               </Grow>
-              
-              {/*  로딩바
-                <LinearProgress 
-                  variant="determinate" 
-                  value={this.state.loading} 
-                  style={{
-                    position: 'fixed',
-                    top: '70%',
-                    left: '25%',
-                    width: '50%',
-                  }}
-                /> 
-              */}
             </div>
         }
       </div>

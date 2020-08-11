@@ -3,19 +3,33 @@ import { connect } from 'react-redux';
 import cookie from 'react-cookies';
 import { useHistory } from 'react-router-dom';
 
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Tooltip from '@material-ui/core/Tooltip';
-import Fab from '@material-ui/core/Fab';
+import { 
+  Tab,
+  Tabs,
+  Grid,
+  Fab,
+  Paper,
+  Tooltip,
+  Typography,
+  makeStyles,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { Typography } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 import * as actionTypes from '../../store/actions';
 import RoomList from '../../Components/SelectRoom/RoomList';
+
+import molethumbnail from '../../images/molethumbnail.png';
+import bidthumbnail from '../../images/bidthumbnail.png';
+import baseballthumbnail from '../../images/baseballthumbnail.png';
+
+import moleGameDec from '../../images/moleGameDec.png';
+import bidGameDec from '../../images/bidGameDec.png';
+import baseballGameDec from '../../images/baseballGameDec.png';
 
 const axios = require('axios');
 
@@ -42,6 +56,16 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     padding: theme.spacing(8, 0, 0, 0),
+  },
+  rootroot: {
+    display: 'inline-block',
+    padding: '20px 0px',
+    width: '800px',
+    height: '100px',
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
   },
 }));
 
@@ -71,6 +95,27 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
 
   const leaveRoomHandler = () => {};
 
+  const games = [
+    {
+      name: '두더지 게임',
+      img: molethumbnail,
+      dec: moleGameDec,
+      color: '#00C8DE',
+    }, 
+    {
+      name: '구슬 동자',
+      img: bidthumbnail,
+      dec: bidGameDec,
+      color: '#000000',
+    }, 
+    {
+      name: '숫자 야구',
+      img: baseballthumbnail,
+      dec: baseballGameDec,
+      color: '#2D65AA'
+    }, 
+    ];
+  
   const emptyRoomList = (
     <Grid
       container
@@ -133,8 +178,56 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
           <Tab label='숫자 야구' />
         </Tabs>
       </Paper>
-      {cookie.load('selectedGame') === '0' ? (
-        <div>게임설명</div>
+      {cookie.load('selectedGame') === '0' ? (  // 게임설명 페이지
+        <Grid container direction='column' justify='space-evenly' alignItems='center'>
+          <div className={classes.rootroot}>
+
+            {
+              games.map((game) => {
+                return (
+                  <Accordion style={{ backgroundColor: `${game.color}`, marginBottom: '10px' }}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      style={{
+                        height: '150px',
+                        width: '760px',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <img src={game.img}
+                        style={{
+                          width: '300px',
+                        }}
+                      />
+                      <Typography 
+                        style={{
+                          color: '#fff',
+                          marginTop: '25px',
+                          marginLeft: '50px',
+                          fontSize: '70px'
+                        }}
+                      >
+                        {game.name}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails style={{
+                        // overflow: 'hidden',
+                        alignItems: 'center'
+                      }}>
+                        <img src={game.dec} style={{
+                          marginLeft: '10px',
+                          width: 750,
+                        }}/>
+                    </AccordionDetails>
+                  </Accordion>
+                )
+              })
+            }
+
+          </div>
+        </Grid>
+
+
       ) : rooms[0] === undefined ? ( // 생성된 방이 없다
         emptyRoomList
       ) : (

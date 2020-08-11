@@ -48,24 +48,27 @@ class Game extends Component {
     this.stageHeight = null;
 
     // Block
-    this.blockSizeX = this.state.width / 3;
+    this.blockSizeX = this.state.width / 5;
     this.blockSizeY = this.state.height / 35;
     this.blockPosX = (this.state.width / 2) - (this.blockSizeX / 2);
     this.blockPosY = Math.floor(this.state.height * 4.5 / 5);
     this.blockPosInitX = (this.state.width / 2) - (this.blockSizeX / 2);
     // Rival Block
-    this.RivalSizeX = this.state.width / 3;
+    this.RivalSizeX = this.state.width / 5;
     this.RivalSizeY = this.state.height / 35;
     this.RivalPosX = (this.state.width / 2) - (this.RivalSizeX / 2);
     this.RivalPosY = Math.floor(this.state.height / 12);
     this.RivalPosInitX = (this.state.width / 2) - (this.RivalSizeX / 2);
 
     // Ball
-    this.ballRadius = this.state.width / 20;
+    this.ballRadius = this.state.width / 40;
     this.ballSpeed = this.state.width / 100;
+    this.balls = [];
 
     // mouse
     this.mousePos = 0;
+    this.mouseX = 0;
+    this.mouseY = 0;
 
     // pre date
     this.prePercent = 0;
@@ -73,7 +76,7 @@ class Game extends Component {
   }
 
   componentDidMount() {
-    socket = socketio.connect('http://15.164.170.101:3005');
+    socket = socketio.connect('http://localhost:3005');
     (() => {
       socket.emit('joinRoom', {
         username: cookie.load('username'),
@@ -83,7 +86,6 @@ class Game extends Component {
     this.canvas = document.getElementById('canvas');
     this.ctx = this.canvas.getContext('2d');
 
-    this.ball = new Ball(this.state.width, this.state.height, this.ballRadius, this.ballSpeed)
     this.block = new Block(this.blockSizeX, this.blockSizeY, this.blockPosX, this.blockPosY, this.state.width, this.state.height);
     this.Rivalblock = new RivalBlock(this.RivalSizeX, this.RivalSizeY, this.RivalPosX, this.RivalPosY, this.state.width, this.state.height);
 
@@ -96,11 +98,18 @@ class Game extends Component {
     //   this.mousePos = e.layerX
     // })
 
-    this.canvas.addEventListener('mousemove', (e) => {
-      if(e.movementX !== 0){
-        this.blockPosX = Math.floor(e.layerX - this.blockSizeX)
-        this.RivalPosX = Math.floor(e.layerX - this.RivalSizeX)
+    document.addEventListener('keydown', (e) => {
+      if (e.keyCode === 65) {  // 왼쪽
+        console.log('left')
+        this.blockPosX -= 30; 
+      } else if (e.keyCode === 68) {  // 오른쪽
+        console.log('right')
+        this.blockPosX += 30; 
       }
+      // if(e.movementX !== 0){
+      //   this.blockPosX = Math.floor(e.layerX - this.blockSizeX)
+      //   this.RivalPosX = Math.floor(e.layerX - this.RivalSizeX)
+      // }
       let posPercent = Number((this.blockPosX / this.state.width).toFixed(2));
       if(this.prePercent !== posPercent){
         socket.emit('mouseMove', posPercent);
@@ -116,20 +125,31 @@ class Game extends Component {
       this.RivalPosX = ((1 - e) * this.state.width) - this.RivalSizeX
     });
 
-    document.addEventListener('keydown', (e) => {
-      if(e.keyCode === 81){
-        console.log('awefawef')
-        this.setState({ myScore: this.state.myScore += 1 })
+
+    // 발사
+    this.canvas.addEventListener('mousedown', (e) => {
+      let angle = this.calc()
+      let moveX = 0;
+      let moveY = 0;
+      console.log('angle: ', angle);
+      if(angle > -40 && angle < 60) {
+        moveX = -2;
       }
-      if(e.keyCode === 65){
-        this.ball.stoppp(true)
-        this.initPos()
-        socket.emit('start', true);
+      else if(angle >= 60 && angle <= 120) {
+        moveX = 0;
       }
+      else if(angle > 120 && angle < 180 || angle < -140){
+        moveX = 2;
+      }
+      let ball = new Ball(this.state.width, this.state.height, this.ballRadius, moveX, 2, this.blockPosX, this.blockSizeX)
+      this.balls.push(ball)
     });
-    socket.on('start', (x) => {
-      this.ball.stoppp(x)
-      this.initPos()
+
+    // 조준
+    this.canvas.addEventListener('mousemove', (e) => {
+      this.mouseX = e.layerX;
+      this.mouseY = e.layerY;
+      
     })
   } 
 
@@ -139,6 +159,16 @@ class Game extends Component {
   //     socket.emit('disconnect');
   //   })();
   // }
+
+  calc() {
+    // 발사각 측정
+    let ballX = this.blockPosX + (this.blockSizeX / 2);
+    let ballY = this.state.height - 40;
+    let width = (ballX - this.mouseX)
+    let height = (ballY - this.mouseY)
+    let angle = Math.atan2(height, width) * 180 / Math.PI;
+    return angle
+  }
 
   // 화면크기 재설정 함수
   resize() {
@@ -169,31 +199,39 @@ class Game extends Component {
       this.RivalPosX = this.state.width - this.RivalSizeX
     }
     window.requestAnimationFrame(this.animate.bind(this));
-    this.ctx.clearRect(0, 0, this.state.width, this.state.height)
-
+    this.ctx.clearRect(0, this.state.height - 60, this.state.width, this.state.height)
+    this.ctx.clearRect(0, 0, this.state.width, this.state.height /7)
+    
     // Block
-    this.ctx.shadowColor = '#707070';
-    this.ctx.shadowBlur = 30;
+    // this.ctx.shadowColor = '#707070';
+    // this.ctx.shadowBlur = 30;
     this.Rivalblock.draw(this.ctx, this.RivalPosX, this.RivalPosY)
+
     this.block.draw(this.ctx, this.blockPosX, this.blockPosY)
 
     // Ball
-    this.ctx.shadowColor = '#ffff8c';
-    this.ctx.shadowBlur = 5;
-    // this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-    // this.ctx.fillRect(0, 0, this.state.width, this.state.height);
-    const response = this.ball.draw(
-      this.ctx, this.state.width, this.state.height, 
-      this.blockPosX, this.blockPosY, this.blockSizeX, this.blockSizeY,
-      this.RivalPosX, this.RivalPosY, this.RivalSizeX, this.RivalSizeY,
-    ) 
-    // 게임결과 출력시 화면 초기화
-    if(response){
-      console.log(response)
-      // this.ball.stoppp(true)
-      // this.initPos()
-      socket.emit('start');
+    // this.ctx.shadowColor = '#ffff8c';
+    // this.ctx.shadowBlur = 0;
+
+    if(this.balls.length !== 0){
+      for(let i=0; i<this.balls.length; i++){
+        this.balls[i].draw(
+          this.ctx, this.state.width, this.state.height, 
+          this.blockPosX, this.blockPosY, this.blockSizeX, this.blockSizeY,
+          this.RivalPosX, this.RivalPosY, this.RivalSizeX, this.RivalSizeY,
+        ) 
+     }
     }
+
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    this.ctx.fillRect(0, this.state.height /7, this.state.width, this.state.height - 130);
+    // 게임결과 출력시 화면 초기화
+    // if(response){
+    //   console.log(response)
+    //   // this.ball.stoppp(true)
+    //   // this.initPos()
+    //   socket.emit('start');
+    // }
   }
 
 
@@ -203,7 +241,7 @@ class Game extends Component {
       <Paper id="paper" style={{
         width: this.state.width,
         height: this.state.height,
-        cursor: 'none',
+        // cursor: 'none',
         boxShadow: '1px 1px 100px 0px #707070',
         }} className={classes.Paper}>
         <canvas id="canvas" />

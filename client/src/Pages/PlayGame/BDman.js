@@ -254,7 +254,6 @@ class Game extends Component {
       this.setState({ winner: winner });
     });
     socket.on('loadUsers', (data) => {
-      console.log(data)
       for(let key in data){
         if(data[key].username === cookie.load('username')){
           this.setState({ 
