@@ -84,6 +84,7 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
     // } else if (cookie.load('selectedRoom')) {
     //   history.push('/waitingroom');
     // }
+    
     getRooms(getRoomList);
     selectedGame(Number(cookie.load('selectedGame')));
   }, [currentGame]);

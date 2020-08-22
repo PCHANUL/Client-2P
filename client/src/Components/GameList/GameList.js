@@ -61,7 +61,7 @@ const gameDescription = {
 
 // 비로그인 유저
 const guestLogin = () => {
-  let randomName = Math.random().toString(36).substr(2, 11)
+  let randomName = Math.random().toString(36).substr(2, 5)
   let randomAvatar = String(Math.floor(Math.random() * 12))
   cookie.save('username', `Guest_${randomName}`, { path: '/' })
   cookie.save('avatarId', randomAvatar, { path: '/' })
@@ -104,7 +104,7 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
                 <Button color="primary" disableElevation className={classes.button} variant="outlined" 
                   onClick={() => {
                     cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
-                    guestLogin()
+                    if(!cookie.load('username')) guestLogin()
                     history.push('/selectroom')
                   }
                 }>
@@ -117,6 +117,7 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
                 <Button color="secondary" disableElevation className={classes.button} variant="outlined" 
                   onClick={() => {
                     cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
+                    if(!cookie.load('username')) guestLogin()
                     makeRooms()
                   }}
                 >
