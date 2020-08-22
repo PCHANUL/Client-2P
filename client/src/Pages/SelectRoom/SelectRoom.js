@@ -77,13 +77,13 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
 
   React.useEffect(() => {
     console.log(history);
-    if (!cookie.load('username')) {
-      history.push('/');
-    } else if (!cookie.load('selectedGame')) {
-      history.push('/selectgame');
-    } else if (cookie.load('selectedRoom')) {
-      history.push('/waitingroom');
-    }
+    // if (!cookie.load('username')) {
+    //   history.push('/');
+    // } else if (!cookie.load('selectedGame')) {
+    //   history.push('/selectgame');
+    // } else if (cookie.load('selectedRoom')) {
+    //   history.push('/waitingroom');
+    // }
     getRooms(getRoomList);
     selectedGame(Number(cookie.load('selectedGame')));
   }, [currentGame]);

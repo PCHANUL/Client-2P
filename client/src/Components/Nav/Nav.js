@@ -208,7 +208,7 @@ class Nav extends Component {
                   color='inherit'
                   className={classes.menuButton}
                   onClick={() => {
-                    history.push('/');
+                    history.push('/login');
                   }}
                 >
                   Login

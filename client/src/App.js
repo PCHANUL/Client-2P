@@ -61,10 +61,10 @@ class App extends Component {
               <Nav />
               <Switch>
                 <Route exact path='/'>
-                  <Login />
-                </Route>
-                <Route path='/selectgame'>
                   <SelectGame />
+                </Route>
+                <Route path='/login'>
+                  <Login />
                 </Route>
                 <Route path='/selectroom'>
                   <SelectRoom />
