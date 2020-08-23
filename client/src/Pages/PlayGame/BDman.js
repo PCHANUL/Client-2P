@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import Gameover from '../../Components/PlayGame/Gameover';
 
-import { Paper, Typography, Tooltip, Fab, Grid, GridList, GridListTile } from '@material-ui/core';
+import { Paper, Typography, Tooltip, Fab, Grid, GridList, GridListTile, Button } from '@material-ui/core';
 
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 
@@ -153,6 +153,21 @@ class Game extends Component {
 
     // gif frame
     this.frame = 0;
+
+    // computer
+    this.computer = {
+      avatarId: '13',
+      username: 'COMPUTER',
+    }
+  }
+  computerMode() {
+    (() => {
+      this.socket.emit('joinRoom', {
+        username: this.computer.username,
+        room: cookie.load('selectedRoom'),
+        avatarId: this.computer.avatarId,
+      });
+    })();
   }
 
   componentDidMount() {
@@ -493,6 +508,8 @@ class Game extends Component {
   render() {
     const { classes, avatarImg } = this.props;
     console.log(this.props)
+    console.log(this.state.rivalName)
+
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center'>
         {this.state.winner !== '' ? <Gameover winner={this.state.winner} /> : null}
@@ -508,22 +525,45 @@ class Game extends Component {
             }}
           >
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img 
-                alt='들어오는중'
-                src={this.state.rivalAvatar} 
-                style={{
-                  width: this.state.width/2,
-                  height: this.state.width/2.2,
-                }}
-              ></img>
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/15}px`
-                }}
-              >
-                {this.state.rivalName}
-              </Typography>
+              {
+                // 상대유저가 들어오지 않은 경우
+                !this.state.rivalName
+                ? <Button color="secondary" 
+                    disableElevation 
+                    style={{
+                      width: `${this.state.width / 2}px`,
+                      height: `${this.state.width / 2}px`,
+                    }} 
+                    variant="outlined" 
+                    onClick={() => {
+                      console.log('clicked')
+                      this.computerMode();
+                  }}>
+                    <Typography style={{ 
+                      fontSize: `${this.state.width/15}px`
+                    }}>
+                      컴퓨터<br/>대결시작
+                    </Typography>
+                  </Button>
+                : <div>
+                    <img 
+                      alt='들어오는중'
+                      src={this.state.rivalAvatar} 
+                      style={{
+                        width: this.state.width/2,
+                        height: this.state.width/2.2,
+                      }}
+                    ></img>
+                    <Typography 
+                      className={classes.pos} 
+                      style={{
+                        fontSize: `${this.state.width/15}px`
+                      }}
+                    >
+                      {this.state.rivalName}
+                    </Typography>
+                  </div>
+              }
               <Typography 
                 className={classes.pos} 
                 style={{
