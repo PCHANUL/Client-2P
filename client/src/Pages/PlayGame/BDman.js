@@ -159,13 +159,47 @@ class Game extends Component {
       avatarId: 'https://image.flaticon.com/icons/svg/603/603506.svg',
       username: 'COMPUTER',
     }
+
+    // computer block collision (0: 좌측, 1: 우측)
+    this.blockCollision = -1;
   }
-  computerMode() {
+
+  computerModeStart() {
     this.socket.emit('computerMode');
     this.setState({
       rivalAvatar: this.computer.avatarId,
       rivalName: this.computer.username
-    })
+    });
+    this.moveComputerBlock();
+  }
+
+  moveComputerBlock() {
+    let a = Math.floor(Math.random()*3)
+    let b
+    if(this.blockCollision !== -1){
+      this.move(a, this.blockCollision)
+      this.blockCollision = -1
+    }
+    else {
+      b = Math.floor(Math.random()*2)
+      this.move(a, b)
+    }
+  }
+
+  move(a, b) {
+    console.log(this.RivalPosX)
+    setTimeout(() => {
+      if (b === 0) this.RivalPosX += this.blockSizeX
+      else if (b === 1) this.RivalPosX -= this.blockSizeX
+      
+      a -= 1
+      if (a !== -1) {
+        this.move(a, b)
+      } 
+      else if (a === -1) {
+        this.moveComputerBlock()
+      }
+    }, 100)
   }
 
   componentDidMount() {
@@ -381,8 +415,10 @@ class Game extends Component {
     }
     if (this.RivalPosX < 0) {
       this.RivalPosX = 0;
+      this.blockCollision = 0;
     } else if (this.RivalPosX > this.state.width - this.RivalSizeX) {
       this.RivalPosX = this.state.width - this.RivalSizeX;
+      this.blockCollision = 1;
     }
     window.requestAnimationFrame(this.animate.bind(this));
 
@@ -504,8 +540,6 @@ class Game extends Component {
 
   render() {
     const { classes, avatarImg } = this.props;
-    console.log(this.props)
-    console.log(this.state.rivalName)
 
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center'>
@@ -534,7 +568,7 @@ class Game extends Component {
                     variant="outlined" 
                     onClick={() => {
                       console.log('clicked')
-                      this.computerMode();
+                      this.computerModeStart();
                   }}>
                     <Typography style={{ 
                       fontSize: `${this.state.width/15}px`
