@@ -156,18 +156,16 @@ class Game extends Component {
 
     // computer
     this.computer = {
-      avatarId: '13',
+      avatarId: 'https://image.flaticon.com/icons/svg/603/603506.svg',
       username: 'COMPUTER',
     }
   }
   computerMode() {
-    (() => {
-      this.socket.emit('joinRoom', {
-        username: this.computer.username,
-        room: cookie.load('selectedRoom'),
-        avatarId: this.computer.avatarId,
-      });
-    })();
+    this.socket.emit('computerMode');
+    this.setState({
+      rivalAvatar: this.computer.avatarId,
+      rivalName: this.computer.username
+    })
   }
 
   componentDidMount() {
@@ -410,7 +408,6 @@ class Game extends Component {
     this.ctx.fillStyle = '#fff'
     
     if (this.state.gameStart && Math.floor(this.state.width/this.frame) !== 5) {
-      console.log('this.state.width/this.frame: ', this.state.width/this.frame);
       this.ctx.font = `${ this.state.width/5 + this.state.width/this.frame }px sanseif`
       this.ctx.fillText(
         'Start!', 
@@ -664,7 +661,6 @@ class Game extends Component {
                     key={tile.img}
                     style={{ height: '100px' }}
                     onClick={() => {
-                      console.log('this.state.showEmojis: ', this.state.isActive);
                       if (this.state.isActive === false) {
                         this.activeEmoji(tile.img);
                         this.setState({
