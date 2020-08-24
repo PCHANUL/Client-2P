@@ -170,7 +170,10 @@ class Game extends Component {
       rivalAvatar: this.computer.avatarId,
       rivalName: this.computer.username
     });
-    this.moveComputerBlock();
+    setTimeout(() => {
+      this.moveComputerBlock();
+      this.shotComputerBlock();
+    }, 3000);
   }
 
   moveComputerBlock() {
@@ -187,7 +190,6 @@ class Game extends Component {
   }
 
   move(dis, dir) {
-    console.log(this.RivalPosX)
     setTimeout(() => {
       if (dir === 0) this.RivalPosX += this.blockSizeX
       else if (dir === 1) this.RivalPosX -= this.blockSizeX
@@ -197,6 +199,52 @@ class Game extends Component {
       else if (dis === -1) this.moveComputerBlock()
     }, 100)
   }
+
+  shotComputerBlock() {
+    let shotDir = [-1, 0, 1];
+    let a = Math.floor(Math.random()*3)
+    let num = Math.floor(Math.random()*4)
+
+    this.shot(shotDir[a], num)
+  }
+
+  shot(a, num) {
+    setTimeout(() => {
+      this.rivalShot(a)
+      num -= 1
+      if (num !== -1) this.shot(a, num);
+      else if (num === -1) this.shotComputerBlock();
+    }, 100)
+  }
+
+
+  rivalShot(e) {
+    if (e === 1) {
+      // right (this.aim === 1)
+      this.RivalMoveX = this.BulletSpeed * -1;
+      this.RivalMoveY = this.BulletSpeed;
+    } else if (e === 0) {
+      // center (this.aim === 0)
+      this.RivalMoveX = 0;
+      this.RivalMoveY = this.BulletSpeed * 2;
+    } else if (e === -1) {
+      // left (this.aim === -1)
+      this.RivalMoveX = this.BulletSpeed;
+      this.RivalMoveY = this.BulletSpeed;
+    }
+    let bullet = new Bullet(
+      this.state.width,
+      this.state.height,
+      this.BulletRadius,
+      this.RivalMoveX,
+      this.RivalMoveY,
+      this.RivalPosX,
+      this.RivalPosY + this.RivalSizeY,
+      this.RivalSizeX
+    );
+    this.RivalBullets.push(bullet);
+  }
+
 
   componentDidMount() {
     (() => {
@@ -254,32 +302,7 @@ class Game extends Component {
     });
 
     // Rival shot (mirror)
-    this.socket.on('rivalShot', (e) => {
-      if (e === 1) {
-        // right (this.aim === 1)
-        this.RivalMoveX = this.BulletSpeed * -1;
-        this.RivalMoveY = this.BulletSpeed;
-      } else if (e === 0) {
-        // center (this.aim === 0)
-        this.RivalMoveX = 0;
-        this.RivalMoveY = this.BulletSpeed * 2;
-      } else if (e === -1) {
-        // left (this.aim === -1)
-        this.RivalMoveX = this.BulletSpeed;
-        this.RivalMoveY = this.BulletSpeed;
-      }
-      let bullet = new Bullet(
-        this.state.width,
-        this.state.height,
-        this.BulletRadius,
-        this.RivalMoveX,
-        this.RivalMoveY,
-        this.RivalPosX,
-        this.RivalPosY + this.RivalSizeY,
-        this.RivalSizeX
-      );
-      this.RivalBullets.push(bullet);
-    });
+    this.socket.on('rivalShot', (e) => this.rivalShot(e));
 
     this.socket.on('moveLeft', () => {
       this.RivalPosX += this.blockSizeX;
