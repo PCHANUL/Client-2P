@@ -174,31 +174,27 @@ class Game extends Component {
   }
 
   moveComputerBlock() {
-    let a = Math.floor(Math.random()*3)
-    let b
+    let ranDistance = Math.floor(Math.random()*3)
+    let ranDirection
     if(this.blockCollision !== -1){
-      this.move(a, this.blockCollision)
+      this.move(ranDistance, this.blockCollision)
       this.blockCollision = -1
     }
     else {
-      b = Math.floor(Math.random()*2)
-      this.move(a, b)
+      ranDirection = Math.floor(Math.random()*2)
+      this.move(ranDistance, ranDirection)
     }
   }
 
-  move(a, b) {
+  move(dis, dir) {
     console.log(this.RivalPosX)
     setTimeout(() => {
-      if (b === 0) this.RivalPosX += this.blockSizeX
-      else if (b === 1) this.RivalPosX -= this.blockSizeX
+      if (dir === 0) this.RivalPosX += this.blockSizeX
+      else if (dir === 1) this.RivalPosX -= this.blockSizeX
       
-      a -= 1
-      if (a !== -1) {
-        this.move(a, b)
-      } 
-      else if (a === -1) {
-        this.moveComputerBlock()
-      }
+      dis -= 1
+      if (dis !== -1) this.move(dis, dir)
+      else if (dis === -1) this.moveComputerBlock()
     }, 100)
   }
 
