@@ -162,6 +162,9 @@ class Game extends Component {
 
     // computer block collision (0: 좌측, 1: 우측)
     this.blockCollision = -1;
+
+    // computer magazine
+    this.computerMag = 10;
   }
 
   computerModeStart() {
@@ -197,26 +200,38 @@ class Game extends Component {
       dis -= 1
       if (dis !== -1) this.move(dis, dir)
       else if (dis === -1) this.moveComputerBlock()
-    }, 100)
+    }, 200)
   }
 
   shotComputerBlock() {
     let shotDir = [-1, 0, 1];
-    let a = Math.floor(Math.random()*3)
+    let angle = Math.floor(Math.random()*3)
     let num = Math.floor(Math.random()*4)
 
-    this.shot(shotDir[a], num)
+
+    if(this.computerMag - num < 0){
+      setTimeout(() => {
+        this.computerMag = 10;
+        this.shotComputerBlock();
+      }, 2500);
+    } else {
+      this.computerMag -= num
+      this.shot(shotDir[angle], num)
+    }
   }
 
-  shot(a, num) {
+  shot(ang, num) {
     setTimeout(() => {
-      this.rivalShot(a)
+      this.rivalShot(ang)
       num -= 1
-      if (num !== -1) this.shot(a, num);
-      else if (num === -1) this.shotComputerBlock();
-    }, 100)
+      if (num !== -1) this.shot(ang, num);
+      else if (num === -1) {
+        setTimeout(() => {
+          this.shotComputerBlock()
+        }, 1000)
+      }
+    }, 200)
   }
-
 
   rivalShot(e) {
     if (e === 1) {
