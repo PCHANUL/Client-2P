@@ -12,12 +12,9 @@ import { withStyles } from '@material-ui/core/styles';
 import { Block } from './BDBlock';
 import { RivalBlock } from './BDRivalBlock';
 import { Bullet } from './Bullet';
-import { isDeleteExpression } from 'typescript';
 import cookie from 'react-cookies';
 import socketio from 'socket.io-client';
 
-import avatar from '../../images/bald.png';
-import avatar2 from '../../images/gas-mask.png';
 
 const styles = (theme) => ({
   Paper: {
@@ -508,9 +505,14 @@ class Game extends Component {
         );
         if (response) {
           this.bullets.splice(i, 1);
-          if (response.result) this.setState({ rivalScore: this.state.rivalScore - 10 });
-          console.log(this.state.myScore);
-          this.socket.emit('score', this.state.rivalScore)
+          if (response.result) {
+            this.setState({ rivalScore: this.state.rivalScore - 10 });
+            if (this.state.rivalName !== 'COMPUTER') {
+              this.socket.emit('score', this.state.rivalScore);
+            } else if (this.state.rivalName === 'COMPUTER' && this.state.rivalScore === 0){
+              this.setState({ winner: `${this.state.userName}`})
+            }
+          }
         }
       }
     }
@@ -525,7 +527,15 @@ class Game extends Component {
           this.blockSizeX,
           this.blockSizeY
         );
-        if (response) this.RivalBullets.splice(i, 1);
+        if (response) {
+          this.RivalBullets.splice(i, 1);
+          if (response.result && this.state.rivalName === 'COMPUTER') {
+            this.setState({ myScore: this.state.myScore - 10 });
+            if(this.state.myScore === 0){
+              this.setState({ winner: 'Computer'})
+            }
+          }
+        }
       }
     }
 
@@ -577,7 +587,11 @@ class Game extends Component {
 
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center'>
-        {this.state.winner !== '' ? <Gameover winner={this.state.winner} /> : null}
+        {this.state.winner !== '' 
+          ? this.state.rivalName === 'COMPUTER'
+            ? <Gameover winner={this.state.winner} isComputer={true}/>
+            : <Gameover winner={this.state.winner} />
+          : null}
 
         <Grid item>
           <Paper 
