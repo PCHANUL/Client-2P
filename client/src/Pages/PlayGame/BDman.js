@@ -14,6 +14,7 @@ import { RivalBlock } from './BDRivalBlock';
 import { Bullet } from './Bullet';
 import cookie from 'react-cookies';
 import socketio from 'socket.io-client';
+import { createNonNullChain } from 'typescript';
 
 
 const styles = (theme) => ({
@@ -203,14 +204,14 @@ class Game extends Component {
   shotComputerBlock() {
     let shotDir = [-1, 0, 1];
     let angle = Math.floor(Math.random()*3)
-    let num = Math.floor(Math.random()*4)
+    let num = Math.floor(Math.random()*6)
 
 
     if(this.computerMag - num < 0){
       setTimeout(() => {
         this.computerMag = 10;
         this.shotComputerBlock();
-      }, 2500);
+      }, 2000);
     } else {
       this.computerMag -= num
       this.shot(shotDir[angle], num)
@@ -225,7 +226,7 @@ class Game extends Component {
       else if (num === -1) {
         setTimeout(() => {
           this.shotComputerBlock()
-        }, 1000)
+        }, 700)
       }
     }, 200)
   }
@@ -684,6 +685,11 @@ class Game extends Component {
                 marginRight: '40px', 
                 width: `${this.state.width / 2}px`,
                 height: `${this.state.width / 1.2}px`,
+                boxShadow: `${
+                  this.state.bullet === 0
+                  ? '1px 1px 100px 0px #00535c'
+                  : ''
+                }`
               }}
             >
             <Grid container direction='column' justify='center' alignItems='center'>
