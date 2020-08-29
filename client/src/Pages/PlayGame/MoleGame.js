@@ -6,7 +6,7 @@ import cookie from 'react-cookies';
 import Gameover from '../../Components/PlayGame/Gameover';
 import MoleScoreCard from '../../Components/PlayGame/MoleScoreCard';
 
-import { Paper, Grid, Fab, Tooltip, GridList, GridListTile, Typography } from '@material-ui/core';
+import { Paper, Button, Grid, Fab, Tooltip, GridList, GridListTile, Typography } from '@material-ui/core';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import { withStyles } from '@material-ui/core/styles';
 import { isDeleteExpression } from 'typescript';
@@ -93,6 +93,12 @@ class MoleGame extends Component {
     this.cursorClick = false;
 
     this.gifCount = 0;
+
+    // computer
+    this.computer = {
+      avatarId: 'https://image.flaticon.com/icons/svg/603/603506.svg',
+      username: 'COMPUTER',
+    }
 
     // socket connection endpoint
     this.socket = socketio.connect('http://localhost:3009');
@@ -186,7 +192,11 @@ class MoleGame extends Component {
     });
 
     this.socket.on('init', ([usernames, currentMole, score, avatarIds]) => {
+      console.log('usernames, currentMole, score, avatarIds: ', usernames, currentMole, score, avatarIds);
+
       const opponentUsername = usernames.filter((username) => cookie.load('username') !== username);
+      console.log('opponentUsername: ', opponentUsername);
+
       const players = Object.keys(score);
       let myScore, opponentScore;
       players.forEach((player) => {
@@ -291,8 +301,25 @@ class MoleGame extends Component {
     }, 2500);
   }
 
+  computerModeStart() {
+    this.socket.emit(
+      'gameStart',
+      this.computer.username,
+      cookie.load('selectedRoom'),
+      12,
+    );
+    // this.setState({
+    //   rivalAvatar: this.computer.avatarId,
+    //   opponentUsername: this.computer.username,
+    //   opponentScore: 0,
+    // });
+  }
+
+
   render() {
     const { classes, avatar } = this.props;
+    console.log(cookie.load('avatarId'))
+
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center' style={{ marginTop: `${this.state.width/4}px`}}>
         {this.state.winner !== '' ? <Gameover winner={this.state.winner} /> : null}
@@ -307,21 +334,45 @@ class MoleGame extends Component {
             }}
           >
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img 
-                src={this.state.rivalAvatar} 
-                style={{
-                  width: this.state.width/2,
-                  height: this.state.width/2.2,
-                }}
-              ></img>
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/15}px`
-                }}
-              >
-                {'Rival'}
-              </Typography>
+              {
+                !this.state.opponentUsername.length
+                ? <Button color="secondary" 
+                    disableElevation 
+                    style={{
+                      width: `${this.state.width / 2}px`,
+                      height: `${this.state.width / 2}px`,
+                    }} 
+                    variant="outlined" 
+                    onClick={() => {
+                      console.log('clicked')
+                      this.computerModeStart();
+                  }}>
+                    <Typography style={{ 
+                      fontSize: `${this.state.width/15}px`
+                    }}>
+                      컴퓨터<br/>대결시작
+                    </Typography>
+                  </Button>
+                : 
+                <>
+                  <img 
+                    src={this.state.rivalAvatar} 
+                    style={{
+                      width: this.state.width/2,
+                      height: this.state.width/2.2,
+                    }}
+                  />
+                  <Typography 
+                    className={classes.pos} 
+                    style={{
+                      fontSize: `${this.state.width/15}px`
+                    }}
+                  >
+                    {this.state.opponentUsername}
+                  </Typography>
+                </>
+              }
+
               <Typography 
                 className={classes.pos} 
                 style={{
@@ -330,6 +381,7 @@ class MoleGame extends Component {
               >
                 {this.state.opponentScore}
               </Typography>
+
             </Grid>
           </Paper>
         </Grid>
