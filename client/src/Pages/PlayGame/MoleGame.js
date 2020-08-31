@@ -61,6 +61,7 @@ let blockX;
 let dx = 10;
 let preKey;
 let moles = [];
+let moleTimer
 
 class MoleGame extends Component {
   constructor(props) {
@@ -93,12 +94,6 @@ class MoleGame extends Component {
     this.cursorClick = false;
 
     this.gifCount = 0;
-
-    // computer
-    this.computer = {
-      avatarId: 'https://image.flaticon.com/icons/svg/603/603506.svg',
-      username: 'COMPUTER',
-    }
 
     // socket connection endpoint
     this.socket = socketio.connect('http://localhost:3009');
@@ -164,7 +159,7 @@ class MoleGame extends Component {
 
     this.socket.on('generateMole', (index) => {
       this.setState({ currentMole: this.state.currentMole + 1 });
-      this.randomMole(index);
+      moles[index].generateMole();
     });
 
     this.socket.on('updateScore', (data) => {
@@ -223,13 +218,17 @@ class MoleGame extends Component {
 
   componentWillUnmount() {
     moles = [];
+    if(cookie.load('selectedRoom') === undefined) {
+      this.socket.emit('leaveComputerMode')
+      clearInterval(moleTimer);
+    }
     this.socket.disconnect();
   }
 
   mousePressed(mouseX, mouseY) {
     for (let i = 0; i < moles.length; i++) {
       let clickedMole = moles[i].clicked(mouseX, mouseY, i, this.ctx);
-      if (clickedMole) {
+      if (clickedMole && this.state.opponentUsername[0] !== 'COMPUTER') {
         const data = {
           gameRoomId: cookie.load('selectedRoom'),
           currentMole: this.state.currentMole,
@@ -237,14 +236,13 @@ class MoleGame extends Component {
           index: clickedMole,
         };
         this.socket.emit('moleClick', data);
+      } else if (clickedMole && this.state.opponentUsername[0] === 'COMPUTER') {
+        moles[clickedMole].hideMole();
+        this.setState({ myScore: this.state.myScore + 1});
       }
     }
   }
 
-  // moles배열에서 랜덤한 인덱스의 mole이 나옴
-  randomMole(index) {
-    moles[index].showMole();
-  }
 
   // 화면그리기
   animate(t) {
@@ -258,10 +256,11 @@ class MoleGame extends Component {
 
     // 마우스가 canvas에 들어온 경우 망치이미지 생성
     if (this.cursorEnter) {
+      let size = this.stageWidth/20
       if (this.cursorClick) {
-        this.ctx.drawImage(this.clickedCursor, this.cursorX - 10, this.cursorY - 30, 50, 50);
+        this.ctx.drawImage(this.clickedCursor, this.cursorX - size/7, this.cursorY - size/2, size, size);
       } else {
-        this.ctx.drawImage(this.hemmer, this.cursorX - 10, this.cursorY - 30, 50, 50);
+        this.ctx.drawImage(this.hemmer, this.cursorX - size/7, this.cursorY - size/2, size, size);
       }
     }
   }
@@ -301,24 +300,46 @@ class MoleGame extends Component {
     }, 2500);
   }
 
+  // 컴퓨터모드 실행
   computerModeStart() {
     this.socket.emit(
       'gameStart',
-      this.computer.username,
+      cookie.load('username'),
       cookie.load('selectedRoom'),
       12,
+      'COMPUTER',
     );
-    // this.setState({
-    //   rivalAvatar: this.computer.avatarId,
-    //   opponentUsername: this.computer.username,
-    //   opponentScore: 0,
-    // });
+    this.computerRandomMole()
   }
 
+  // moles배열에서 주어진 인덱스의 mole이 나옴
+  computerRandomMole() {
+    let count = 0;
+    moleTimer = setInterval(() => {
+      let randomIndex = Math.floor(Math.random() * 16);
+      let randomTime = Math.floor(Math.random() * 3);
+      
+      moles[randomIndex].showMole();
+      setTimeout(() => {
+        try {
+          let missed = moles[randomIndex].hideMole()
+          if(missed) this.setState({opponentScore : this.state.opponentScore + 1})
+        } catch (err) {
+          console.log(err)
+        }
+      }, 500 + (randomTime * 300));
+
+      if (count === 10) clearInterval(moleTimer);
+      else count ++
+    }, 3000);
+  }
+ 
+  // l
+  //   console.log('randomTime: ', randomTime);
+    
 
   render() {
     const { classes, avatar } = this.props;
-    console.log(cookie.load('avatarId'))
 
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center' style={{ marginTop: `${this.state.width/4}px`}}>
