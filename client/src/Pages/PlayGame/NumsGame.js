@@ -6,21 +6,12 @@ import cookie from 'react-cookies';
 import Gameover from '../../Components/PlayGame/Gameover';
 import MoleScoreCard from '../../Components/PlayGame/MoleScoreCard';
 
-import Paper from '@material-ui/core/Paper';
-import { Grid, Typography, Tooltip, Fab } from '@material-ui/core';
+import { Grid, Typography, Tooltip, Fab, Button, Paper, GridList, GridListTile, GridListTileBar } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { isDeleteExpression } from 'typescript';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import { KeyPad } from './keyPad';
-import hemmer from '../../images/hemmer.png';
-import clicked from '../../images/clicked.png';
 
-import avatar from '../../images/bald.png';
-import avatar2 from '../../images/gas-mask.png';
-
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
@@ -155,8 +146,6 @@ class NumsGame extends Component {
 
     this.canvas = document.getElementById('canvas');
     this.ctx = this.canvas.getContext('2d');
-    this.hemmer = document.getElementById('hemmer');
-    this.clickedCursor = document.getElementById('clicked');
 
     // 화면크기 재설정 이벤트
     this.resize();
@@ -196,7 +185,7 @@ class NumsGame extends Component {
             userName: data[key].username
           })
           this.userAvatarId = data[key].avatarId  // 아바타아이디 백업
-        } else {
+        } else { 
           this.setState({
             rivalAvatar: this.props.avatarImg[data[key].avatarId],
             rivalName: data[key].username
@@ -543,6 +532,19 @@ class NumsGame extends Component {
     }, 2500);
   }
 
+  computerModeStart() {
+    // this.setState({
+    //   rivalAvatar: 'https://image.flaticon.com/icons/svg/603/603506.svg',
+    //   rivalName: 'COMPUTER',
+    // })
+
+    socket.emit('joinRoom',  {
+      username: 'COMPUTER', 
+      room: this.state.userName, 
+      avatarId: 12,
+    })
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -570,22 +572,45 @@ class NumsGame extends Component {
               {this.state.myTurn ? '대기' : this.state.count}
             </Typography>
             <Grid container direction='column' justify='center' alignItems='center'>
-              <img 
-                src={this.state.rivalAvatar} 
-                style={{
-                  width: this.state.width/2,
-                  height: this.state.width/2.2,
-                }}
-              ></img>
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/15}px`,
-                  overflow: 'hidden',
-                }}
-              >
-                {this.state.rivalName}
-              </Typography>
+              {
+                !this.state.rivalName
+                ? <Button color="secondary" 
+                    disableElevation 
+                    style={{
+                      width: `${this.state.width / 2}px`,
+                      height: `${this.state.width / 2}px`,
+                    }} 
+                    variant="outlined" 
+                    onClick={() => {
+                      console.log('clicked')
+                      this.computerModeStart();
+                  }}>
+                    <Typography style={{ 
+                      fontSize: `${this.state.width/15}px`
+                    }}>
+                      컴퓨터<br/>대결시작
+                    </Typography>
+                  </Button>
+                : <>
+                    <img 
+                      src={this.state.rivalAvatar} 
+                      style={{
+                        width: this.state.width/2,
+                        height: this.state.width/2.2,
+                      }}
+                    ></img>
+                    <Typography 
+                      className={classes.pos} 
+                      style={{
+                        fontSize: `${this.state.width/15}px`,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {this.state.rivalName}
+                    </Typography>
+                  </>
+              }
+              
               {this.state.warningRival === 1 ? (
                 <div
                   style={{
@@ -615,13 +640,10 @@ class NumsGame extends Component {
             width: this.state.width,
             height: this.state.height,
             borderRadius: `${this.state.width/10}px`,
-            // cursor: 'none',
           }}
           className={classes.Paper}
         >
           <canvas id='canvas' />
-          <img id='hemmer' src={hemmer} style={{ width: '40px', display: 'none' }} />
-          <img id='clicked' src={clicked} style={{ width: '40px', display: 'none' }} />
         </Paper>
 
         <Grid item>
@@ -671,7 +693,6 @@ class NumsGame extends Component {
                 style={{
                   fontSize: `${this.state.width/15}px`,
                   width: this.state.width/2.5,
-                  overflow: 'hidden',
                 }}
               >
                 {this.state.userName}

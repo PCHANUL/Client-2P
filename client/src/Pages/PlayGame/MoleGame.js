@@ -17,7 +17,6 @@ import clicked from '../../images/clicked.png';
 
 const styles = (theme) => ({
   Paper: {
-    
     backgroundColor: 'white',
     margin: theme.spacing(3, 3),
     background: '#00babd',
@@ -57,9 +56,6 @@ const styles = (theme) => ({
   },
 });
 
-let blockX;
-let dx = 10;
-let preKey;
 let moles = [];
 let moleTimer
 
@@ -123,9 +119,6 @@ class MoleGame extends Component {
       'mousedown',
       (e) => {
         this.mousePressed(e.layerX, e.layerY);
-        // for(let i=0; i<16; i++){
-        //   this.randomMole(i)
-        // }
         this.cursorClick = true;
       },
       false
@@ -334,10 +327,6 @@ class MoleGame extends Component {
     }, 3000);
   }
  
-  // l
-  //   console.log('randomTime: ', randomTime);
-    
-
   render() {
     const { classes, avatar } = this.props;
 
