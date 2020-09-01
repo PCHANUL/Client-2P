@@ -311,20 +311,27 @@ class MoleGame extends Component {
     moleTimer = setInterval(() => {
       let randomIndex = Math.floor(Math.random() * 16);
       let randomTime = Math.floor(Math.random() * 3);
-      
       moles[randomIndex].showMole();
+
       setTimeout(() => {
         try {
+          count ++
           let missed = moles[randomIndex].hideMole()
           if(missed) this.setState({opponentScore : this.state.opponentScore + 1})
+          if (count === 3) {
+            clearInterval(moleTimer);
+            this.gameover()
+          }
         } catch (err) {
           console.log(err)
         }
       }, 500 + (randomTime * 300));
-
-      if (count === 10) clearInterval(moleTimer);
-      else count ++
     }, 3000);
+  }
+
+  gameover() {
+    if (this.state.myScore > this.state.opponentScore) this.setState({winner: cookie.load('username')})
+    else this.setState({winner: 'Computer'})
   }
  
   render() {
@@ -332,7 +339,11 @@ class MoleGame extends Component {
 
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center' style={{ marginTop: `${this.state.width/4}px`}}>
-        {this.state.winner !== '' ? <Gameover winner={this.state.winner} /> : null}
+        {this.state.winner !== '' 
+          ? this.state.opponentUsername === 'COMPUTER'
+            ? <Gameover winner={this.state.winner} isComputer={true}/>
+            : <Gameover winner={this.state.winner} />
+          : null}
 
         <Grid item>
           <Paper 
