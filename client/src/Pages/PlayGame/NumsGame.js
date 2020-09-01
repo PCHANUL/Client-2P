@@ -246,7 +246,7 @@ class NumsGame extends Component {
     });
 
     socket.on('end', (winner) => {
-      if (winner === null) {
+      if (winner === null || winner === 'COMPUTER') {
         this.setState({ winner: 'Computer' });
       } else {
         this.setState({ winner: winner });
