@@ -6,7 +6,7 @@ import cookie from 'react-cookies';
 import Gameover from '../../Components/PlayGame/Gameover';
 import MoleScoreCard from '../../Components/PlayGame/MoleScoreCard';
 
-import { Grid, Typography, Tooltip, Fab, Button, Paper, GridList, GridListTile, GridListTileBar } from '@material-ui/core';
+import { Grid, Typography, Tooltip, Fab, Button, Paper, GridList, GridListTile, GridListTileBar, Input } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { isDeleteExpression } from 'typescript';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
@@ -221,12 +221,19 @@ class NumsGame extends Component {
     });
 
     socket.on('turn', (username) => {
+      console.log('username: ', username);
       if (username === cookie.load('username')) {
         //본인 차례
         this.turnChange(true);
       } else {
         //상대방 차례
         this.turnChange(false);
+        if(!this.state.rivalName || this.state.rivalName === 'COMPUTER') {
+          let ranNum = Math.floor(Math.random()*4)
+          setTimeout(() => {
+            this.computerInput()
+          }, 10000 + (ranNum * 4000))
+        }
       }
     });
 
@@ -474,15 +481,6 @@ class NumsGame extends Component {
       this.ctx.font = `${this.radius * 1.5}px serif`;
       this.ctx.fillText(`${num}`, x - this.radius / 2.7, y + this.radius / 2.7);
     });
-
-    // 마우스가 canvas에 들어온 경우 망치이미지 생성
-    // if (this.cursorEnter) {
-    //   if (this.cursorClick) {
-    //     this.ctx.drawImage(this.clickedCursor, this.cursorX - 20, this.cursorY - 40, 50, 50);
-    //   } else {
-    //     this.ctx.drawImage(this.hemmer, this.cursorX - 20, this.cursorY - 40, 50, 50);
-    //   }
-    // }
   }
 
   // 화면크기 재설정 함수
@@ -533,11 +531,6 @@ class NumsGame extends Component {
   }
 
   computerModeStart() {
-    // this.setState({
-    //   rivalAvatar: 'https://image.flaticon.com/icons/svg/603/603506.svg',
-    //   rivalName: 'COMPUTER',
-    // })
-
     socket.emit('joinRoom',  {
       username: 'COMPUTER', 
       room: this.state.userName, 
@@ -545,12 +538,74 @@ class NumsGame extends Component {
     })
   }
 
+  computerInput() {
+    let logs = this.state.myNums.concat(this.state.RivalNums)
+    let arr = this.computerLogic(logs)
+    let ranNum = Math.floor(Math.random() * arr.length);
+    let input = String(arr[ranNum]).split('').map((num) => Number(num))
+
+    socket.emit('submit', {
+      username: 'COMPUTER',
+      room: cookie.load('username'),
+      arr: input,
+    });
+  }
+
+  computerLogic(logs) {
+    let answer = [];
+    for(let i = 999; i < 9876; i++) { //모두 탐색
+      let num = String(i);
+      //중복숫자 제외 ex 1123
+      if(num.charAt(0) === num.charAt(1) || num.charAt(0) === num.charAt(2) || num.charAt(0) === num.charAt(3) || 
+          num.charAt(1) === num.charAt(2) || num.charAt(1) === num.charAt(3) || num.charAt(2) === num.charAt(3)) continue;
+      let flag = true;
+      for (let j = 0; j < logs.length; j++) {
+        if (logs[j].number === '----') continue;
+        let cur = logs[j].number;
+        let strike
+        let ball
+        if(logs[j].result !== 'OUT') {
+          strike = Number(logs[j].result[0]);
+          ball = Number(logs[j].result[2]);
+        } 
+        else {
+          strike = 0;
+          ball = 0;
+        }
+        //strike
+        let countStrike = 0;
+        for (let k = 0; k < 4; k++) {
+          if (num.charAt(k) === cur.charAt(k)) countStrike++;
+        }
+        if (countStrike !== strike) {
+          flag = false;
+          break;
+        } 
+        //ball
+        let countBall = 0;
+        for (let k = 0; k < 4; k++) {
+          if (num.indexOf(cur.charAt(k)) !== -1) countBall++;
+        }
+        if (countBall - countStrike !== ball) {
+          flag = false;
+          break;
+        }
+      }
+      if(flag) answer.push(i);
+    }
+    return answer;
+  }
+  
   render() {
     const { classes } = this.props;
 
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center'>
-        {this.state.winner !== '' ? <Gameover winner={this.state.winner} /> : null}
+        {this.state.winner !== '' 
+          ? this.state.rivalName === 'COMPUTER'
+            ? <Gameover winner={this.state.winner} isComputer={true}/>
+            : <Gameover winner={this.state.winner} />
+          : null}
 
         <Grid item>
           <Paper
