@@ -318,7 +318,7 @@ class MoleGame extends Component {
           count ++
           let missed = moles[randomIndex].hideMole()
           if(missed) this.setState({opponentScore : this.state.opponentScore + 1})
-          if (count === 3) {
+          if (count === 11) {
             clearInterval(moleTimer);
             this.gameover()
           }
