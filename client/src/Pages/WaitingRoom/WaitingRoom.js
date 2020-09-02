@@ -16,14 +16,15 @@ let socket = io.connect('http://13.125.163.76:3002');
 const WaitingRoom = (props) => {
   const { roomUsers, chat } = props.waitingRoom;
   const bothPlayersReady = roomUsers.filter((user) => user.userInfo.isReady).length === 2;
-  const history = useHistory();
+  // const history = useHistory();
 
   useEffect(() => {
-    if (!cookie.load('username')) {
-      history.push('/');
-    } else if (!cookie.load('selectedRoom')) {
-      history.push('/selectroom');
-    } else if (!props.waitingRoom.joinedRoom) {
+    // if (!cookie.load('username')) {
+    //   history.push('/');
+    // } else if (!cookie.load('selectedRoom')) {
+    //   history.push('/selectroom');
+    // } else 
+    if (!props.waitingRoom.joinedRoom) {
       props.enterChatroom(
         cookie.load('selectedRoom'),
         cookie.load('username'),
