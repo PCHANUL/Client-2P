@@ -93,12 +93,12 @@ class PlayGame extends Component {
     if (!cookie.load('selectedGame')) {
       this.props.history.push('/')
     } 
-    else if (!cookie.load('selectedRoom')) {
-      this.props.history.push('/selectroom')
-    } 
-    else if (!cookie.load('isPlaying')) {
-      this.props.history.push('/waitingroom')
-    }
+    // else if (!cookie.load('selectedRoom')) {
+    //   this.props.history.push('/selectroom')
+    // } 
+    // else if (!cookie.load('isPlaying')) {
+    //   this.props.history.push('/waitingroom')
+    // }
   }
 
   componentWillUnmount() {

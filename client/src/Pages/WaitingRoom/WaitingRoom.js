@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 import cookie from 'react-cookies';
 
 import './WaitingRoom.css';
-let socket = io.connect('http://13.125.163.76:3002');
+let socket = io.connect('http://3.35.27.36:3002');
 
 const WaitingRoom = (props) => {
   const { roomUsers, chat } = props.waitingRoom;
@@ -76,7 +76,7 @@ const socketSubscribe = (dispatch) => {
     socket.emit('leave');
     socket.removeAllListeners();
     alert('호스트가 방에서 나갔습니다');
-    setTimeout(() => window.location.replace('http://project-2p.s3-website.ap-northeast-2.amazonaws.com/selectRoom'), 2000);
+    setTimeout(() => window.location.replace('http://http://project-2p.s3-website.ap-northeast-2.amazonaws.com/selectRoom'), 2000);
   });
 };
 
