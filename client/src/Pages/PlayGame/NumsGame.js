@@ -135,7 +135,7 @@ class NumsGame extends Component {
   }
 
   componentDidMount() {
-    socket = socketio.connect('http://3.35.37.171:3006');
+    socket = socketio.connect('http://3.35.27.36:3006');
     (() => {
       socket.emit('joinRoom', {
         username: cookie.load('username'),

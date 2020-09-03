@@ -164,7 +164,7 @@ class Game extends Component {
   }
 
   computerModeStart() {
-    this.socket.emit('computerMode');
+    socket.emit('computerMode');
     this.setState({
       rivalAvatar: this.computer.avatarId,
       rivalName: this.computer.username
@@ -258,7 +258,7 @@ class Game extends Component {
 
 
   componentDidMount() {
-    socket = socketio.connect('http://15.164.170.101:3005');
+    socket = socketio.connect('http://3.35.27.36:3005');
 
     (() => {
       socket.emit('joinRoom', {
@@ -315,7 +315,7 @@ class Game extends Component {
     });
 
     // Rival shot (mirror)
-    this.socket.on('rivalShot', (e) => this.rivalShot(e));
+    socket.on('rivalShot', (e) => this.rivalShot(e));
 
     socket.on('moveLeft', () => {
       this.RivalPosX += this.blockSizeX;
@@ -509,7 +509,7 @@ class Game extends Component {
           if (response.result) {
             this.setState({ rivalScore: this.state.rivalScore - 10 });
             if (this.state.rivalName !== 'COMPUTER') {
-              this.socket.emit('score', this.state.rivalScore);
+              socket.emit('score', this.state.rivalScore);
             } else if (this.state.rivalName === 'COMPUTER' && this.state.rivalScore === 0){
               this.setState({ winner: `${this.state.userName}`})
             }

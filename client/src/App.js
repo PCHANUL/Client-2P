@@ -126,7 +126,7 @@ const Mypage = async () => {
   try {
     const response = await axios({
       method: 'get',
-      url: 'http://3.34.178.78:3001/users/mypage',
+      url: 'http://3.35.27.36:3001/users/mypage',
       withCredentials: true,
     });
     console.log(response);
