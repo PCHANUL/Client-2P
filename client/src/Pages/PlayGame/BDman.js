@@ -12,12 +12,10 @@ import { withStyles } from '@material-ui/core/styles';
 import { Block } from './BDBlock';
 import { RivalBlock } from './BDRivalBlock';
 import { Bullet } from './Bullet';
-import { isDeleteExpression } from 'typescript';
 import cookie from 'react-cookies';
 import socketio from 'socket.io-client';
+import { createNonNullChain } from 'typescript';
 
-import avatar from '../../images/bald.png';
-import avatar2 from '../../images/gas-mask.png';
 
 const styles = (theme) => ({
   Paper: {
@@ -206,14 +204,14 @@ class Game extends Component {
   shotComputerBlock() {
     let shotDir = [-1, 0, 1];
     let angle = Math.floor(Math.random()*3)
-    let num = Math.floor(Math.random()*4)
+    let num = Math.floor(Math.random()*6)
 
 
     if(this.computerMag - num < 0){
       setTimeout(() => {
         this.computerMag = 10;
         this.shotComputerBlock();
-      }, 2500);
+      }, 2000);
     } else {
       this.computerMag -= num
       this.shot(shotDir[angle], num)
@@ -228,7 +226,7 @@ class Game extends Component {
       else if (num === -1) {
         setTimeout(() => {
           this.shotComputerBlock()
-        }, 1000)
+        }, 700)
       }
     }, 200)
   }
@@ -508,9 +506,14 @@ class Game extends Component {
         );
         if (response) {
           this.bullets.splice(i, 1);
-          if (response.result) this.setState({ rivalScore: this.state.rivalScore - 10 });
-          console.log(this.state.myScore);
-          this.socket.emit('score', this.state.rivalScore)
+          if (response.result) {
+            this.setState({ rivalScore: this.state.rivalScore - 10 });
+            if (this.state.rivalName !== 'COMPUTER') {
+              this.socket.emit('score', this.state.rivalScore);
+            } else if (this.state.rivalName === 'COMPUTER' && this.state.rivalScore === 0){
+              this.setState({ winner: `${this.state.userName}`})
+            }
+          }
         }
       }
     }
@@ -525,7 +528,15 @@ class Game extends Component {
           this.blockSizeX,
           this.blockSizeY
         );
-        if (response) this.RivalBullets.splice(i, 1);
+        if (response) {
+          this.RivalBullets.splice(i, 1);
+          if (response.result && this.state.rivalName === 'COMPUTER') {
+            this.setState({ myScore: this.state.myScore - 10 });
+            if(this.state.myScore === 0){
+              this.setState({ winner: 'Computer'})
+            }
+          }
+        }
       }
     }
 
@@ -577,7 +588,11 @@ class Game extends Component {
 
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center'>
-        {this.state.winner !== '' ? <Gameover winner={this.state.winner} /> : null}
+        {this.state.winner !== '' 
+          ? this.state.rivalName === 'COMPUTER'
+            ? <Gameover winner={this.state.winner} isComputer={true}/>
+            : <Gameover winner={this.state.winner} />
+          : null}
 
         <Grid item>
           <Paper 
@@ -670,6 +685,11 @@ class Game extends Component {
                 marginRight: '40px', 
                 width: `${this.state.width / 2}px`,
                 height: `${this.state.width / 1.2}px`,
+                boxShadow: `${
+                  this.state.bullet === 0
+                  ? '1px 1px 100px 0px #00535c'
+                  : ''
+                }`
               }}
             >
             <Grid container direction='column' justify='center' alignItems='center'>
