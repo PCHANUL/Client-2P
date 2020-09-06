@@ -285,6 +285,23 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
               <RefreshIcon />
             </Fab>
           </Tooltip>
+          <Button disableElevation variant="contained" 
+            style={{
+              position: 'fixed',
+              width: '300px',
+              height: '50px',
+              bottom: '2%',
+              left: '50%',
+              marginLeft: '-150px',
+            }}
+            onClick={() => {
+              history.push('/playgame')
+            }}
+          >
+            <Typography variant='h6'>
+              연습하기
+            </Typography>
+          </Button>
         </div>
       )}
     </div>
