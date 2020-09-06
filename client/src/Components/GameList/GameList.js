@@ -36,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     width: '200px',
-    height: '200px',
-    margin: theme.spacing(1)
+    height: '100px',
+    margin: theme.spacing(3)
   },
 }));
 
@@ -101,7 +101,7 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
             </Typography>
             <Grid container direction="row" justify="space-evenly" alignItems="center" spacing={3}>
               <Grid item>
-                <Button color="primary" disableElevation className={classes.button} variant="outlined" 
+                <Button color="primary" disableElevation className={classes.button} variant="contained" 
                   onClick={() => {
                     cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                     if(!cookie.load('username')) guestLogin()
@@ -114,7 +114,8 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
                 </Button>
               </Grid>
               <Grid item>
-                <Button color="secondary" disableElevation className={classes.button} variant="outlined" 
+                <Button color="secondary" disableElevation className={classes.button} variant="contained"
+                  style={{ marginLeft: '-40px'}} 
                   onClick={() => {
                     cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                     if(!cookie.load('username')) guestLogin()
@@ -127,6 +128,21 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
                 </Button>
               </Grid>
             </Grid>
+            <Button disableElevation variant="contained" 
+              style={{
+                width: '450px',
+                height: '50px',
+              }}
+              onClick={() => {
+                cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
+                if(!cookie.load('username')) guestLogin()
+                history.push('/playgame')
+              }}
+            >
+              <Typography variant='h6'>
+                연습하기
+              </Typography>
+            </Button>
           </Paper>
         </Grow>
         :

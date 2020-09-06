@@ -91,7 +91,7 @@ class PlayGame extends Component {
 
   componentWillMount() {
     if (!cookie.load('selectedGame')) {
-      this.props.history.push('/selectgame')
+      this.props.history.push('/')
     } 
     // else if (!cookie.load('selectedRoom')) {
     //   this.props.history.push('/selectroom')

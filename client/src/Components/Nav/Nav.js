@@ -140,7 +140,7 @@ class Nav extends Component {
       this.props.history.push('/selectroom');
       cookie.remove('selectedRoom', { path: '/' });
     } else if (location === '/playgame') {
-      this.props.history.push('/waitingroom');
+      this.props.history.goBack();
       cookie.remove('isPlaying', { path: '/' });
     } else if (location === '/login') {
       this.props.history.goBack()
