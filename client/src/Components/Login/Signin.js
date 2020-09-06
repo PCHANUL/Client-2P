@@ -15,9 +15,12 @@ class Signin extends Component {
     password: '',
   };
 
-  componentDidMount() {
-    if (cookie.load('username')) {
-      this.props.history.push('/selectgame');
+  componentWillMount() {
+    let username = cookie.load('username')
+    if (username) {
+      if(!username.includes('Guest')){
+        this.props.history.goBack();
+      }
     }
   }
 

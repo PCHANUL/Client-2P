@@ -190,7 +190,7 @@ function Mypage({ avatar, userData }) {
     }
   }
   
-  console.log(userGameData)
+  console.log(typeof avatarId)
   return (
       <Card style={modalStyle} className={classes.paper}>
         <CardHeader
