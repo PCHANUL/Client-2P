@@ -19,15 +19,11 @@
 
 
 <p align= "center">
+  <img src="./img/moleThumbnail.png" width="25%" style="margin: 5px">
+  <img src="./img/numsThumbnail.png" width="25%" style="margin: 5px">
+  <img src="./img/ballThumbnail.png" width="25%" style="margin: 5px">
 </p>
-<img src="./img/moleThumbnail.png" width="25%" style="margin: 5px">
-<img src="./img/molePlay.gif" width="70%" style="margin: 5px">
 
-<img src="./img/numsThumbnail.png" width="25%" style="margin: 5px">
-<img src="./img/numsPlay.gif" width="70%" style="margin: 5px">
-
-<img src="./img/ballThumbnail.png" width="25%" style="margin: 5px">
-<img src="./img/ballPlay.gif" width="70%" style="margin: 5px">
 
 <br>
 <br>
