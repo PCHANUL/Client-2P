@@ -14,7 +14,6 @@
   </a>
 </p>
 
----
 <br>
 
 <p align= "center">
@@ -24,7 +23,10 @@
 </p>
 <br>
 
-# Game Flow
+
+# Flows
+
+### Game Flow
 
 <details>
 <summary>두더지 잡기</summary>
@@ -37,4 +39,13 @@
 <details>
 <summary>구슬 동자</summary>
   <img src="./img/ballFlow.png" width="100%">
+</details>
+
+
+### Work Flow
+
+<details>
+  <summary>와이어 프레임</summary>
+    
+  
 </details>
