@@ -43,6 +43,7 @@
 <img src="./img/axios.png" width="8%" style="margin: 5px">
 <img src="./img/material.png" width="4%" style="margin: 5px">
 </div>
+<br />
 
 
 # Demos
@@ -58,7 +59,6 @@
   <summary>구슬 동자</summary>
   <img src="./img/ballPlay.gif" width="100%" style="margin: 5px">
 </details>
-<br />
 <br />
 
 # Flows
