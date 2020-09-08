@@ -28,6 +28,33 @@
 <br>
 <br>
 
+# Skills
+
+<img src="./img/react.png" width="8%" style="margin: 5px">
+<img src="./img/redux.png" width="8%" style="margin: 5px">
+<img src="./img/socket.png" width="8%" style="margin: 5px">
+<img src="./img/axios.png" width="8%" style="margin: 5px">
+<img src="./img/material.png" width="4%" style="margin: 5px">
+<br />
+<br />
+
+
+# Demos
+<details>
+  <summary>두더지 잡기</summary>
+  <img src="./img/molePla.gif" width="100%" style="margin: 5px">
+</details>
+<details>
+  <summary>숫자 야구</summary>
+  <img src="./img/numsPlay.gif" width="100%" style="margin: 5px">
+</details>
+<details>
+  <summary>구슬 동자</summary>
+  <img src="./img/ballPlay.gif" width="100%" style="margin: 5px">
+</details>
+<br />
+<br />
+
 # Flows
 
 ### Work Flow
