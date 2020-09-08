@@ -28,16 +28,21 @@
 <br>
 <br>
 
+
+# Updates
+
+20.09.03 연습하기(컴퓨터 모드) 기능추가
+
+<br />
+
 # Skills
-<p>
+<div>
 <img src="./img/react.png" width="8%" style="margin: 5px">
 <img src="./img/redux.png" width="8%" style="margin: 5px">
 <img src="./img/socket.png" width="8%" style="margin: 5px">
 <img src="./img/axios.png" width="8%" style="margin: 5px">
 <img src="./img/material.png" width="4%" style="margin: 5px">
-</p>
-<br />
-<br />
+</div>
 
 
 # Demos
@@ -69,8 +74,6 @@
   <img src="./img/dataFlow.jpg" width="100%">
 </details>
 
-<br>
-
 ### Game Flow
 
 <details>
@@ -86,7 +89,7 @@
   <img src="./img/ballFlow.png" width="100%">
 </details>
 
-
+<br />
 
 
 
