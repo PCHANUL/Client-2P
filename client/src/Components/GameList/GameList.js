@@ -16,7 +16,9 @@ import {
   Paper,
   Grow,
   Grid,
+  IconButton,
 } from '@material-ui/core';
+import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
 import SelectGame from '../../Pages/SelectGame/SelectGame';
 
 
@@ -100,10 +102,17 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
             className={classes.innerCard}
             onMouseEnter={handlePopoverOpen}
             onMouseLeave={handlePopoverClose}
+            onClick={handlePopoverClose}
           >
-            <Typography className={classes.title}>
-              {gameDescription[gameName]['title']}
-            </Typography>
+            <Grid container direction="row" justify="space-around" alignItems="center" style={{marginLeft: '5%'}}>
+              <Grid item />
+              <Typography className={classes.title}>
+                {gameDescription[gameName]['title']}
+              </Typography>
+              <IconButton >
+                <CancelPresentationIcon />
+              </IconButton>
+            </Grid>
             <Typography className={classes.desc}>
               {gameDescription[gameName]['desc']}
             </Typography>
@@ -158,6 +167,7 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
           title={`${gameName} game`}
           onMouseEnter={handlePopoverOpen}
           onMouseLeave={handlePopoverClose}
+          onClick={handlePopoverOpen}
         />
       }
     </Card>
