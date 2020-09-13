@@ -399,7 +399,6 @@ class Game extends Component {
   }
 
   move = (e) => {
-    console.log('awef')
     if (e.keyCode === 65) {
       // 왼쪽
       socket.emit('moveLeft');
