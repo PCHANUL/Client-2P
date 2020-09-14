@@ -81,7 +81,7 @@ class Nav extends Component {
     try {
       const response = await axios({
         method: 'post',
-        url: 'http://3.35.27.36:3001/users/signout',
+        url: 'http://localhost:3001/users/signout',
         withCredentials: true,
       });
       console.log(response);
@@ -94,7 +94,7 @@ class Nav extends Component {
     try {
       const response = await axios({
         method: 'get',
-        url: 'http://3.35.27.36:3001/users/mypage',
+        url: 'http://localhost:3001/users/mypage',
         withCredentials: true,
       });
       console.log(response);
@@ -111,7 +111,7 @@ class Nav extends Component {
   leaveRoomHandler = async () => {
     axios({
       method: 'post',
-      url: 'http://3.35.27.36:3001/rooms/leaveroom',
+      url: 'http://localhost:3001/rooms/leaveroom',
       data: {
         roomId: cookie.load('selectedRoom'),
         gameCode: cookie.load('selectedGame'),

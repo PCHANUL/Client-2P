@@ -258,7 +258,7 @@ class Game extends Component {
 
 
   componentDidMount() {
-    socket = socketio.connect('http://3.35.27.36:3005');
+    socket = socketio.connect('http://localhost:3005');
 
     (() => {
       socket.emit('joinRoom', {

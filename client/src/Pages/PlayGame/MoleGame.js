@@ -92,7 +92,7 @@ class MoleGame extends Component {
     this.gifCount = 0;
 
     // socket connection endpoint
-    this.socket = socketio.connect('http://3.35.27.36:3009');
+    this.socket = socketio.connect('http://localhost:3009');
 
     for (let i = 0; i < 16; i++) {
       moles.push(new Mole(this.state.width, this.state.height, 15, i));
