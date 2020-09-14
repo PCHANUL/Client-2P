@@ -39,7 +39,6 @@ class App extends Component {
       this.setState({ loading: Math.min(this.state.loading + diff, 100)})
     }, 100);
   }
-
   componentDidMount() {
     if (!cookie.load('username')) {
       this.props.history.push('/');

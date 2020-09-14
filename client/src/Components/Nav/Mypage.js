@@ -148,7 +148,7 @@ function Mypage({ avatar, userData }) {
 
     gameNames.map((game) => {
       let gameData = userData.data[game]
-      if (gameData) {
+      if(gameData){
         winRate.push(Math.floor(gameData.win / gameData.play * 10))
       }
     })

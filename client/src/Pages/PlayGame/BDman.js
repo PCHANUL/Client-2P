@@ -14,8 +14,7 @@ import { RivalBlock } from './BDRivalBlock';
 import { Bullet } from './Bullet';
 import cookie from 'react-cookies';
 import socketio from 'socket.io-client';
-import { createNonNullChain } from 'typescript';
-
+let socket;
 
 const styles = (theme) => ({
   Paper: {
@@ -100,7 +99,6 @@ class Game extends Component {
       //game start
       gameStart: false,
     };
-    this.socket = socketio.connect('http://localhost:3005');
     //초기화
     this.canvas = null;
     this.ctx = null;
@@ -166,7 +164,7 @@ class Game extends Component {
   }
 
   computerModeStart() {
-    this.socket.emit('computerMode');
+    socket.emit('computerMode');
     this.setState({
       rivalAvatar: this.computer.avatarId,
       rivalName: this.computer.username
@@ -260,8 +258,10 @@ class Game extends Component {
 
 
   componentDidMount() {
+    socket = socketio.connect('http://localhost:3005');
+
     (() => {
-      this.socket.emit('joinRoom', {
+      socket.emit('joinRoom', {
         username: cookie.load('username'),
         room: cookie.load('selectedRoom'),
         avatarId: cookie.load('avatarId'),
@@ -296,26 +296,26 @@ class Game extends Component {
     document.addEventListener('keydown', this.move, true);
 
     // Rival shot (mirror)
-    this.socket.on('rivalShot', (e) => this.rivalShot(e));
+    socket.on('rivalShot', (e) => this.rivalShot(e));
 
-    this.socket.on('moveLeft', () => {
+    socket.on('moveLeft', () => {
       this.RivalPosX += this.blockSizeX;
     });
-    this.socket.on('moveRight', () => {
+    socket.on('moveRight', () => {
       this.RivalPosX -= this.blockSizeX;
     });
-    this.socket.on('hit', (res) => {
+    socket.on('hit', (res) => {
       this.setState({ myScore: res });
     });
-    this.socket.on('start', (isStarted) => {
+    socket.on('start', (isStarted) => {
       if (isStarted) {
         this.setState({ gameStart: true });
       }
     });
-    this.socket.on('end', (winner) => {
+    socket.on('end', (winner) => {
       this.setState({ winner: winner });
     });
-    this.socket.on('loadUsers', (data) => {
+    socket.on('loadUsers', (data) => {
       for(let key in data){
         if(data[key].username === cookie.load('username')){
           this.setState({ 
@@ -333,11 +333,11 @@ class Game extends Component {
       }
     })
 
-    this.socket.on('connectError', () => {
-      // this.socket.disconnect();
+    socket.on('connectError', () => {
+      // socket.disconnect();
       alert('잘못된 접근입니다, 뒤로가기를 눌러주세요');
     });
-    this.socket.on('getEmoji', (data) => {
+    socket.on('getEmoji', (data) => {
       this.activeRivalEmoji(JSON.parse(data));
     });
 
@@ -355,7 +355,7 @@ class Game extends Component {
           this.blockSizeX
         );
         this.bullets.push(bullet);
-        this.socket.emit('shot', this.aim);
+        socket.emit('shot', this.aim);
         this.setState({ bullet: this.state.bullet - 1 });
       }
     });
@@ -395,9 +395,9 @@ class Game extends Component {
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.move, true);
-    this.socket.disconnect();
+    socket.disconnect();
   }
-  
+
   move = (e) => {
     console.log('awef')
     if (e.keyCode === 65) {
@@ -513,7 +513,7 @@ class Game extends Component {
           if (response.result) {
             this.setState({ rivalScore: this.state.rivalScore - 10 });
             if (this.state.rivalName !== 'COMPUTER') {
-              this.socket.emit('score', this.state.rivalScore);
+              socket.emit('score', this.state.rivalScore);
             } else if (this.state.rivalName === 'COMPUTER' && this.state.rivalScore === 0){
               this.setState({ winner: `${this.state.userName}`})
             }
@@ -568,7 +568,7 @@ class Game extends Component {
 
   activeEmoji(gif) {
     this.setState({ userAvatar: gif });
-    this.socket.emit('sendEmoji', JSON.stringify(gif));
+    socket.emit('sendEmoji', JSON.stringify(gif));
 
     setTimeout(() => {
       this.setState({ 

@@ -1,0 +1,9 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #ccc;
+  border-radius: 1%;
+  height: 60%;
+  width: 45%;
+}

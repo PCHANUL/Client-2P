@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { withRouter, useHistory } from 'react-router-dom';
 import cookie from 'react-cookies'
@@ -16,29 +16,40 @@ import {
   Paper,
   Grow,
   Grid,
+  IconButton,
 } from '@material-ui/core';
+import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
 import SelectGame from '../../Pages/SelectGame/SelectGame';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: 600,
-    // margin: 'auto',
+    width: '100vw',
+    height: '55vw',
+    marginBottom: '2vw',
   },
-  popover: {
-    pointerEvents: 'none',
-  },
-  paper: {
-    padding: theme.spacing(1),
-  },
-  mouseOverPaper: {
-    width: '600px',
-    height: '300px',
+  innerCard: {
+    width: '100vw',
+    height: '55vw',
   },
   button: {
-    width: '200px',
-    height: '100px',
-    margin: theme.spacing(3)
+    width: '40vw',
+    height: '20vw',
+    margin: '2vw',
   },
+  practiceButton: {
+    width: '90vw',
+    height: '10vw',
+  },
+  title: {
+    fontSize: '10vw',
+  },
+  desc: {
+    fontSize: '2.5vw',
+  },
+  buttonFont: {
+    fontSize: '5vw'
+  }
 }));
 
 const gameDescription = {
@@ -59,6 +70,66 @@ const gameDescription = {
   },
 };
 
+const fixedStyle = {
+  card: {
+    width: '600px',
+    height: '300px',
+  },
+  paper: {
+    width: '600px',
+    height: '300px',
+    margin: '20px',
+  },
+  button: {
+    width: '220px',
+    height: '100px',
+    margin: '10px',
+  },
+  practiceButton: {
+    width: '500px',
+    height: '50px',
+  },
+  title: {
+    fontSize: '50px',
+  },
+  desc: {
+    fontSize: '15px',
+  },
+  buttonFont: {
+    fontSize: '25px'
+  }
+};
+
+const responsibleStyle = {
+  card: {
+    width: '100vw',
+    height: '55vw',
+  },
+  paper: {
+    width: '100vw',
+    height: '55vw',
+  },
+  button: {
+    width: '40vw',
+    height: '20vw',
+    margin: '2vw',
+  },
+  practiceButton: {
+    width: '90vw',
+    height: '10vw',
+  },
+  title: {
+    fontSize: '10vw',
+  },
+  desc: {
+    fontSize: '2.5vw',
+  },
+  buttonFont: {
+    fontSize: '5vw'
+  }
+
+}
+
 // 비로그인 유저
 const guestLogin = () => {
   let randomName = Math.random().toString(36).substr(2, 5)
@@ -70,7 +141,48 @@ const guestLogin = () => {
 const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
   const classes = useStyles();
   const history = useHistory();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const [changeStyle, setChangeStyle] = useState(false);
+  const [cardStyle, setCardStyle] = useState(responsibleStyle.card);
+  const [paperStyle, setPaperStyle] = useState(responsibleStyle.paper);
+  const [buttonStyle, setButtonStyle] = useState(responsibleStyle.button);
+  const [practiceButtonStyle, setPracticeButtonStyle] = useState(responsibleStyle.practiceButton);
+  const [titleStyle, setTitleStyle] = useState(responsibleStyle.title);
+  const [descStyle, setDescStyle] = useState(responsibleStyle.desc);
+  const [buttonFontStyle, setButtonFontStyle] = useState(responsibleStyle.buttonFont);
+
+  useEffect(() => {
+    if (changeStyle || window.innerWidth > 750) {
+      setCardStyle(fixedStyle.card)
+      setPaperStyle(fixedStyle.paper)
+      setButtonStyle(fixedStyle.button)
+      setPracticeButtonStyle(fixedStyle.practiceButton)
+      setTitleStyle(fixedStyle.title)
+      setDescStyle(fixedStyle.desc)
+      setButtonFontStyle(fixedStyle.buttonFont)
+    } else {
+      setCardStyle(responsibleStyle.card)
+      setPaperStyle(responsibleStyle.paper)
+      setButtonStyle(responsibleStyle.button)
+      setPracticeButtonStyle(responsibleStyle.practiceButton)
+      setTitleStyle(responsibleStyle.title)
+      setDescStyle(responsibleStyle.desc)
+      setButtonFontStyle(responsibleStyle.buttonFont)
+    }
+
+    window.addEventListener('resize', resize, false);
+    return () => {
+      window.removeEventListener('resize', resize, false);
+    }
+  }, [changeStyle]);
+
+  let resize = () => {
+    if (window.innerWidth > 750) setChangeStyle(true)
+    else setChangeStyle(false)
+  }
+
+  
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -80,83 +192,86 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
   }
   const open = Boolean(anchorEl);
 
-
   return (
-    <Card className={classes.root}>
+    <Paper style={paperStyle}>
       {
         open
         ? 
         <Grow in={open}>
-          <Paper 
+          <Card 
             elevation={4}
-            className={classes.mouseOverPaper}
+            style={cardStyle}
             onMouseEnter={handlePopoverOpen}
             onMouseLeave={handlePopoverClose}
+            onClick={handlePopoverClose}
           >
-            <Typography variant='h3'>
-              {gameDescription[gameName]['title']}
-            </Typography>
-            <Typography variant='body' color='textSecondary' component='p'>
+            <Grid container direction="row" justify="space-around" alignItems="center" style={{marginLeft: '5%'}}>
+              <Grid item />
+              <Typography style={titleStyle}>
+                {gameDescription[gameName]['title']}
+              </Typography>
+              <IconButton >
+                <CancelPresentationIcon />
+              </IconButton>
+            </Grid>
+            <Typography style={{fontSize: descStyle.fontSize}}>
               {gameDescription[gameName]['desc']}
             </Typography>
-            <Grid container direction="row" justify="space-evenly" alignItems="center" spacing={3}>
+            <Grid container direction="row" justify="space-evenly" alignItems="center">
               <Grid item>
-                <Button color="primary" disableElevation className={classes.button} variant="contained" 
+                <Button color="primary" disableElevation style={buttonStyle} variant="contained" 
                   onClick={() => {
                     cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                     if(!cookie.load('username')) guestLogin()
                     history.push('/selectroom')
                   }
                 }>
-                  <Typography variant='h6'>
+                  <Typography style={{fontSize: buttonFontStyle.fontSize}}>
                     참가하기
                   </Typography>
                 </Button>
               </Grid>
               <Grid item>
-                <Button color="secondary" disableElevation className={classes.button} variant="contained"
-                  style={{ marginLeft: '-40px'}} 
+                <Button color="secondary" disableElevation style={buttonStyle} variant="contained"
                   onClick={() => {
                     cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                     if(!cookie.load('username')) guestLogin()
                     makeRooms()
                   }}
                 >
-                  <Typography variant='h6'>
+                  <Typography style={{fontSize: buttonFontStyle.fontSize}}>
                     방 만들기
                   </Typography>
                 </Button>
               </Grid>
             </Grid>
             <Button disableElevation variant="contained" 
-              style={{
-                width: '450px',
-                height: '50px',
-              }}
+              style={practiceButtonStyle}
               onClick={() => {
                 cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                 if(!cookie.load('username')) guestLogin()
                 history.push('/playgame')
               }}
             >
-              <Typography variant='h6'>
+              <Typography style={{fontSize: buttonFontStyle.fontSize}}>
                 연습하기
               </Typography>
             </Button>
-          </Paper>
+          </Card>
         </Grow>
         :
         <CardMedia
           component='img'
           alt='gameImg'
-          height='300'
+          style={cardStyle}
           image={image}
           title={`${gameName} game`}
           onMouseEnter={handlePopoverOpen}
           onMouseLeave={handlePopoverClose}
+          onClick={handlePopoverOpen}
         />
       }
-    </Card>
+    </Paper>
   );
 };
 
