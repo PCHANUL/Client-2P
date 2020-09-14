@@ -70,6 +70,66 @@ const gameDescription = {
   },
 };
 
+const fixedStyle = {
+  card: {
+    width: '600px',
+    height: '300px',
+  },
+  paper: {
+    width: '600px',
+    height: '300px',
+    margin: '20px',
+  },
+  button: {
+    width: '220px',
+    height: '100px',
+    margin: '10px',
+  },
+  practiceButton: {
+    width: '500px',
+    height: '50px',
+  },
+  title: {
+    fontSize: '50px',
+  },
+  desc: {
+    fontSize: '15px',
+  },
+  buttonFont: {
+    fontSize: '25px'
+  }
+};
+
+const responsibleStyle = {
+  card: {
+    width: '100vw',
+    height: '55vw',
+  },
+  paper: {
+    width: '100vw',
+    height: '55vw',
+  },
+  button: {
+    width: '40vw',
+    height: '20vw',
+    margin: '2vw',
+  },
+  practiceButton: {
+    width: '90vw',
+    height: '10vw',
+  },
+  title: {
+    fontSize: '10vw',
+  },
+  desc: {
+    fontSize: '2.5vw',
+  },
+  buttonFont: {
+    fontSize: '5vw'
+  }
+
+}
+
 // 비로그인 유저
 const guestLogin = () => {
   let randomName = Math.random().toString(36).substr(2, 5)
@@ -82,16 +142,45 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
   const classes = useStyles();
   const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [cardStyle, setCardStyle] = useState({ width: '100vw', height: '55vw' });
-  const [buttonStyle, setButtontyle] = useState({ width: '40vw', height: '20vw', margin: '2vw' });
-  const [practiceButtonStyle, setPracticeButtontyle] = useState({ width: '90vw', height: '10vw' });
-  const [titleStyle, setTitleStyle] = useState({ fontSize: '10vw' });
-  const [descStyle, setDescStyle] = useState({ fontSize: '2.5vw' });
-  const [buttonFontStyle, setButtonFontStyle] = useState({ fontSize: '5vw' });
+
+  const [changeStyle, setChangeStyle] = useState(false);
+  const [cardStyle, setCardStyle] = useState(responsibleStyle.card);
+  const [paperStyle, setPaperStyle] = useState(responsibleStyle.paper);
+  const [buttonStyle, setButtonStyle] = useState(responsibleStyle.button);
+  const [practiceButtonStyle, setPracticeButtonStyle] = useState(responsibleStyle.practiceButton);
+  const [titleStyle, setTitleStyle] = useState(responsibleStyle.title);
+  const [descStyle, setDescStyle] = useState(responsibleStyle.desc);
+  const [buttonFontStyle, setButtonFontStyle] = useState(responsibleStyle.buttonFont);
 
   useEffect(() => {
-    console.log('resize')
-  })
+    if (changeStyle || window.innerWidth > 750) {
+      setCardStyle(fixedStyle.card)
+      setPaperStyle(fixedStyle.paper)
+      setButtonStyle(fixedStyle.button)
+      setPracticeButtonStyle(fixedStyle.practiceButton)
+      setTitleStyle(fixedStyle.title)
+      setDescStyle(fixedStyle.desc)
+      setButtonFontStyle(fixedStyle.buttonFont)
+    } else {
+      setCardStyle(responsibleStyle.card)
+      setPaperStyle(responsibleStyle.paper)
+      setButtonStyle(responsibleStyle.button)
+      setPracticeButtonStyle(responsibleStyle.practiceButton)
+      setTitleStyle(responsibleStyle.title)
+      setDescStyle(responsibleStyle.desc)
+      setButtonFontStyle(responsibleStyle.buttonFont)
+    }
+
+    window.addEventListener('resize', resize, false);
+    return () => {
+      window.removeEventListener('resize', resize, false);
+    }
+  }, [changeStyle]);
+
+  let resize = () => {
+    if (window.innerWidth > 750) setChangeStyle(true)
+    else setChangeStyle(false)
+  }
 
   
 
@@ -104,9 +193,7 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
   const open = Boolean(anchorEl);
 
   return (
-    <Paper 
-      // className={classes.root}
-      style={{...cardStyle, marginBottom: '2vw'}}>
+    <Paper style={paperStyle}>
       {
         open
         ? 
