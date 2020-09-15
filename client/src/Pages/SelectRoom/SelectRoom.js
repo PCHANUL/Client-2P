@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(70),
   },
   alertText: {
-    margin: theme.spacing(20, 0, 10, 0),
+    // margin: theme.spacing(20, 0, 10, 0),
   },
   root: {
     padding: theme.spacing(8, 0, 0, 0),
@@ -69,6 +69,28 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: theme.typography.fontWeightRegular,
   },
 }));
+
+const webStyle = {
+  emptyRoomGrid: {
+    marginTop: '1vw',
+  },
+  emptyRoomCard: {
+    width: '100vw',
+    height: '100vw',
+  },
+  emptyRoomText: {
+    margin: '5vw',
+    fontSize: '5vw',
+  },
+  emptyRoomPracticeButton: {
+    width: '40vw',
+    height: '10vw',
+    marginTop: '7vw'
+  },
+
+}
+
+
 
 function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
   const classes = useStyles();
@@ -123,57 +145,35 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
       container
       container
       direction='column'
-      justify='space-evenly'
+      justify='flex-start'
       alignItems='center'
-      className={classes.section1}
+      style={webStyle.emptyRoomGrid}
     >
-      <Paper className={classes.emptyAlert}>
-        <Grid item style={{ marginTop: '-60px' }}>
-          <Typography variant='h4' className={classes.alertText}>
-            대기중인 방이 없습니다.
-            <br />
-            방을 생성해보세요
-          </Typography>
-        </Grid>
-        <Grid container direction='row' justify='space-evenly' alignItems='center'
-          style={{ marginTop: '-20px' }}>
-          <Tooltip
-            title='방만들기'
-            aria-label='add'
-            onClick={() => {
-              makeRooms();
-            }}
-          >
+      <Paper style={webStyle.emptyRoomCard}>
+        <Typography style={webStyle.emptyRoomText}>
+          대기중인 방이 없습니다.
+          <br />
+          방을 생성해보세요
+        </Typography>
+        <Grid container direction='row' justify='center' alignItems='center'>
+          <Tooltip title='방만들기' aria-label='add' onClick={() => makeRooms()} style={{marginRight: '10vw'}}>
             <Fab color='secondary'>
-              <AddIcon />
+              <AddIcon/>
             </Fab>
           </Tooltip>
-          <Tooltip
-            title='새로고침'
-            aria-label='add'
-            onClick={() => {
-              getRooms(getRoomList);
-            }}
-          >
+          <Tooltip title='새로고침' aria-label='add' onClick={() => getRooms(getRoomList)}>
             <Fab color='primary'>
               <RefreshIcon />
             </Fab>
           </Tooltip>
         </Grid>
-        <Button disableElevation variant="contained" 
-            style={{
-              width: '300px',
-              height: '50px',
-              marginTop: '60px'
-            }}
-            onClick={() => {
-              history.push('/playgame')
-            }}
-          >
-            <Typography variant='h6'>
-              연습하기
-            </Typography>
-          </Button>
+        <Button disableElevation variant="contained" style={webStyle.emptyRoomPracticeButton}
+          onClick={() => history.push('/playgame')}
+        >
+          <Typography style={webStyle.emptyRoomText}>
+            연습하기
+          </Typography>
+        </Button>
       </Paper>
     </Grid>
   );
