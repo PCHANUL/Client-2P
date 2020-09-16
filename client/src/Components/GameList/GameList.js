@@ -132,10 +132,10 @@ const responsibleStyle = {
 
 // 비로그인 유저
 const guestLogin = () => {
-  let randomName = Math.random().toString(36).substr(2, 5)
-  let randomAvatar = String(Math.floor(Math.random() * 12))
-  cookie.save('username', `Guest_${randomName}`, { path: '/' })
-  cookie.save('avatarId', randomAvatar, { path: '/' })
+  let randomName = Math.random().toString(36).substr(2, 5);
+  let randomAvatar = String(Math.floor(Math.random() * 12));
+  cookie.save('username', `Guest_${randomName}`, { path: '/' });
+  cookie.save('avatarId', randomAvatar, { path: '/' });
 }
 
 const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
@@ -143,53 +143,47 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
   const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const [changeStyle, setChangeStyle] = useState(false);
-  const [cardStyle, setCardStyle] = useState(responsibleStyle.card);
-  const [paperStyle, setPaperStyle] = useState(responsibleStyle.paper);
-  const [buttonStyle, setButtonStyle] = useState(responsibleStyle.button);
-  const [practiceButtonStyle, setPracticeButtonStyle] = useState(responsibleStyle.practiceButton);
-  const [titleStyle, setTitleStyle] = useState(responsibleStyle.title);
-  const [descStyle, setDescStyle] = useState(responsibleStyle.desc);
-  const [buttonFontStyle, setButtonFontStyle] = useState(responsibleStyle.buttonFont);
+  const [styleName, setChangeStyle] = useState({});
+  const [cardStyle, setCardStyle] = useState({});
+  const [paperStyle, setPaperStyle] = useState({});
+  const [buttonStyle, setButtonStyle] = useState({});
+  const [practiceButtonStyle, setPracticeButtonStyle] = useState({});
+  const [titleStyle, setTitleStyle] = useState({});
+  const [descStyle, setDescStyle] = useState({});
+  const [buttonFontStyle, setButtonFontStyle] = useState({});
 
   useEffect(() => {
-    if (changeStyle || window.innerWidth > 750) {
-      setCardStyle(fixedStyle.card)
-      setPaperStyle(fixedStyle.paper)
-      setButtonStyle(fixedStyle.button)
-      setPracticeButtonStyle(fixedStyle.practiceButton)
-      setTitleStyle(fixedStyle.title)
-      setDescStyle(fixedStyle.desc)
-      setButtonFontStyle(fixedStyle.buttonFont)
-    } else {
-      setCardStyle(responsibleStyle.card)
-      setPaperStyle(responsibleStyle.paper)
-      setButtonStyle(responsibleStyle.button)
-      setPracticeButtonStyle(responsibleStyle.practiceButton)
-      setTitleStyle(responsibleStyle.title)
-      setDescStyle(responsibleStyle.desc)
-      setButtonFontStyle(responsibleStyle.buttonFont)
-    }
+    resize();
+    setCardStyle(styleName.card);
+    setPaperStyle(styleName.paper);
+    setButtonStyle(styleName.button);
+    setPracticeButtonStyle(styleName.practiceButton);
+    setTitleStyle(styleName.title);
+    setDescStyle(styleName.desc);
+    setButtonFontStyle(styleName.buttonFont);
 
     window.addEventListener('resize', resize, false);
     return () => {
       window.removeEventListener('resize', resize, false);
     }
-  }, [changeStyle]);
+  }, [styleName]);
 
-  let resize = () => {
-    if (window.innerWidth > 750) setChangeStyle(true)
-    else setChangeStyle(false)
-  }
-
-  
+  const resize = () => {
+    if (window.innerWidth > 750) {
+      setChangeStyle(fixedStyle);
+    } else {
+      setChangeStyle(responsibleStyle);
+    }
+  };
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
-  }
+  };
+  
   const handlePopoverClose = (event) => {
     setAnchorEl(null);
-  }
+  };
+
   const open = Boolean(anchorEl);
 
   return (

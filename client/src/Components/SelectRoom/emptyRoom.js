@@ -13,7 +13,7 @@ import cookie from 'react-cookies';
 
 const axios = require('axios');
 
-const webStyle = {
+const mobileStyle = {
   emptyRoomGrid: {
     marginTop: '1vw',
     height: '100vw',
@@ -24,7 +24,7 @@ const webStyle = {
   },
   emptyRoomText: {
     margin: '5vw',
-    fontSize: '5vw',
+    fontSize: '20px',
   },
   emptyRoomPracticeButton: {
     width: '150px',
@@ -38,14 +38,13 @@ function EmptyRoom ({ makeRooms, getRooms, refreshRoomList, history }) {
   return (
     <Grid
     container
-    container
     direction='column'
     justify='flex-start'
     alignItems='center'
-    style={webStyle.emptyRoomGrid}
+    style={mobileStyle.emptyRoomGrid}
   >
-    <Paper style={webStyle.emptyRoomCard}>
-      <Typography style={webStyle.emptyRoomText}>
+    <Paper style={mobileStyle.emptyRoomCard}>
+      <Typography style={mobileStyle.emptyRoomText}>
         대기중인 방이 없습니다.
         <br />
         방을 생성해보세요
@@ -62,7 +61,7 @@ function EmptyRoom ({ makeRooms, getRooms, refreshRoomList, history }) {
           </Fab>
         </Tooltip>
       </Grid>
-      <Button disableElevation variant="contained" style={webStyle.emptyRoomPracticeButton}
+      <Button disableElevation variant="contained" style={mobileStyle.emptyRoomPracticeButton}
         onClick={() => history.push('/playgame')}
       >
         <Typography style={{fontSize: '20px'}}>
