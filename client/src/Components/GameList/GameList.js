@@ -142,7 +142,6 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
   const classes = useStyles();
   const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
-
   const [styleName, setChangeStyle] = useState({});
 
   useEffect(() => {
