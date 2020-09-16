@@ -33,6 +33,26 @@ const mobileStyle = {
   },
 }
 
+const laptopStyle = {
+  emptyRoomGrid: {
+    marginTop: '1vw',
+    height: '100vw',
+  },
+  emptyRoomCard: {
+    width: '500px',
+    height: '500px',
+  },
+  emptyRoomText: {
+    margin: '5vw',
+    fontSize: '20px',
+  },
+  emptyRoomPracticeButton: {
+    width: '150px',
+    height: '50px',
+    marginTop: '7vw'
+  },
+}
+
 function EmptyRoom ({ makeRooms, getRooms, refreshRoomList, history }) {
 
   return (

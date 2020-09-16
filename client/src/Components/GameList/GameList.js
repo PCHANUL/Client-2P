@@ -144,23 +144,9 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const [styleName, setChangeStyle] = useState({});
-  const [cardStyle, setCardStyle] = useState({});
-  const [paperStyle, setPaperStyle] = useState({});
-  const [buttonStyle, setButtonStyle] = useState({});
-  const [practiceButtonStyle, setPracticeButtonStyle] = useState({});
-  const [titleStyle, setTitleStyle] = useState({});
-  const [descStyle, setDescStyle] = useState({});
-  const [buttonFontStyle, setButtonFontStyle] = useState({});
 
   useEffect(() => {
     resize();
-    setCardStyle(styleName.card);
-    setPaperStyle(styleName.paper);
-    setButtonStyle(styleName.button);
-    setPracticeButtonStyle(styleName.practiceButton);
-    setTitleStyle(styleName.title);
-    setDescStyle(styleName.desc);
-    setButtonFontStyle(styleName.buttonFont);
 
     window.addEventListener('resize', resize, false);
     return () => {
@@ -187,67 +173,67 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
   const open = Boolean(anchorEl);
 
   return (
-    <Paper style={paperStyle}>
+    <Paper style={styleName.paper}>
       {
         open
         ? 
         <Grow in={open}>
           <Card 
             elevation={4}
-            style={cardStyle}
+            style={styleName.card}
             onMouseEnter={handlePopoverOpen}
             onMouseLeave={handlePopoverClose}
             onClick={handlePopoverClose}
           >
             <Grid container direction="row" justify="space-around" alignItems="center" style={{marginLeft: '5%'}}>
               <Grid item />
-              <Typography style={titleStyle}>
+              <Typography style={styleName.title}>
                 {gameDescription[gameName]['title']}
               </Typography>
               <IconButton >
                 <CancelPresentationIcon />
               </IconButton>
             </Grid>
-            <Typography style={{fontSize: descStyle.fontSize}}>
+            <Typography style={styleName.desc}>
               {gameDescription[gameName]['desc']}
             </Typography>
             <Grid container direction="row" justify="space-evenly" alignItems="center">
               <Grid item>
-                <Button color="primary" disableElevation style={buttonStyle} variant="contained" 
+                <Button color="primary" disableElevation style={styleName.button} variant="contained" 
                   onClick={() => {
                     cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                     if(!cookie.load('username')) guestLogin()
                     history.push('/selectroom')
                   }
                 }>
-                  <Typography style={{fontSize: buttonFontStyle.fontSize}}>
+                  <Typography style={styleName.buttonFont}>
                     참가하기
                   </Typography>
                 </Button>
               </Grid>
               <Grid item>
-                <Button color="secondary" disableElevation style={buttonStyle} variant="contained"
+                <Button color="secondary" disableElevation style={styleName.button} variant="contained"
                   onClick={() => {
                     cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                     if(!cookie.load('username')) guestLogin()
                     makeRooms()
                   }}
                 >
-                  <Typography style={{fontSize: buttonFontStyle.fontSize}}>
+                  <Typography style={styleName.buttonFont}>
                     방 만들기
                   </Typography>
                 </Button>
               </Grid>
             </Grid>
             <Button disableElevation variant="contained" 
-              style={practiceButtonStyle}
+              style={styleName.practiceButton}
               onClick={() => {
                 cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                 if(!cookie.load('username')) guestLogin()
                 history.push('/playgame')
               }}
             >
-              <Typography style={{fontSize: buttonFontStyle.fontSize}}>
+              <Typography style={styleName.buttonFont}>
                 연습하기
               </Typography>
             </Button>
@@ -257,7 +243,7 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
         <CardMedia
           component='img'
           alt='gameImg'
-          style={cardStyle}
+          style={styleName.card}
           image={image}
           title={`${gameName} game`}
           onMouseEnter={handlePopoverOpen}
