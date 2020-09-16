@@ -23,6 +23,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 import * as actionTypes from '../../store/actions';
 import RoomList from '../../Components/SelectRoom/RoomList';
+import EmptyRoomList from '../../Components/SelectRoom/emptyRoom';
 
 import molethumbnail from '../../images/molethumbnail.png';
 import bidthumbnail from '../../images/bidthumbnail.png';
@@ -53,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(70),
   },
   alertText: {
-    margin: theme.spacing(20, 0, 10, 0),
+    // margin: theme.spacing(20, 0, 10, 0),
   },
   root: {
     padding: theme.spacing(8, 0, 0, 0),
@@ -69,6 +70,29 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: theme.typography.fontWeightRegular,
   },
 }));
+
+const webStyle = {
+  emptyRoomGrid: {
+    marginTop: '1vw',
+    height: '100vw',
+  },
+  emptyRoomCard: {
+    width: '100vw',
+    height: '100vw',
+  },
+  emptyRoomText: {
+    margin: '5vw',
+    fontSize: '5vw',
+  },
+  emptyRoomPracticeButton: {
+    width: '150px',
+    height: '50px',
+    marginTop: '7vw'
+  },
+
+}
+
+
 
 function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
   const classes = useStyles();
@@ -97,6 +121,10 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
 
   const leaveRoomHandler = () => {};
 
+  const refreshRoomList = () => {
+    getRooms(getRoomList);
+  };
+
   const games = [
     {
       name: '두더지 게임',
@@ -117,66 +145,6 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
       color: '#2D65AA'
     }, 
     ];
-  
-  const emptyRoomList = (
-    <Grid
-      container
-      container
-      direction='column'
-      justify='space-evenly'
-      alignItems='center'
-      className={classes.section1}
-    >
-      <Paper className={classes.emptyAlert}>
-        <Grid item style={{ marginTop: '-60px' }}>
-          <Typography variant='h4' className={classes.alertText}>
-            대기중인 방이 없습니다.
-            <br />
-            방을 생성해보세요
-          </Typography>
-        </Grid>
-        <Grid container direction='row' justify='space-evenly' alignItems='center'
-          style={{ marginTop: '-20px' }}>
-          <Tooltip
-            title='방만들기'
-            aria-label='add'
-            onClick={() => {
-              makeRooms();
-            }}
-          >
-            <Fab color='secondary'>
-              <AddIcon />
-            </Fab>
-          </Tooltip>
-          <Tooltip
-            title='새로고침'
-            aria-label='add'
-            onClick={() => {
-              getRooms(getRoomList);
-            }}
-          >
-            <Fab color='primary'>
-              <RefreshIcon />
-            </Fab>
-          </Tooltip>
-        </Grid>
-        <Button disableElevation variant="contained" 
-            style={{
-              width: '300px',
-              height: '50px',
-              marginTop: '60px'
-            }}
-            onClick={() => {
-              history.push('/playgame')
-            }}
-          >
-            <Typography variant='h6'>
-              연습하기
-            </Typography>
-          </Button>
-      </Paper>
-    </Grid>
-  );
 
   return (
     <div>
@@ -243,10 +211,8 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
 
           </div>
         </Grid>
-
-
       ) : rooms[0] === undefined ? ( // 생성된 방이 없다
-        emptyRoomList
+        <EmptyRoomList refreshRoomList={refreshRoomList} makeRooms={makeRooms} history={history}/>
       ) : (
         <div>
           <div className={classes.section1}>
@@ -277,9 +243,7 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
           <Tooltip
             title='새로고침'
             aria-label='add'
-            onClick={() => {
-              getRooms(getRoomList);
-            }}
+            onClick={() => refreshRoomList()}
           >
             <Fab color='primary' className={classes.refresh}>
               <RefreshIcon />
@@ -319,6 +283,7 @@ const mapReduxStateToReactProps = (state) => {
 const mapReduxDispatchToReactProps = (dispatch) => {
   return {
     getRooms: async function (cb) {
+      console.log('refresh')
       try {
         if (cookie.load('selectedGame') !== '0') {
           const response = await axios({

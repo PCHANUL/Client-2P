@@ -132,128 +132,107 @@ const responsibleStyle = {
 
 // 비로그인 유저
 const guestLogin = () => {
-  let randomName = Math.random().toString(36).substr(2, 5)
-  let randomAvatar = String(Math.floor(Math.random() * 12))
-  cookie.save('username', `Guest_${randomName}`, { path: '/' })
-  cookie.save('avatarId', randomAvatar, { path: '/' })
+  let randomName = Math.random().toString(36).substr(2, 5);
+  let randomAvatar = String(Math.floor(Math.random() * 12));
+  cookie.save('username', `Guest_${randomName}`, { path: '/' });
+  cookie.save('avatarId', randomAvatar, { path: '/' });
 }
 
 const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
   const classes = useStyles();
   const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
-
-  const [changeStyle, setChangeStyle] = useState(false);
-  const [cardStyle, setCardStyle] = useState(responsibleStyle.card);
-  const [paperStyle, setPaperStyle] = useState(responsibleStyle.paper);
-  const [buttonStyle, setButtonStyle] = useState(responsibleStyle.button);
-  const [practiceButtonStyle, setPracticeButtonStyle] = useState(responsibleStyle.practiceButton);
-  const [titleStyle, setTitleStyle] = useState(responsibleStyle.title);
-  const [descStyle, setDescStyle] = useState(responsibleStyle.desc);
-  const [buttonFontStyle, setButtonFontStyle] = useState(responsibleStyle.buttonFont);
+  const [styleName, setChangeStyle] = useState({});
 
   useEffect(() => {
-    if (changeStyle || window.innerWidth > 750) {
-      setCardStyle(fixedStyle.card)
-      setPaperStyle(fixedStyle.paper)
-      setButtonStyle(fixedStyle.button)
-      setPracticeButtonStyle(fixedStyle.practiceButton)
-      setTitleStyle(fixedStyle.title)
-      setDescStyle(fixedStyle.desc)
-      setButtonFontStyle(fixedStyle.buttonFont)
-    } else {
-      setCardStyle(responsibleStyle.card)
-      setPaperStyle(responsibleStyle.paper)
-      setButtonStyle(responsibleStyle.button)
-      setPracticeButtonStyle(responsibleStyle.practiceButton)
-      setTitleStyle(responsibleStyle.title)
-      setDescStyle(responsibleStyle.desc)
-      setButtonFontStyle(responsibleStyle.buttonFont)
-    }
+    resize();
 
     window.addEventListener('resize', resize, false);
     return () => {
       window.removeEventListener('resize', resize, false);
     }
-  }, [changeStyle]);
+  }, [styleName]);
 
-  let resize = () => {
-    if (window.innerWidth > 750) setChangeStyle(true)
-    else setChangeStyle(false)
-  }
-
-  
+  const resize = () => {
+    if (window.innerWidth > 750) {
+      setChangeStyle(fixedStyle);
+    } else {
+      setChangeStyle(responsibleStyle);
+    }
+  };
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
-  }
+  };
+  
   const handlePopoverClose = (event) => {
     setAnchorEl(null);
-  }
+  };
+
   const open = Boolean(anchorEl);
 
   return (
-    <Paper style={paperStyle}>
+    <Paper style={styleName.paper}>
       {
         open
         ? 
         <Grow in={open}>
           <Card 
             elevation={4}
-            style={cardStyle}
+            style={styleName.card}
             onMouseEnter={handlePopoverOpen}
             onMouseLeave={handlePopoverClose}
             onClick={handlePopoverClose}
           >
             <Grid container direction="row" justify="space-around" alignItems="center" style={{marginLeft: '5%'}}>
               <Grid item />
-              <Typography style={titleStyle}>
+              <Typography style={styleName.title}>
                 {gameDescription[gameName]['title']}
               </Typography>
               <IconButton >
                 <CancelPresentationIcon />
               </IconButton>
             </Grid>
-            <Typography style={{fontSize: descStyle.fontSize}}>
+            <Typography style={styleName.desc}>
               {gameDescription[gameName]['desc']}
             </Typography>
             <Grid container direction="row" justify="space-evenly" alignItems="center">
               <Grid item>
-                <Button color="primary" disableElevation style={buttonStyle} variant="contained" 
+                <Button color="primary" disableElevation style={styleName.button} variant="contained" 
                   onClick={() => {
                     cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                     if(!cookie.load('username')) guestLogin()
                     history.push('/selectroom')
                   }
                 }>
-                  <Typography style={{fontSize: buttonFontStyle.fontSize}}>
+                  <Typography style={styleName.buttonFont}>
                     참가하기
                   </Typography>
                 </Button>
               </Grid>
               <Grid item>
-                <Button color="secondary" disableElevation style={buttonStyle} variant="contained"
+                <Button color="secondary" disableElevation style={styleName.button} variant="contained"
                   onClick={() => {
                     cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                     if(!cookie.load('username')) guestLogin()
                     makeRooms()
                   }}
                 >
-                  <Typography style={{fontSize: buttonFontStyle.fontSize}}>
+                  <Typography style={styleName.buttonFont}>
                     방 만들기
                   </Typography>
                 </Button>
               </Grid>
             </Grid>
             <Button disableElevation variant="contained" 
-              style={practiceButtonStyle}
+              style={styleName.practiceButton}
               onClick={() => {
                 cookie.save('selectedGame', gameDescription[gameName]['code'], { path: '/' })
                 if(!cookie.load('username')) guestLogin()
                 history.push('/playgame')
               }}
             >
-              <Typography style={{fontSize: buttonFontStyle.fontSize}}>
+              <Typography style={styleName.buttonFont}>
                 연습하기
               </Typography>
             </Button>
@@ -263,7 +242,7 @@ const GameList = ({ image, gameName, getRooms, selectGame, makeRooms }) => {
         <CardMedia
           component='img'
           alt='gameImg'
-          style={cardStyle}
+          style={styleName.card}
           image={image}
           title={`${gameName} game`}
           onMouseEnter={handlePopoverOpen}
