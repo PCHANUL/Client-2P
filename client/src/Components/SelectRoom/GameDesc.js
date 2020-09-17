@@ -38,6 +38,7 @@ const mobileStyle = {
   },
   descImg: {
     width: '100%',
+    height: '50vw',
   }
 }
 
