@@ -21,7 +21,9 @@ import baseballthumbnail from '../../images/baseballthumbnail.png';
 const mobileStyle = {
   root: {
     height: '15vw',
-    overflow: 'hidden',
+  },
+  accordion: {
+    width: '90vw', 
   },
   thumbnail: {
     width: '30vw',
@@ -35,22 +37,52 @@ const mobileStyle = {
     fontWeight: 'bold'
   },
   descImg: {
-    width: '86vw',
+    width: '100%',
   }
 }
 
 const laptopStyle = {
-  rootroot: {
-    display: 'inline-block',
-    padding: '20px 0px',
-    width: '800px',
-    height: '100px',
+  root: {
+    height: '120px',
   },
+  accordion: {
+    width: '720px', 
+  },
+  thumbnail: {
+    width: '240px',
+    height: '120px',
+  },
+  font: {
+    color: '#fff',
+    marginTop: '24px',
+    marginLeft: '50px',
+    fontSize: '48px',
+    fontWeight: 'bold'
+  },
+  descImg: {
+    width: '100%',
+  }
   
 }
 
 function GameDesc() {
+  const [styleName, setStyleName] = useState({});
 
+  useEffect(() => {
+    resize();
+    window.addEventListener('resize', resize, false);
+    return () => {
+      window.removeEventListener('resize', resize, false);
+    }
+  }, [styleName])
+
+  const resize = () => {
+    if (window.innerWidth > 750) {
+      setStyleName(laptopStyle);
+    } else {
+      setStyleName(mobileStyle);
+    }
+  };
 
   const games = [
     {
@@ -78,15 +110,15 @@ function GameDesc() {
         {
           games.map((game) => {
             return (
-              <Accordion style={{ backgroundColor: `${game.color}`, width: '90vw' }}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon style={{ fontSize: '5vw' }} />} style={mobileStyle.root}>
-                  <img src={game.img} style={mobileStyle.thumbnail} />
-                  <Typography style={mobileStyle.font}>
+              <Accordion style={{ ...styleName.accordion, backgroundColor: `${game.color}` }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon style={{ fontSize: '5vw' }} />} style={styleName.root}>
+                  <img src={game.img} style={styleName.thumbnail} />
+                  <Typography style={styleName.font}>
                     {game.name}
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails style={{alignItems: 'center'}}>
-                    <img src={game.dec} style={mobileStyle.descImg}/>
+                <AccordionDetails>
+                    <img src={game.dec} style={styleName.descImg}/>
                 </AccordionDetails>
               </Accordion>
             )
