@@ -6,40 +6,21 @@ import { useHistory } from 'react-router-dom';
 import { 
   Tab,
   Tabs,
-  Grid,
-  Fab,
   Paper,
-  Button,
-  Tooltip,
-  Typography,
   makeStyles,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
 } from '@material-ui/core';
 
 import AddIcon from '@material-ui/icons/Add';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import FitnessCenterIcon from '@material-ui/icons/FitnessCenter';
 import MenuIcon from '@material-ui/icons/Menu';
 
-import * as actionTypes from '../../store/actions';
-import RoomList from '../../Components/SelectRoom/RoomList';
-import EmptyRoomList from '../../Components/SelectRoom/emptyRoom';
-
-import molethumbnail from '../../images/molethumbnail.png';
-import bidthumbnail from '../../images/bidthumbnail.png';
-import baseballthumbnail from '../../images/baseballthumbnail.png';
-
-import moleGameDec from '../../images/moleGameDec.png';
-import bidGameDec from '../../images/bidGameDec.png';
-import baseballGameDec from '../../images/baseballGameDec.png';
-
 import SpeedDial from '@material-ui/lab/SpeedDial';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 
+import RoomList from '../../Components/SelectRoom/RoomList';
+import EmptyRoomList from '../../Components/SelectRoom/emptyRoom';
+import GameDescList from '../../Components/SelectRoom/GameDesc';
 
 
 const axios = require('axios');
@@ -58,21 +39,8 @@ const useStyles = makeStyles((theme) => ({
   section1: {
     margin: theme.spacing(3, 2),
   },
-  emptyAlert: {
-    width: theme.spacing(80),
-    height: theme.spacing(70),
-  },
-  alertText: {
-    // margin: theme.spacing(20, 0, 10, 0),
-  },
   root: {
     padding: theme.spacing(8, 0, 0, 0),
-  },
-  rootroot: {
-    display: 'inline-block',
-    padding: '20px 0px',
-    width: '800px',
-    height: '100px',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -91,29 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const webStyle = {
-  emptyRoomGrid: {
-    marginTop: '1vw',
-    height: '100vw',
-  },
-  emptyRoomCard: {
-    width: '100vw',
-    height: '100vw',
-  },
-  emptyRoomText: {
-    margin: '5vw',
-    fontSize: '5vw',
-  },
-  emptyRoomPracticeButton: {
-    width: '150px',
-    height: '50px',
-    marginTop: '7vw'
-  },
-}
-
-
-
-function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
+function SelectRoom({ login, getRooms, makeRooms }) {
   const classes = useStyles();
   const history = useHistory();
   const [currentGame, selectedGame] = React.useState(0);
@@ -131,15 +77,6 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
 
 
   React.useEffect(() => {
-    console.log(history);
-    // if (!cookie.load('username')) {
-    //   history.push('/');
-    // } else if (!cookie.load('selectedGame')) {
-    //   history.push('/selectgame');
-    // } else if (cookie.load('selectedRoom')) {
-    //   history.push('/waitingroom');
-    // }
-    
     getRooms(getRoomList);
     selectedGame(Number(cookie.load('selectedGame')));
   }, [currentGame]);
@@ -149,32 +86,9 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
     cookie.save('selectedGame', newValue, { path: '/' });
   };
 
-  const leaveRoomHandler = () => {};
-
   const refreshRoomList = () => {
     getRooms(getRoomList);
   };
-
-  const games = [
-    {
-      name: '두더지 게임',
-      img: molethumbnail,
-      dec: moleGameDec,
-      color: '#00C8DE',
-    }, 
-    {
-      name: '구슬 동자',
-      img: bidthumbnail,
-      dec: bidGameDec,
-      color: '#000000',
-    }, 
-    {
-      name: '숫자 야구',
-      img: baseballthumbnail,
-      dec: baseballGameDec,
-      color: '#2D65AA'
-    }, 
-  ];
 
   const actions = [
     { 
@@ -212,53 +126,7 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
         </Tabs>
       </Paper>
       {cookie.load('selectedGame') === '0' ? (  // 게임설명 페이지
-        <Grid container direction='column' justify='space-evenly' alignItems='center'>
-          <div className={classes.rootroot}>
-
-            {
-              games.map((game) => {
-                return (
-                  <Accordion style={{ backgroundColor: `${game.color}`, marginBottom: '10px' }}>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      style={{
-                        height: '150px',
-                        width: '760px',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <img src={game.img}
-                        style={{
-                          width: '300px',
-                        }}
-                      />
-                      <Typography 
-                        style={{
-                          color: '#fff',
-                          marginTop: '25px',
-                          marginLeft: '50px',
-                          fontSize: '70px'
-                        }}
-                      >
-                        {game.name}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails style={{
-                        // overflow: 'hidden',
-                        alignItems: 'center'
-                      }}>
-                        <img src={game.dec} style={{
-                          marginLeft: '10px',
-                          width: 750,
-                        }}/>
-                    </AccordionDetails>
-                  </Accordion>
-                )
-              })
-            }
-
-          </div>
-        </Grid>
+        <GameDescList />
       ) : rooms[0] === undefined ? ( // 생성된 방이 없다
         <EmptyRoomList refreshRoomList={refreshRoomList} makeRooms={makeRooms} history={history}/>
       ) : (
@@ -279,7 +147,7 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
           </div>
           <div className={classes.exampleWrapper}>
             <SpeedDial
-              ariaLabel="SpeedDial example"
+              ariaLabel="SpeedDial"
               className={classes.speedDial}
               hidden={hidden}
               icon={<MenuIcon />}
