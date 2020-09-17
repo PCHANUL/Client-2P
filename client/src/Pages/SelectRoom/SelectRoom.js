@@ -109,7 +109,6 @@ const webStyle = {
     height: '50px',
     marginTop: '7vw'
   },
-
 }
 
 
@@ -119,17 +118,8 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
   const history = useHistory();
   const [currentGame, selectedGame] = React.useState(0);
   const [rooms, getRoomList] = React.useState([{}]);
-
-  const [direction, setDirection] = React.useState('up');
   const [open, setOpen] = React.useState(false);
   const [hidden, setHidden] = React.useState(false);
-  const handleDirectionChange = (event) => {
-    setDirection(event.target.value);
-  };
-
-  const handleHiddenChange = (event) => {
-    setHidden(event.target.checked);
-  };
 
   const handleClose = () => {
     setOpen(false);
@@ -187,16 +177,25 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
   ];
 
   const actions = [
-    { icon: <RefreshIcon />, name: '새로고침', callback: refreshRoomList },
-    { icon: <AddIcon />, name: '방만들기', callback: makeRooms },
-    { icon: <FitnessCenterIcon />, name: '연습모드', callback: () => history.push('/playgame') },
+    { 
+      icon: <RefreshIcon />, 
+      name: '새로고침', 
+      callback: refreshRoomList 
+    },
+    { 
+      icon: <AddIcon />, 
+      name: '방만들기', 
+      callback: makeRooms 
+    },
+    { 
+      icon: <FitnessCenterIcon />, 
+      name: '연습모드', 
+      callback: () => history.push('/playgame') 
+    },
   ];
 
   return (
     <>
-      
-
-
       <Paper className={classes.root}>
         <Tabs
           value={currentGame}
@@ -287,7 +286,6 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
               onClose={handleClose}
               onOpen={handleOpen}
               open={open}
-              direction={direction}
             >
               {actions.map((action) => (
                 <SpeedDialAction
