@@ -17,9 +17,12 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from '@material-ui/core';
+
 import AddIcon from '@material-ui/icons/Add';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import FitnessCenterIcon from '@material-ui/icons/FitnessCenter';
+import MenuIcon from '@material-ui/icons/Menu';
 
 import * as actionTypes from '../../store/actions';
 import RoomList from '../../Components/SelectRoom/RoomList';
@@ -32,6 +35,12 @@ import baseballthumbnail from '../../images/baseballthumbnail.png';
 import moleGameDec from '../../images/moleGameDec.png';
 import bidGameDec from '../../images/bidGameDec.png';
 import baseballGameDec from '../../images/baseballGameDec.png';
+
+import SpeedDial from '@material-ui/lab/SpeedDial';
+import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
+import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
+
+
 
 const axios = require('axios');
 
@@ -69,6 +78,17 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
   },
+  speedDial: {
+    position: 'absolute',
+    '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
+    },
+    '&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight': {
+      top: theme.spacing(2),
+      left: theme.spacing(2),
+    },
+  },
 }));
 
 const webStyle = {
@@ -99,6 +119,26 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
   const history = useHistory();
   const [currentGame, selectedGame] = React.useState(0);
   const [rooms, getRoomList] = React.useState([{}]);
+
+  const [direction, setDirection] = React.useState('up');
+  const [open, setOpen] = React.useState(false);
+  const [hidden, setHidden] = React.useState(false);
+  const handleDirectionChange = (event) => {
+    setDirection(event.target.value);
+  };
+
+  const handleHiddenChange = (event) => {
+    setHidden(event.target.checked);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
 
   React.useEffect(() => {
     console.log(history);
@@ -144,10 +184,19 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
       dec: baseballGameDec,
       color: '#2D65AA'
     }, 
-    ];
+  ];
+
+  const actions = [
+    { icon: <RefreshIcon />, name: '새로고침', callback: refreshRoomList },
+    { icon: <AddIcon />, name: '방만들기', callback: makeRooms },
+    { icon: <FitnessCenterIcon />, name: '연습모드', callback: () => history.push('/playgame') },
+  ];
 
   return (
-    <div>
+    <>
+      
+
+
       <Paper className={classes.root}>
         <Tabs
           value={currentGame}
@@ -229,46 +278,30 @@ function SelectRoom({ login, roomList, getRooms, makeRooms, isMaking }) {
               />
             ))}
           </div>
-          <Tooltip
-            title='방만들기'
-            aria-label='add'
-            onClick={() => {
-              makeRooms();
-            }}
-          >
-            <Fab color='secondary' className={classes.absolute}>
-              <AddIcon />
-            </Fab>
-          </Tooltip>
-          <Tooltip
-            title='새로고침'
-            aria-label='add'
-            onClick={() => refreshRoomList()}
-          >
-            <Fab color='primary' className={classes.refresh}>
-              <RefreshIcon />
-            </Fab>
-          </Tooltip>
-          <Button disableElevation variant="contained" 
-            style={{
-              position: 'fixed',
-              width: '300px',
-              height: '50px',
-              bottom: '2%',
-              left: '50%',
-              marginLeft: '-150px',
-            }}
-            onClick={() => {
-              history.push('/playgame')
-            }}
-          >
-            <Typography variant='h6'>
-              연습하기
-            </Typography>
-          </Button>
+          <div className={classes.exampleWrapper}>
+            <SpeedDial
+              ariaLabel="SpeedDial example"
+              className={classes.speedDial}
+              hidden={hidden}
+              icon={<MenuIcon />}
+              onClose={handleClose}
+              onOpen={handleOpen}
+              open={open}
+              direction={direction}
+            >
+              {actions.map((action) => (
+                <SpeedDialAction
+                  key={action.name}
+                  icon={action.icon}
+                  tooltipTitle={action.name}
+                  onClick={action.callback}
+                />
+              ))}
+            </SpeedDial>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
