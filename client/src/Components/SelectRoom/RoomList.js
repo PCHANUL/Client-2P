@@ -2,17 +2,8 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import * as actionTypes from '../../store/actions';
-
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
 
 import { makeStyles } from '@material-ui/core/styles';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionActions from '@material-ui/core/AccordionActions';
 
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -46,8 +37,8 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     maxWidth: 700,
     maxHeight: 300,
-    margin: theme.spacing(0, 2, 2),
-    backgroundColor: theme.palette.background.paper,
+    // margin: theme.spacing(0, 2, 2),
+    // backgroundColor: theme.palette.background.paper,
   },
   paper: {
     height: 40,
@@ -134,10 +125,10 @@ function RoomList({
         <div className={classes.section1}>
           <Grid container alignItems='center'>
             <Grid>
-              {isWait ? (
-                <Chip label={'Waiting'} variant='outlined' color={'primary'} />
-              ) : (
-                <Chip label={'Playing'} color={'secondary'} />
+              {isFull === 2 ? (
+                  <Chip label={'Playing'} color={'secondary'} />
+                ) : (
+                  <Chip label={'Waiting'} variant='outlined' color={'primary'} />
               )}
             </Grid>
             <Grid item xs>
