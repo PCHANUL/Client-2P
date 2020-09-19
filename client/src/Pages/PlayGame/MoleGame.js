@@ -282,23 +282,26 @@ class MoleGame extends Component {
     this.setState({ width: this.canvas.width, height: this.canvas.height });
   }
 
-  openEmojiList() {
-    this.setState({ showEmojis: !this.state.showEmojis });
-  }
 
   activeEmoji(gif) {
-    const avatarBeforeChange = this.state.userAvatar;
-    const data = { gameRoomId: cookie.load('selectedRoom'), gif };
-    this.socket.emit('activateGif', data);
-    this.setState({ userAvatar: gif });
-    // this.socket.emit('sendEmoji', (JSON.stringify(gif)));
-
-    setTimeout(() => {
+    if (!this.state.isActive) {
       this.setState({
-        userAvatar: avatarBeforeChange,
+        showEmojis: !this.state.showEmojis,
         isActive: !this.state.isActive,
       });
-    }, 2500);
+      const avatarBeforeChange = this.state.userAvatar;
+      const data = { gameRoomId: cookie.load('selectedRoom'), gif };
+      this.socket.emit('activateGif', data);
+      this.setState({ userAvatar: gif });
+      // this.socket.emit('sendEmoji', (JSON.stringify(gif)));
+  
+      setTimeout(() => {
+        this.setState({
+          userAvatar: avatarBeforeChange,
+          isActive: !this.state.isActive,
+        });
+      }, 2500);
+    }
   }
 
   activeRivalEmoji(gif) {
@@ -309,6 +312,11 @@ class MoleGame extends Component {
       this.setState({ rivalAvatar: avatarBeforeChange });
     }, 2500);
   }
+
+
+  openEmojiList() {
+    this.setState({ showEmojis: !this.state.showEmojis });
+  };
 
   // 컴퓨터모드 실행
   computerModeStart() {
@@ -421,41 +429,12 @@ class MoleGame extends Component {
           <UserCard width={this.state.width} userAvatar={this.state.userAvatar} myScore={this.state.myScore} />
         </Grid>
 
-        
-        <Emoji />
-        {/* <Tooltip
-          title='이모티콘'
-          aria-label='add'
-          onClick={() => this.setState({ showEmojis: !this.state.showEmojis })}
-        >
-          <Fab color='secondary' className={this.props.classes.absolute}>
-            <EmojiEmotionsIcon />
-          </Fab>
-        </Tooltip>
-
-        <div className={classes.rootroot}>
-          {this.state.showEmojis ? (
-            <GridList cellHeight={180} className={classes.gridList}>
-              {this.tileData.map((tile) => (
-                <GridListTile
-                  key={tile.img}
-                  style={{ height: '100px' }}
-                  onClick={() => {
-                    if (this.state.isActive === false) {
-                      this.activeEmoji(tile.img);
-                      this.setState({
-                        showEmojis: !this.state.showEmojis,
-                        isActive: !this.state.isActive,
-                      });
-                    }
-                  }}
-                >
-                  <img src={tile.img} alt={tile.title} style={{ width: '70px', height: '70px' }} />
-                </GridListTile>
-              ))}
-            </GridList>
-          ) : null}
-        </div> */}
+        <Emoji 
+          openEmojiList={this.openEmojiList.bind(this)} 
+          showEmojis={this.state.showEmojis}
+          activeEmoji={this.activeEmoji.bind(this)}
+          tileData={this.tileData}
+        />
       </Grid>
     );
   }

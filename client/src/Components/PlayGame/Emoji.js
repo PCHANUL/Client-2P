@@ -7,51 +7,64 @@ import {
   GridList,
   GridListTile,
 } from '@material-ui/core'
+import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 
 const style = {
-  pos: {
+  buttonPos: {
     position: 'fixed',
     bottom: '3%',
     right: '3%',
+  },
+  listPos: {
+    position: 'fixed',
+    right: '1%',
+    bottom: '100px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+  },
+  listCard: {
+    width: '200px', 
+    height: '40vw',
+  },
+  tile: {
+    width: '100px', 
+    height: '90px',
+  },
+  img: {
+    width: '70px', 
+    height: '70px',
   }
 }
 
 
-function Emoji({ openEmojiList }) {
+function Emoji({ openEmojiList, activeEmoji, showEmojis, tileData }) {
   return (
-    <Tooltip
-      title='이모티콘'
-      aria-label='add'
-      onClick={openEmojiList}
-    >
-      <Fab color='secondary' style={style.pos}>
-        <EmojiEmotionsIcon />
-      </Fab>
-    </Tooltip>
+    <>
+      <Tooltip title='이모티콘' aria-label='add' onClick={openEmojiList}>
+        <Fab color='secondary' style={style.buttonPos}>
+          <EmojiEmotionsIcon />
+        </Fab>
+      </Tooltip>
 
-    <div className={classes.rootroot}>
-      {this.state.showEmojis ? (
-        <GridList cellHeight={180} className={classes.gridList}>
-          {this.tileData.map((tile) => (
-            <GridListTile
-              key={tile.img}
-              style={{ height: '100px' }}
-              onClick={() => {
-                if (this.state.isActive === false) {
-                  this.activeEmoji(tile.img);
-                  this.setState({
-                    showEmojis: !this.state.showEmojis,
-                    isActive: !this.state.isActive,
-                  });
-                }
-              }}
-            >
-              <img src={tile.img} alt={tile.title} style={{ width: '70px', height: '70px' }} />
-            </GridListTile>
-          ))}
-        </GridList>
-      ) : null}
-    </div>
+      <div style={style.listPos}>
+        {showEmojis && 
+          <GridList style={style.listCard}>
+            {tileData.map((tile) => (
+              <GridListTile
+                key={tile.img}
+                style={style.tile}
+                onClick={() => activeEmoji(tile.img)}
+              >
+                <img src={tile.img} alt={tile.title} style={style.img} />
+              </GridListTile>
+            ))}
+          </GridList>
+        }
+      </div>
+    </>
   )
 }
 
