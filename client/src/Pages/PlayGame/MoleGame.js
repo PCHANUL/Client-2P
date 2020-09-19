@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import cookie from 'react-cookies';
 import Gameover from '../../Components/PlayGame/Gameover';
 import MoleScoreCard from '../../Components/PlayGame/MoleScoreCard';
+import UserCard from '../../Components/PlayGame/MoleGame/UserCard'
+import Emoji from '../../Components/PlayGame/Emoji';
 
 import { Paper, Button, Grid, Fab, Tooltip, GridList, GridListTile, Typography } from '@material-ui/core';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
@@ -54,6 +56,7 @@ const styles = (theme) => ({
     width: 200,
     height: 450,
   },
+  
 });
 
 let moles = [];
@@ -102,6 +105,16 @@ class MoleGame extends Component {
     this.props.gifEmoji.map((item) => {
       this.tileData.push({ img: item });
     });
+
+    this.style = {
+      canvas: {
+        width: this.state.width,
+        height: this.state.height,
+        borderRadius: `${this.state.width/6}px`,
+        border: `${this.state.width/11}px solid #06cdd4`,
+        cursor: 'none',
+      }
+    }
   }
 
   componentDidMount() {
@@ -269,6 +282,10 @@ class MoleGame extends Component {
     this.setState({ width: this.canvas.width, height: this.canvas.height });
   }
 
+  openEmojiList() {
+    this.setState({ showEmojis: !this.state.showEmojis });
+  }
+
   activeEmoji(gif) {
     const avatarBeforeChange = this.state.userAvatar;
     const data = { gameRoomId: cookie.load('selectedRoom'), gif };
@@ -358,7 +375,6 @@ class MoleGame extends Component {
               {
                 !this.state.opponentUsername.length
                 ? <Button color="secondary" 
-                    disableElevation 
                     style={{
                       width: `${this.state.width / 2}px`,
                       height: `${this.state.width / 2}px`,
@@ -383,84 +399,31 @@ class MoleGame extends Component {
                       height: this.state.width/2.2,
                     }}
                   />
-                  <Typography 
-                    className={classes.pos} 
-                    style={{
-                      fontSize: `${this.state.width/15}px`
-                    }}
-                  >
+                  <Typography className={classes.pos} style={{fontSize: `${this.state.width/15}px`}}>
                     {this.state.opponentUsername}
                   </Typography>
                 </>
               }
-
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/5}px`
-                }}  
-              >
+              <Typography className={classes.pos} style={{fontSize: `${this.state.width/5}px`}}  >
                 {this.state.opponentScore}
               </Typography>
-
             </Grid>
           </Paper>
         </Grid>
 
-        <Paper
-          id='paper'
-          style={{
-            width: this.state.width,
-            height: this.state.height,
-            borderRadius: `${this.state.width/6}px`,
-            border: `${this.state.width/11}px solid #06cdd4`,
-            cursor: 'none',
-          }}
-          className={classes.Paper}
-        >
+        <Paper id='paper' style={this.style.canvas} className={classes.Paper}>
           <canvas id='canvas' />
           <img id='hemmer' src={hemmer} style={{ width: '40px', display: 'none' }} />
           <img id='clicked' src={clicked} style={{ width: '40px', display: 'none' }} />
         </Paper>
 
         <Grid item>
-          <Paper 
-            className={classes.root} 
-            style={{ 
-              marginRight: '40px',
-              width: `${this.state.width / 2}px`,
-              height: `${this.state.width / 1.2}px`,
-            }}
-          >
-            <Grid container direction='column' justify='center' alignItems='center'>
-              <img 
-                src={this.state.userAvatar} 
-                style={{
-                  width: this.state.width/2,
-                  height: this.state.width/2.2,
-                }}
-              ></img>
-              <Typography 
-                className={classes.pos}
-                style={{
-                  fontSize: `${this.state.width/15}px`
-                }}
-              >
-                {cookie.load('username')}
-              </Typography>
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/5}px`
-                }}
-              >
-                {this.state.myScore}
-              </Typography>
-            </Grid>
-          </Paper>
+          <UserCard width={this.state.width} userAvatar={this.state.userAvatar} myScore={this.state.myScore} />
         </Grid>
 
-        <Tooltip
+        
+        <Emoji />
+        {/* <Tooltip
           title='이모티콘'
           aria-label='add'
           onClick={() => this.setState({ showEmojis: !this.state.showEmojis })}
@@ -492,7 +455,7 @@ class MoleGame extends Component {
               ))}
             </GridList>
           ) : null}
-        </div>
+        </div> */}
       </Grid>
     );
   }
