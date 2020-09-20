@@ -6,6 +6,7 @@ import cookie from 'react-cookies';
 import Gameover from '../../Components/PlayGame/Gameover';
 import MoleScoreCard from '../../Components/PlayGame/MoleScoreCard';
 import UserCard from '../../Components/PlayGame/MoleGame/UserCard'
+import RivalCard from '../../Components/PlayGame/MoleGame/RivalCard'
 import Emoji from '../../Components/PlayGame/Emoji';
 
 import { Paper, Button, Grid, Fab, Tooltip, GridList, GridListTile, Typography } from '@material-ui/core';
@@ -193,11 +194,7 @@ class MoleGame extends Component {
     });
 
     this.socket.on('init', ([usernames, currentMole, score, avatarIds]) => {
-      console.log('usernames, currentMole, score, avatarIds: ', usernames, currentMole, score, avatarIds);
-
       const opponentUsername = usernames.filter((username) => cookie.load('username') !== username);
-      console.log('opponentUsername: ', opponentUsername);
-
       const players = Object.keys(score);
       let myScore, opponentScore;
       players.forEach((player) => {
@@ -371,52 +368,13 @@ class MoleGame extends Component {
           : null}
 
         <Grid item>
-          <Paper 
-            className={classes.root} 
-            style={{ 
-              marginLeft: '40px',
-              width: `${this.state.width / 2}px`,
-              height: `${this.state.width / 1.2}px`,
-            }}
-          >
-            <Grid container direction='column' justify='center' alignItems='center'>
-              {
-                !this.state.opponentUsername.length
-                ? <Button color="secondary" 
-                    style={{
-                      width: `${this.state.width / 2}px`,
-                      height: `${this.state.width / 2}px`,
-                    }} 
-                    variant="outlined" 
-                    onClick={() => {
-                      console.log('clicked')
-                      this.computerModeStart();
-                  }}>
-                    <Typography style={{ 
-                      fontSize: `${this.state.width/15}px`
-                    }}>
-                      컴퓨터<br/>대결시작
-                    </Typography>
-                  </Button>
-                : 
-                <>
-                  <img 
-                    src={this.state.rivalAvatar} 
-                    style={{
-                      width: this.state.width/2,
-                      height: this.state.width/2.2,
-                    }}
-                  />
-                  <Typography className={classes.pos} style={{fontSize: `${this.state.width/15}px`}}>
-                    {this.state.opponentUsername}
-                  </Typography>
-                </>
-              }
-              <Typography className={classes.pos} style={{fontSize: `${this.state.width/5}px`}}  >
-                {this.state.opponentScore}
-              </Typography>
-            </Grid>
-          </Paper>
+          <RivalCard 
+            width={this.state.width}
+            opponentUsername={this.state.opponentUsername} 
+            opponentScore={this.state.opponentScore}
+            rivalAvatar={this.state.rivalAvatar}
+            computerModeStart={this.computerModeStart.bind(this)}
+          />
         </Grid>
 
         <Paper id='paper' style={this.style.canvas} className={classes.Paper}>
@@ -426,7 +384,11 @@ class MoleGame extends Component {
         </Paper>
 
         <Grid item>
-          <UserCard width={this.state.width} userAvatar={this.state.userAvatar} myScore={this.state.myScore} />
+          <UserCard 
+            width={this.state.width} 
+            userAvatar={this.state.userAvatar} 
+            myScore={this.state.myScore} 
+          />
         </Grid>
 
         <Emoji 
