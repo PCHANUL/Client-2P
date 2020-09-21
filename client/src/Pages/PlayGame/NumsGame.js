@@ -774,6 +774,7 @@ class NumsGame extends Component {
             </Grid>
           </Paper>
         </Grid>
+        
         <Tooltip
           title='이모티콘'
           aria-label='add'

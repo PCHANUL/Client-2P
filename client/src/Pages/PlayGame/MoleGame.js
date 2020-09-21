@@ -5,6 +5,9 @@ import PropTypes from 'prop-types';
 import cookie from 'react-cookies';
 import Gameover from '../../Components/PlayGame/Gameover';
 import MoleScoreCard from '../../Components/PlayGame/MoleScoreCard';
+import UserCard from '../../Components/PlayGame/MoleGame/UserCard'
+import RivalCard from '../../Components/PlayGame/MoleGame/RivalCard'
+import Emoji from '../../Components/PlayGame/Emoji';
 
 import { Paper, Button, Grid, Fab, Tooltip, GridList, GridListTile, Typography } from '@material-ui/core';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
@@ -54,6 +57,7 @@ const styles = (theme) => ({
     width: 200,
     height: 450,
   },
+  
 });
 
 let moles = [];
@@ -102,6 +106,16 @@ class MoleGame extends Component {
     this.props.gifEmoji.map((item) => {
       this.tileData.push({ img: item });
     });
+
+    this.style = {
+      canvas: {
+        width: this.state.width,
+        height: this.state.height,
+        borderRadius: `${this.state.width/6}px`,
+        border: `${this.state.width/11}px solid #06cdd4`,
+        cursor: 'none',
+      }
+    }
   }
 
   componentDidMount() {
@@ -180,11 +194,7 @@ class MoleGame extends Component {
     });
 
     this.socket.on('init', ([usernames, currentMole, score, avatarIds]) => {
-      console.log('usernames, currentMole, score, avatarIds: ', usernames, currentMole, score, avatarIds);
-
       const opponentUsername = usernames.filter((username) => cookie.load('username') !== username);
-      console.log('opponentUsername: ', opponentUsername);
-
       const players = Object.keys(score);
       let myScore, opponentScore;
       players.forEach((player) => {
@@ -269,19 +279,26 @@ class MoleGame extends Component {
     this.setState({ width: this.canvas.width, height: this.canvas.height });
   }
 
-  activeEmoji(gif) {
-    const avatarBeforeChange = this.state.userAvatar;
-    const data = { gameRoomId: cookie.load('selectedRoom'), gif };
-    this.socket.emit('activateGif', data);
-    this.setState({ userAvatar: gif });
-    // this.socket.emit('sendEmoji', (JSON.stringify(gif)));
 
-    setTimeout(() => {
+  activeEmoji(gif) {
+    if (!this.state.isActive) {
       this.setState({
-        userAvatar: avatarBeforeChange,
+        showEmojis: !this.state.showEmojis,
         isActive: !this.state.isActive,
       });
-    }, 2500);
+      const avatarBeforeChange = this.state.userAvatar;
+      const data = { gameRoomId: cookie.load('selectedRoom'), gif };
+      this.socket.emit('activateGif', data);
+      this.setState({ userAvatar: gif });
+      // this.socket.emit('sendEmoji', (JSON.stringify(gif)));
+  
+      setTimeout(() => {
+        this.setState({
+          userAvatar: avatarBeforeChange,
+          isActive: !this.state.isActive,
+        });
+      }, 2500);
+    }
   }
 
   activeRivalEmoji(gif) {
@@ -292,6 +309,11 @@ class MoleGame extends Component {
       this.setState({ rivalAvatar: avatarBeforeChange });
     }, 2500);
   }
+
+
+  openEmojiList() {
+    this.setState({ showEmojis: !this.state.showEmojis });
+  };
 
   // 컴퓨터모드 실행
   computerModeStart() {
@@ -346,153 +368,35 @@ class MoleGame extends Component {
           : null}
 
         <Grid item>
-          <Paper 
-            className={classes.root} 
-            style={{ 
-              marginLeft: '40px',
-              width: `${this.state.width / 2}px`,
-              height: `${this.state.width / 1.2}px`,
-            }}
-          >
-            <Grid container direction='column' justify='center' alignItems='center'>
-              {
-                !this.state.opponentUsername.length
-                ? <Button color="secondary" 
-                    disableElevation 
-                    style={{
-                      width: `${this.state.width / 2}px`,
-                      height: `${this.state.width / 2}px`,
-                    }} 
-                    variant="outlined" 
-                    onClick={() => {
-                      console.log('clicked')
-                      this.computerModeStart();
-                  }}>
-                    <Typography style={{ 
-                      fontSize: `${this.state.width/15}px`
-                    }}>
-                      컴퓨터<br/>대결시작
-                    </Typography>
-                  </Button>
-                : 
-                <>
-                  <img 
-                    src={this.state.rivalAvatar} 
-                    style={{
-                      width: this.state.width/2,
-                      height: this.state.width/2.2,
-                    }}
-                  />
-                  <Typography 
-                    className={classes.pos} 
-                    style={{
-                      fontSize: `${this.state.width/15}px`
-                    }}
-                  >
-                    {this.state.opponentUsername}
-                  </Typography>
-                </>
-              }
-
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/5}px`
-                }}  
-              >
-                {this.state.opponentScore}
-              </Typography>
-
-            </Grid>
-          </Paper>
+          <RivalCard 
+            width={this.state.width}
+            opponentUsername={this.state.opponentUsername} 
+            opponentScore={this.state.opponentScore}
+            rivalAvatar={this.state.rivalAvatar}
+            computerModeStart={this.computerModeStart.bind(this)}
+          />
         </Grid>
 
-        <Paper
-          id='paper'
-          style={{
-            width: this.state.width,
-            height: this.state.height,
-            borderRadius: `${this.state.width/6}px`,
-            border: `${this.state.width/11}px solid #06cdd4`,
-            cursor: 'none',
-          }}
-          className={classes.Paper}
-        >
+        <Paper id='paper' style={this.style.canvas} className={classes.Paper}>
           <canvas id='canvas' />
           <img id='hemmer' src={hemmer} style={{ width: '40px', display: 'none' }} />
           <img id='clicked' src={clicked} style={{ width: '40px', display: 'none' }} />
         </Paper>
 
         <Grid item>
-          <Paper 
-            className={classes.root} 
-            style={{ 
-              marginRight: '40px',
-              width: `${this.state.width / 2}px`,
-              height: `${this.state.width / 1.2}px`,
-            }}
-          >
-            <Grid container direction='column' justify='center' alignItems='center'>
-              <img 
-                src={this.state.userAvatar} 
-                style={{
-                  width: this.state.width/2,
-                  height: this.state.width/2.2,
-                }}
-              ></img>
-              <Typography 
-                className={classes.pos}
-                style={{
-                  fontSize: `${this.state.width/15}px`
-                }}
-              >
-                {cookie.load('username')}
-              </Typography>
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/5}px`
-                }}
-              >
-                {this.state.myScore}
-              </Typography>
-            </Grid>
-          </Paper>
+          <UserCard 
+            width={this.state.width} 
+            userAvatar={this.state.userAvatar} 
+            myScore={this.state.myScore} 
+          />
         </Grid>
 
-        <Tooltip
-          title='이모티콘'
-          aria-label='add'
-          onClick={() => this.setState({ showEmojis: !this.state.showEmojis })}
-        >
-          <Fab color='secondary' className={this.props.classes.absolute}>
-            <EmojiEmotionsIcon />
-          </Fab>
-        </Tooltip>
-
-        <div className={classes.rootroot}>
-          {this.state.showEmojis ? (
-            <GridList cellHeight={180} className={classes.gridList}>
-              {this.tileData.map((tile) => (
-                <GridListTile
-                  key={tile.img}
-                  style={{ height: '100px' }}
-                  onClick={() => {
-                    if (this.state.isActive === false) {
-                      this.activeEmoji(tile.img);
-                      this.setState({
-                        showEmojis: !this.state.showEmojis,
-                        isActive: !this.state.isActive,
-                      });
-                    }
-                  }}
-                >
-                  <img src={tile.img} alt={tile.title} style={{ width: '70px', height: '70px' }} />
-                </GridListTile>
-              ))}
-            </GridList>
-          ) : null}
-        </div>
+        <Emoji 
+          openEmojiList={this.openEmojiList.bind(this)} 
+          showEmojis={this.state.showEmojis}
+          activeEmoji={this.activeEmoji.bind(this)}
+          tileData={this.tileData}
+        />
       </Grid>
     );
   }

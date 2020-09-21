@@ -65,7 +65,6 @@ export class Mole {
     // 두더지가 나옴
     this.show = true;
     let randomTime = Math.floor(Math.random() * 3);
-    console.log('randomTime: ', randomTime);
     setTimeout(() => {
       this.show = false;
     }, 2500);

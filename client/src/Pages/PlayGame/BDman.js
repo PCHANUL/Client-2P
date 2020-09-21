@@ -293,7 +293,7 @@ class Game extends Component {
     window.requestAnimationFrame(this.animate.bind(this));
 
     // 블록 이동
-    document.addEventListener('keydown', this.move, true);
+    document.addEventListener('keydown', this.keydown, true);
 
     // Rival shot (mirror)
     socket.on('rivalShot', (e) => this.rivalShot(e));
@@ -394,12 +394,11 @@ class Game extends Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.move, true);
+    document.removeEventListener('keydown', this.keydown, true);
     socket.disconnect();
   }
 
-  move = (e) => {
-    console.log('awef')
+  keydown = (e) => {
     if (e.keyCode === 65) {
       // 왼쪽
       socket.emit('moveLeft');
