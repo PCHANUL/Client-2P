@@ -12,47 +12,49 @@ import {
 function RivalCard({ width, opponentUsername, opponentScore, rivalAvatar, computerModeStart }) {
   const style = {
     root: {
-      padding: '20px',
       backgroundColor: 'white',
-      broderRadius: '30px',
       marginLeft: '40px',
+      borderRadius: `${width / 10}px`,
       width: `${width / 2}px`,
       height: `${width / 1.2}px`,
+      padding: `${width / 6}px`,
     },
-    pos: {
-      color: '#000',
+    font: {
       fontSize: `${width/15}px`,
+    },
+    countFont: {
+      fontSize: `${width/5}px`,
     },
     button: {
       width: `${width / 2}px`,
       height: `${width / 2}px`,
+    },
+    avatarImg: {
+      width: width/2,
+      height: width/2.2,
     }
   }
 
   return (
     <Paper style={style.root}>
       <Grid container direction='column' justify='center' alignItems='center'>
+
         {!opponentUsername.length ? (
           <Button color="secondary" variant="outlined" style={style.button}  onClick={computerModeStart}>
-            <Typography style={{fontSize: style.pos.fontSize}}>
+            <Typography style={style.font}>
               컴퓨터<br/>대결시작
             </Typography>
           </Button>
         ) : (
           <>
-            <img 
-              src={rivalAvatar} 
-              style={{
-                width: width/2,
-                height: width/2.2,
-              }}
-            />
-            <Typography style={style.pos}>
+            <img src={rivalAvatar} style={style.avatarImg} />
+            <Typography style={style.font}>
               {opponentUsername}
             </Typography>
           </>
         )}
-        <Typography style={{fontSize: style.pos.fontSize * 3}}>
+
+        <Typography style={style.countFont}>
           {opponentScore}
         </Typography>
       </Grid>
