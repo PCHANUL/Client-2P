@@ -443,7 +443,7 @@ class NumsGame extends Component {
     this.state.resultPad.map((num, index) => {
       let x = this.state.width / 6.5 + (this.state.width / 7) * index;
       let y = this.state.height / 1.8;
-
+ 
       this.ctx.fillStyle = '#fff';
       this.ctx.beginPath();
       this.ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
@@ -616,8 +616,8 @@ class NumsGame extends Component {
             userAvatar={this.state.userAvatar} 
             theNumber={this.state.myTurn ? this.state.count : '대기'} 
             myTurn={this.state.myTurn}
-            wrongInput={this.state.wrongInput}
-            warning={this.state.warning}
+            warningAlert={this.state.wrongInput}
+            yellowCard={this.state.warning}
           />
         </Grid>
 

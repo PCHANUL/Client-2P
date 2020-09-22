@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import Gameover from '../../Components/PlayGame/Gameover';
+import UserCard from '../../Components/PlayGame/MoleGame/UserCard'
+import RivalCard from '../../Components/PlayGame/MoleGame/RivalCard'
+import Emoji from '../../Components/PlayGame/Emoji';
 
 import { Paper, Typography, Tooltip, Fab, Grid, GridList, GridListTile, Button } from '@material-ui/core';
 
@@ -586,10 +589,15 @@ class Game extends Component {
     }, 2500);
   }
 
+  openEmojiList() {
+    this.setState({ showEmojis: !this.state.showEmojis });
+  };
+
   render() {
     const { classes, avatarImg } = this.props;
 
     return (
+      <>
       <Grid container direction='row' justify='space-evenly' alignItems='center'>
         {this.state.winner !== '' 
           ? this.state.rivalName === 'COMPUTER'
@@ -598,66 +606,17 @@ class Game extends Component {
           : null}
 
         <Grid item>
-          <Paper 
-            className={classes.root} 
-            style={{ 
-              marginRight: '20px', 
-              marginLeft: '40px',
-              width: `${this.state.width / 2}px`,
-              height: `${this.state.width / 1.2}px`,
-            }}
-          >
-            <Grid container direction='column' justify='center' alignItems='center'>
-              {
-                // 상대유저가 들어오지 않은 경우
-                !this.state.rivalName
-                ? <Button color="secondary" 
-                    disableElevation 
-                    style={{
-                      width: `${this.state.width / 2}px`,
-                      height: `${this.state.width / 2}px`,
-                    }} 
-                    variant="outlined" 
-                    onClick={() => {
-                      console.log('clicked')
-                      this.computerModeStart();
-                  }}>
-                    <Typography style={{ 
-                      fontSize: `${this.state.width/15}px`
-                    }}>
-                      컴퓨터<br/>대결시작
-                    </Typography>
-                  </Button>
-                : <div>
-                    <img 
-                      alt='들어오는중'
-                      src={this.state.rivalAvatar} 
-                      style={{
-                        width: this.state.width/2,
-                        height: this.state.width/2.2,
-                      }}
-                    ></img>
-                    <Typography 
-                      className={classes.pos} 
-                      style={{
-                        fontSize: `${this.state.width/15}px`
-                      }}
-                    >
-                      {this.state.rivalName}
-                    </Typography>
-                  </div>
-              }
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/5}px`
-                }}
-              >
-                {this.state.rivalScore}
-              </Typography>
-            </Grid>
-          </Paper>
+          <RivalCard 
+            width={this.state.width}
+            username={this.state.rivalName} 
+            theNumber={this.state.rivalScore}
+            avatar={this.state.rivalAvatar}
+            computerModeStart={this.computerModeStart.bind(this)}
+            cardTheme={'black'}
+          />
         </Grid>
+
+        {/* <Grid container direction='column' justify='space-evenly' alignItems='center'> */}
         <Grid item>
           <Paper
             id='paper'
@@ -670,58 +629,19 @@ class Game extends Component {
           >
             <canvas id='canvas' />
           </Paper>
+          
         </Grid>
-        <Paper 
-          className={classes.magazine} 
-          style={{
-            width:  `${this.state.width / 11}px`,
-            height: `${this.state.width / 1.1}px`,
-          }}
-        >
-          {<Grid item>{this.makeBullet()}</Grid>}
-        </Paper>
+
+
         <Grid item>
-          <Paper 
-              className={classes.root} 
-              style={{ 
-                marginTop: `${this.state.width/15}px`,
-                marginRight: '40px', 
-                width: `${this.state.width / 2}px`,
-                height: `${this.state.width / 1.2}px`,
-                boxShadow: `${
-                  this.state.bullet === 0
-                  ? '1px 1px 100px 0px #00535c'
-                  : ''
-                }`
-              }}
-            >
-            <Grid container direction='column' justify='center' alignItems='center'>
-              <img 
-                alt='들어오는중'
-                src={this.state.userAvatar} 
-                style={{
-                  width: this.state.width/2,
-                  height: this.state.width/2.2,
-                }}
-              ></img>
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/15}px`
-                }}
-              >
-                {this.state.userName}
-              </Typography>
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/5}px`
-                }}
-              >
-                {this.state.myScore}
-              </Typography>
-            </Grid>
-          </Paper>
+          <UserCard 
+            width={this.state.width} 
+            userAvatar={this.state.userAvatar} 
+            theNumber={this.state.myScore} 
+            warningAlert={this.state.bullet === 0}
+            cardTheme={'black'}
+          />
+          
           <Typography 
             className={classes.reloadText} 
             style={{
@@ -735,44 +655,26 @@ class Game extends Component {
               ? 'R을 눌러서 재장전하세요'
               : null}
           </Typography>
-          <Tooltip
-            title='이모티콘'
-            aria-label='add'
-            onClick={() => this.setState({ showEmojis: !this.state.showEmojis })}
-          >
-            <Fab color='secondary' className={this.props.classes.absolute}>
-              <EmojiEmotionsIcon />
-            </Fab>
-          </Tooltip>
-          <div className={classes.rootroot}>
-            {this.state.showEmojis ? (
-              <GridList cellHeight={180} className={classes.gridList}>
-                {this.tileData.map((tile) => (
-                  <GridListTile
-                    key={tile.img}
-                    style={{ height: '100px' }}
-                    onClick={() => {
-                      if (this.state.isActive === false) {
-                        this.activeEmoji(tile.img);
-                        this.setState({
-                          showEmojis: !this.state.showEmojis,
-                          isActive: !this.state.isActive,
-                        });
-                      }
-                    }}
-                  >
-                    <img
-                      src={tile.img}
-                      alt={tile.title}
-                      style={{ width: '70px', height: '70px' }}
-                    />
-                  </GridListTile>
-                ))}
-              </GridList>
-            ) : null}
-          </div>
+          
         </Grid>
+        
+        <Emoji 
+          openEmojiList={this.openEmojiList.bind(this)} 
+          showEmojis={this.state.showEmojis}
+          activeEmoji={this.activeEmoji.bind(this)}
+          tileData={this.tileData}
+        />
       </Grid>
+      <Paper 
+            className={classes.magazine} 
+            style={{
+              width:  `${this.state.width / 11}px`,
+              height: `${this.state.width / 1.1}px`,
+            }}
+          >
+            {<Grid item>{this.makeBullet()}</Grid>}
+          </Paper>
+      </>
     );
   }
 }
