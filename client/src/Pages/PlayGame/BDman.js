@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import Gameover from '../../Components/PlayGame/Gameover';
+import UserCard from '../../Components/PlayGame/MoleGame/UserCard'
+import RivalCard from '../../Components/PlayGame/MoleGame/RivalCard'
+import Emoji from '../../Components/PlayGame/Emoji';
 
 import { Paper, Typography, Tooltip, Fab, Grid, GridList, GridListTile, Button } from '@material-ui/core';
 
@@ -109,13 +112,13 @@ class Game extends Component {
     this.blockSizeX = this.state.width / 10;
     this.blockSizeY = this.state.height / 20;
     this.blockPosX = this.state.width / 2 - this.blockSizeX / 2;
-    this.blockPosY = this.state.height - this.blockSizeY * 2;
+    this.blockPosY = this.state.height - this.blockSizeY * 2.5 ;
     this.blockPosInitX = this.state.width / 2 - this.blockSizeX / 2;
     // Rival Block
     this.RivalSizeX = this.state.width / 10;
     this.RivalSizeY = this.state.height / 20;
     this.RivalPosX = this.state.width / 2 - this.RivalSizeX / 2;
-    this.RivalPosY = this.RivalSizeY;
+    this.RivalPosY = this.RivalSizeY * 1.5;
     this.RivalPosInitX = this.state.width / 2 - this.RivalSizeX / 2;
 
     // Bullet
@@ -343,6 +346,12 @@ class Game extends Component {
 
     // 발사
     this.canvas.addEventListener('mousedown', (e) => {
+
+      // 재장전
+      this.reload = setInterval(() => {
+        this.setState({ bullet: Math.min(10, this.state.bullet + 2)})
+      }, 500)
+
       if (this.state.bullet > 0 && !this.state.isReload && this.state.gameStart) {
         let bullet = new Bullet(
           this.state.width,
@@ -359,6 +368,10 @@ class Game extends Component {
         this.setState({ bullet: this.state.bullet - 1 });
       }
     });
+
+    this.canvas.addEventListener('mouseup', (e) => {
+      clearInterval(this.reload)
+    })
 
     // 조준
     this.canvas.addEventListener('mousemove', (e) => {
@@ -409,15 +422,9 @@ class Game extends Component {
       socket.emit('moveRight');
       this.blockPosX += this.blockSizeX;
       // this.RivalPosX += this.blockSizeX;
-    } else if (e.keyCode === 82) {
-      // 리로드
-      this.setState({ isReload: true });
-      setTimeout(() => {
-        this.setState({ bullet: 10 });
-        this.setState({ isReload: false });
-      }, 2500);
-    }
+    } 
   }
+
 
   calc() {
     // 발사각 측정
@@ -438,6 +445,15 @@ class Game extends Component {
     this.canvas.height = Math.floor(this.stageHeight / 1.2);
 
     this.setState({ width: this.canvas.width, height: this.canvas.height });
+  }
+
+  makeBullet(ctx) {
+    ctx.fillStyle = '#ffff8c';
+    for (let i = 0; i < this.state.bullet; i++) {
+      ctx.beginPath();
+      ctx.rect(i * this.state.width / 10, this.state.height, this.state.width / 11, -this.blockSizeY / 4);
+      ctx.fill();
+    }
   }
 
   // 애니메이션 생성
@@ -489,10 +505,22 @@ class Game extends Component {
       
     } else if (Math.floor(this.state.width/this.frame) !== 5) {
       this.ctx.font = `${this.state.width/5}px sanseif`
-      this.ctx.fillText('Ready', this.state.width/3.8, this.state.height/2)
+      this.ctx.fillText('Ready', this.state.width/3.8, this.state.height/2.1)
       this.ctx.font = `${this.state.width/20}px sanseif`
-      this.ctx.fillText('방향키 - A / D, 발사 - 마우스클릭', this.state.width/5.5, this.state.height/1.8)
+      this.ctx.fillText('방향키 - A, D  |  발사 - 화면 클릭', this.state.width/5.5, this.state.height/1.8)
+      this.ctx.font = `${this.state.width/20}px sanseif`
+      this.ctx.fillText('화면을 길게 눌러 재장전', this.state.width/4, this.state.height/1.6)
     }
+
+    // magazine
+    if (this.state.bullet !== 0) {
+      this.makeBullet(this.ctx)
+    } else {
+      this.ctx.fillStyle = '#a1a1a1';
+      this.ctx.font = `${this.state.width / 18}px sanseif`
+      this.ctx.fillText('화면을 길게 눌러 재장전하세요', this.state.width / 5.5, this.state.height / 2)
+    }
+
     
     // 총알
     let response;
@@ -548,22 +576,7 @@ class Game extends Component {
     this.ctx.fillRect(0, 0, this.state.width, this.state.height);
   }
 
-  makeBullet() {
-    let magazine = [];
-    for (let i = 0; i < this.state.bullet; i++) {
-      magazine.push(
-        <div
-          style={{
-            backgroundColor: '#ffff8c',
-            width: `${this.state.width/35}px`,
-            height: `${this.state.width/17.5}px`,
-            margin: `${this.state.width/33}px`,
-          }}
-        />
-      );
-    }
-    return <div>{magazine}</div>;
-  }
+  
 
   activeEmoji(gif) {
     this.setState({ userAvatar: gif });
@@ -586,10 +599,15 @@ class Game extends Component {
     }, 2500);
   }
 
+  openEmojiList() {
+    this.setState({ showEmojis: !this.state.showEmojis });
+  };
+
   render() {
     const { classes, avatarImg } = this.props;
 
     return (
+      <>
       <Grid container direction='row' justify='space-evenly' alignItems='center'>
         {this.state.winner !== '' 
           ? this.state.rivalName === 'COMPUTER'
@@ -598,66 +616,16 @@ class Game extends Component {
           : null}
 
         <Grid item>
-          <Paper 
-            className={classes.root} 
-            style={{ 
-              marginRight: '20px', 
-              marginLeft: '40px',
-              width: `${this.state.width / 2}px`,
-              height: `${this.state.width / 1.2}px`,
-            }}
-          >
-            <Grid container direction='column' justify='center' alignItems='center'>
-              {
-                // 상대유저가 들어오지 않은 경우
-                !this.state.rivalName
-                ? <Button color="secondary" 
-                    disableElevation 
-                    style={{
-                      width: `${this.state.width / 2}px`,
-                      height: `${this.state.width / 2}px`,
-                    }} 
-                    variant="outlined" 
-                    onClick={() => {
-                      console.log('clicked')
-                      this.computerModeStart();
-                  }}>
-                    <Typography style={{ 
-                      fontSize: `${this.state.width/15}px`
-                    }}>
-                      컴퓨터<br/>대결시작
-                    </Typography>
-                  </Button>
-                : <div>
-                    <img 
-                      alt='들어오는중'
-                      src={this.state.rivalAvatar} 
-                      style={{
-                        width: this.state.width/2,
-                        height: this.state.width/2.2,
-                      }}
-                    ></img>
-                    <Typography 
-                      className={classes.pos} 
-                      style={{
-                        fontSize: `${this.state.width/15}px`
-                      }}
-                    >
-                      {this.state.rivalName}
-                    </Typography>
-                  </div>
-              }
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/5}px`
-                }}
-              >
-                {this.state.rivalScore}
-              </Typography>
-            </Grid>
-          </Paper>
+          <RivalCard 
+            width={this.state.width}
+            username={this.state.rivalName} 
+            theNumber={this.state.rivalScore}
+            avatar={this.state.rivalAvatar}
+            computerModeStart={this.computerModeStart.bind(this)}
+            cardTheme={'black'}
+          />
         </Grid>
+
         <Grid item>
           <Paper
             id='paper'
@@ -670,109 +638,29 @@ class Game extends Component {
           >
             <canvas id='canvas' />
           </Paper>
+          
         </Grid>
-        <Paper 
-          className={classes.magazine} 
-          style={{
-            width:  `${this.state.width / 11}px`,
-            height: `${this.state.width / 1.1}px`,
-          }}
-        >
-          {<Grid item>{this.makeBullet()}</Grid>}
-        </Paper>
+
+
         <Grid item>
-          <Paper 
-              className={classes.root} 
-              style={{ 
-                marginTop: `${this.state.width/15}px`,
-                marginRight: '40px', 
-                width: `${this.state.width / 2}px`,
-                height: `${this.state.width / 1.2}px`,
-                boxShadow: `${
-                  this.state.bullet === 0
-                  ? '1px 1px 100px 0px #00535c'
-                  : ''
-                }`
-              }}
-            >
-            <Grid container direction='column' justify='center' alignItems='center'>
-              <img 
-                alt='들어오는중'
-                src={this.state.userAvatar} 
-                style={{
-                  width: this.state.width/2,
-                  height: this.state.width/2.2,
-                }}
-              ></img>
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/15}px`
-                }}
-              >
-                {this.state.userName}
-              </Typography>
-              <Typography 
-                className={classes.pos} 
-                style={{
-                  fontSize: `${this.state.width/5}px`
-                }}
-              >
-                {this.state.myScore}
-              </Typography>
-            </Grid>
-          </Paper>
-          <Typography 
-            className={classes.reloadText} 
-            style={{
-              fontSize: `${this.state.width/15}px`,
-              height: `${this.state.width/15}px`,
-            }}
-          >
-            {this.state.isReload
-              ? '재장전중'
-              : this.state.bullet === 0
-              ? 'R을 눌러서 재장전하세요'
-              : null}
-          </Typography>
-          <Tooltip
-            title='이모티콘'
-            aria-label='add'
-            onClick={() => this.setState({ showEmojis: !this.state.showEmojis })}
-          >
-            <Fab color='secondary' className={this.props.classes.absolute}>
-              <EmojiEmotionsIcon />
-            </Fab>
-          </Tooltip>
-          <div className={classes.rootroot}>
-            {this.state.showEmojis ? (
-              <GridList cellHeight={180} className={classes.gridList}>
-                {this.tileData.map((tile) => (
-                  <GridListTile
-                    key={tile.img}
-                    style={{ height: '100px' }}
-                    onClick={() => {
-                      if (this.state.isActive === false) {
-                        this.activeEmoji(tile.img);
-                        this.setState({
-                          showEmojis: !this.state.showEmojis,
-                          isActive: !this.state.isActive,
-                        });
-                      }
-                    }}
-                  >
-                    <img
-                      src={tile.img}
-                      alt={tile.title}
-                      style={{ width: '70px', height: '70px' }}
-                    />
-                  </GridListTile>
-                ))}
-              </GridList>
-            ) : null}
-          </div>
+          <UserCard 
+            width={this.state.width} 
+            userAvatar={this.state.userAvatar} 
+            theNumber={this.state.myScore} 
+            warningAlert={this.state.bullet === 0}
+            cardTheme={'black'}
+          />
         </Grid>
+        
+        <Emoji 
+          openEmojiList={this.openEmojiList.bind(this)} 
+          showEmojis={this.state.showEmojis}
+          activeEmoji={this.activeEmoji.bind(this)}
+          tileData={this.tileData}
+        />
       </Grid>
+      
+      </>
     );
   }
 }

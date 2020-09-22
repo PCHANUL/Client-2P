@@ -7,17 +7,22 @@ import {
 } from '@material-ui/core';
 
 
-function UserCard({ width, userAvatar, theNumber, wrongInput, myTurn, warning }) {
+function UserCard({ 
+  width, userAvatar, theNumber, warningAlert, 
+  myTurn, yellowCard,  // numsGame
+  cardTheme,
+}) {
 
   const style = {
     root: {
-      backgroundColor: 'white',
+      backgroundColor: !cardTheme ? 'white' : 'transparent',
+      border: !cardTheme ? null : '2px solid #636363',
       marginRight: '40px',
       borderRadius: `${width / 10}px`,
       width: `${width / 2}px`,
       height: `${width / 1.2}px`,
       padding: `${width / 6}px`,
-      boxShadow: `${wrongInput 
+      boxShadow: `${warningAlert 
         ? '0px 0px 20px 0px #ff5c5c' 
         : myTurn 
         ? `0px 0px ${width / 15}px 0px #0067c2`
@@ -25,9 +30,11 @@ function UserCard({ width, userAvatar, theNumber, wrongInput, myTurn, warning })
       }`,
     },
     font: {
+      color: !cardTheme ? '#000' : '#fff',
       fontSize: `${width/15}px`,
     },
     countFont: {
+      color: !cardTheme ? '#000' : '#fff',
       fontSize: `${width/5}px`,
     },
     avatarImg: {
@@ -46,7 +53,7 @@ function UserCard({ width, userAvatar, theNumber, wrongInput, myTurn, warning })
         <Typography style={style.countFont}>
           {theNumber}
         </Typography>
-        {warning === 1 ? (
+        {yellowCard === 1 ? (
           <div
             style={{
               backgroundColor: 'yellow',
@@ -55,7 +62,7 @@ function UserCard({ width, userAvatar, theNumber, wrongInput, myTurn, warning })
               border: `${document.body.clientWidth/400}px solid #000`,
             }}
           />
-        ) : warning === 2 ? (
+        ) : yellowCard === 2 ? (
           <div
             style={{
               backgroundColor: 'red',

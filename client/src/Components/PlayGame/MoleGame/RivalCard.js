@@ -9,10 +9,15 @@ import {
 
 
 
-function RivalCard({ width, username, theNumber, avatar, computerModeStart, myTurn = true, warningRival }) {
+function RivalCard({ 
+  width, username, theNumber, avatar, computerModeStart, 
+  myTurn = true, warningRival,
+  cardTheme
+}) {
   const style = {
     root: {
-      backgroundColor: 'white',
+      backgroundColor: !cardTheme ? 'white' : 'transparent',
+      border: !cardTheme ? null : '2px solid #636363',
       marginLeft: '40px',
       borderRadius: `${width / 10}px`,
       width: `${width / 2}px`,
@@ -24,9 +29,11 @@ function RivalCard({ width, username, theNumber, avatar, computerModeStart, myTu
       }`,
     },
     font: {
+      color: !username.length ? null : '#fff',
       fontSize: `${width/15}px`,
     },
     countFont: {
+      color: !cardTheme ? '#000' : '#fff',
       fontSize: `${width/5}px`,
     },
     button: {
@@ -44,7 +51,7 @@ function RivalCard({ width, username, theNumber, avatar, computerModeStart, myTu
       <Grid container direction='column' justify='center' alignItems='center'>
 
         {!username.length ? (
-          <Button color="secondary" variant="outlined" style={style.button}  onClick={computerModeStart}>
+          <Button color="secondary" variant="outlined" style={style.button} onClick={computerModeStart}>
             <Typography style={style.font}>
               컴퓨터<br/>대결시작
             </Typography>
