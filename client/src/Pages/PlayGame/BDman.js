@@ -112,13 +112,13 @@ class Game extends Component {
     this.blockSizeX = this.state.width / 10;
     this.blockSizeY = this.state.height / 20;
     this.blockPosX = this.state.width / 2 - this.blockSizeX / 2;
-    this.blockPosY = this.state.height - this.blockSizeY * 2;
+    this.blockPosY = this.state.height - this.blockSizeY * 2.5 ;
     this.blockPosInitX = this.state.width / 2 - this.blockSizeX / 2;
     // Rival Block
     this.RivalSizeX = this.state.width / 10;
     this.RivalSizeY = this.state.height / 20;
     this.RivalPosX = this.state.width / 2 - this.RivalSizeX / 2;
-    this.RivalPosY = this.RivalSizeY;
+    this.RivalPosY = this.RivalSizeY * 1.5;
     this.RivalPosInitX = this.state.width / 2 - this.RivalSizeX / 2;
 
     // Bullet
@@ -346,6 +346,12 @@ class Game extends Component {
 
     // 발사
     this.canvas.addEventListener('mousedown', (e) => {
+
+      // 재장전
+      this.reload = setInterval(() => {
+        this.setState({ bullet: Math.min(10, this.state.bullet + 2)})
+      }, 500)
+
       if (this.state.bullet > 0 && !this.state.isReload && this.state.gameStart) {
         let bullet = new Bullet(
           this.state.width,
@@ -362,6 +368,10 @@ class Game extends Component {
         this.setState({ bullet: this.state.bullet - 1 });
       }
     });
+
+    this.canvas.addEventListener('mouseup', (e) => {
+      clearInterval(this.reload)
+    })
 
     // 조준
     this.canvas.addEventListener('mousemove', (e) => {
@@ -412,15 +422,9 @@ class Game extends Component {
       socket.emit('moveRight');
       this.blockPosX += this.blockSizeX;
       // this.RivalPosX += this.blockSizeX;
-    } else if (e.keyCode === 82) {
-      // 리로드
-      this.setState({ isReload: true });
-      setTimeout(() => {
-        this.setState({ bullet: 10 });
-        this.setState({ isReload: false });
-      }, 2500);
-    }
+    } 
   }
+
 
   calc() {
     // 발사각 측정
@@ -441,6 +445,15 @@ class Game extends Component {
     this.canvas.height = Math.floor(this.stageHeight / 1.2);
 
     this.setState({ width: this.canvas.width, height: this.canvas.height });
+  }
+
+  makeBullet(ctx) {
+    ctx.fillStyle = '#ffff8c';
+    for (let i = 0; i < this.state.bullet; i++) {
+      ctx.beginPath();
+      ctx.rect(i * this.state.width / 10, this.state.height, this.state.width / 11, -this.blockSizeY / 4);
+      ctx.fill();
+    }
   }
 
   // 애니메이션 생성
@@ -492,10 +505,22 @@ class Game extends Component {
       
     } else if (Math.floor(this.state.width/this.frame) !== 5) {
       this.ctx.font = `${this.state.width/5}px sanseif`
-      this.ctx.fillText('Ready', this.state.width/3.8, this.state.height/2)
+      this.ctx.fillText('Ready', this.state.width/3.8, this.state.height/2.1)
       this.ctx.font = `${this.state.width/20}px sanseif`
-      this.ctx.fillText('방향키 - A / D, 발사 - 마우스클릭', this.state.width/5.5, this.state.height/1.8)
+      this.ctx.fillText('방향키 - A, D  |  발사 - 화면 클릭', this.state.width/5.5, this.state.height/1.8)
+      this.ctx.font = `${this.state.width/20}px sanseif`
+      this.ctx.fillText('화면을 길게 눌러 재장전', this.state.width/4, this.state.height/1.6)
     }
+
+    // magazine
+    if (this.state.bullet !== 0) {
+      this.makeBullet(this.ctx)
+    } else {
+      this.ctx.fillStyle = '#a1a1a1';
+      this.ctx.font = `${this.state.width / 18}px sanseif`
+      this.ctx.fillText('화면을 길게 눌러 재장전하세요', this.state.width / 5.5, this.state.height / 2)
+    }
+
     
     // 총알
     let response;
@@ -551,22 +576,7 @@ class Game extends Component {
     this.ctx.fillRect(0, 0, this.state.width, this.state.height);
   }
 
-  makeBullet() {
-    let magazine = [];
-    for (let i = 0; i < this.state.bullet; i++) {
-      magazine.push(
-        <div
-          style={{
-            backgroundColor: '#ffff8c',
-            width: `${this.state.width/35}px`,
-            height: `${this.state.width/17.5}px`,
-            margin: `${this.state.width/33}px`,
-          }}
-        />
-      );
-    }
-    return <div>{magazine}</div>;
-  }
+  
 
   activeEmoji(gif) {
     this.setState({ userAvatar: gif });
@@ -616,7 +626,6 @@ class Game extends Component {
           />
         </Grid>
 
-        {/* <Grid container direction='column' justify='space-evenly' alignItems='center'> */}
         <Grid item>
           <Paper
             id='paper'
@@ -641,21 +650,6 @@ class Game extends Component {
             warningAlert={this.state.bullet === 0}
             cardTheme={'black'}
           />
-          
-          <Typography 
-            className={classes.reloadText} 
-            style={{
-              fontSize: `${this.state.width/15}px`,
-              height: `${this.state.width/15}px`,
-            }}
-          >
-            {this.state.isReload
-              ? '재장전중'
-              : this.state.bullet === 0
-              ? 'R을 눌러서 재장전하세요'
-              : null}
-          </Typography>
-          
         </Grid>
         
         <Emoji 
@@ -665,15 +659,7 @@ class Game extends Component {
           tileData={this.tileData}
         />
       </Grid>
-      <Paper 
-            className={classes.magazine} 
-            style={{
-              width:  `${this.state.width / 11}px`,
-              height: `${this.state.width / 1.1}px`,
-            }}
-          >
-            {<Grid item>{this.makeBullet()}</Grid>}
-          </Paper>
+      
       </>
     );
   }
