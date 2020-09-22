@@ -9,7 +9,7 @@ import {
 
 
 
-function RivalCard({ width, opponentUsername, opponentScore, rivalAvatar, computerModeStart }) {
+function RivalCard({ width, username, theNumber, avatar, computerModeStart, myTurn = true, warningRival }) {
   const style = {
     root: {
       backgroundColor: 'white',
@@ -18,6 +18,10 @@ function RivalCard({ width, opponentUsername, opponentScore, rivalAvatar, comput
       width: `${width / 2}px`,
       height: `${width / 1.2}px`,
       padding: `${width / 6}px`,
+      boxShadow: `${!myTurn 
+        ? '0px 0px 20px 0px #0067c2'
+        : '0px 0px 0px 0px #d6d6d6' 
+      }`,
     },
     font: {
       fontSize: `${width/15}px`,
@@ -39,7 +43,7 @@ function RivalCard({ width, opponentUsername, opponentScore, rivalAvatar, comput
     <Paper style={style.root}>
       <Grid container direction='column' justify='center' alignItems='center'>
 
-        {!opponentUsername.length ? (
+        {!username.length ? (
           <Button color="secondary" variant="outlined" style={style.button}  onClick={computerModeStart}>
             <Typography style={style.font}>
               컴퓨터<br/>대결시작
@@ -47,16 +51,35 @@ function RivalCard({ width, opponentUsername, opponentScore, rivalAvatar, comput
           </Button>
         ) : (
           <>
-            <img src={rivalAvatar} style={style.avatarImg} />
+            <img src={avatar} style={style.avatarImg} />
             <Typography style={style.font}>
-              {opponentUsername}
+              {username}
             </Typography>
           </>
         )}
 
         <Typography style={style.countFont}>
-          {opponentScore}
+          {theNumber}
         </Typography>
+        {warningRival === 1 ? (
+          <div
+            style={{
+              backgroundColor: 'yellow',
+              width: `${document.body.clientWidth/80}px`,
+              height: `${document.body.clientWidth/50}px`,
+              border: `${document.body.clientWidth/400}px solid #000`,
+            }}
+          />
+        ) : warningRival === 2 ? (
+          <div
+            style={{
+              backgroundColor: 'red',
+              width: `${document.body.clientWidth/80}px`,
+              height: `${document.body.clientWidth/50}px`,
+              border: `${document.body.clientWidth/400}px solid #000`,
+            }}
+          />
+        ) : null}
       </Grid>
     </Paper>
   )

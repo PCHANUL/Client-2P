@@ -370,8 +370,8 @@ class MoleGame extends Component {
         <Grid item>
           <RivalCard 
             width={this.state.width}
-            opponentUsername={this.state.opponentUsername} 
-            opponentScore={this.state.opponentScore}
+            username={this.state.opponentUsername} 
+            theNumber={this.state.opponentScore}
             rivalAvatar={this.state.rivalAvatar}
             computerModeStart={this.computerModeStart.bind(this)}
           />
@@ -387,7 +387,7 @@ class MoleGame extends Component {
           <UserCard 
             width={this.state.width} 
             userAvatar={this.state.userAvatar} 
-            myScore={this.state.myScore} 
+            theNumber={this.state.myScore} 
           />
         </Grid>
 
