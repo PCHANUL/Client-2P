@@ -75,8 +75,8 @@ function getModalStyle() {
     top: `${top}%`,
     left: `${left}%`,
     transform: `translate(-${top}%, -${left}%)`,
+    padding: '2px',
     position: 'absolute',
-    width: 400,
     backgroundColor: 'white',
     border: '2px solid #000',
   };
@@ -86,11 +86,10 @@ let modalStyle = getModalStyle()
 
 const body = (
   <div style={modalStyle}>
-    <h2 id="simple-modal-title">Text in a modal</h2>
-    <p id="simple-modal-description">
-      Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+    <p>
+      게임 중 화면크기 변경은<br />
+      오류를 발생시킬 수 있습니다.
     </p>
-    {/* <SimpleModal /> */}
   </div>
 );
 
@@ -102,8 +101,8 @@ class MoleGame extends Component {
       myScore: 0,
       opponentScore: 0,
       opponentUsername: '',
-      width: document.body.clientWidth / 4,
-      height: document.body.clientWidth / 4,
+      width: document.body.clientWidth > 750 ? document.body.clientWidth / 4 : document.body.clientWidth / 2,
+      height: document.body.clientWidth > 750 ? document.body.clientWidth / 4 : document.body.clientWidth / 2,
       currentMole: 0,
 
       // emoji
@@ -175,7 +174,7 @@ class MoleGame extends Component {
         setTimeout(() => {
           this.handleClose();
           console.log('bbb')
-        }, 2000)
+        }, 1000)
 
       }
       
@@ -328,8 +327,8 @@ class MoleGame extends Component {
     this.stageWidth = document.body.clientWidth;
     this.stageHeight = document.body.clientHeight;
 
-    this.canvas.width = Math.floor(this.stageWidth / 4);
-    this.canvas.height = Math.floor(this.stageWidth / 4);
+    this.canvas.width = Math.floor(document.body.clientWidth > 750 ? this.stageWidth / 4 : this.stageWidth / 2);
+    this.canvas.height = Math.floor(document.body.clientWidth > 750 ? this.stageWidth / 4 : this.stageWidth / 2);
 
     this.setState({ width: this.canvas.width, height: this.canvas.height });
   }

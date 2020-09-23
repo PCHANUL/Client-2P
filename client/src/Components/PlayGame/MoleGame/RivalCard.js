@@ -46,8 +46,27 @@ function RivalCard({
     }
   }
 
+  const mobileStyle = {
+    root: {
+      backgroundColor: !cardTheme ? 'white' : 'transparent',
+      border: !cardTheme ? null : '2px solid #636363',
+      marginLeft: '40px',
+      borderRadius: `${width / 10}px`,
+      width: `${width / 2}px`,
+      height: `${width / 1.2}px`,
+      padding: `${width / 6}px`,
+      boxShadow: `${!myTurn 
+        ? '0px 0px 20px 0px #0067c2'
+        : '0px 0px 0px 0px #d6d6d6' 
+      }`,
+      position: 'fixed',
+      bottom: '10%',
+      left: '10%',
+    },
+  }
+
   return (
-    <Paper style={style.root}>
+    <Paper style={document.body.clientWidth > 750 ? style.root : mobileStyle.root}>
       <Grid container direction='column' justify='center' alignItems='center'>
 
         {!username.length ? (
