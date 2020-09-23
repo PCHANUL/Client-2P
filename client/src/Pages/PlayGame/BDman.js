@@ -607,7 +607,6 @@ class Game extends Component {
     const { classes, avatarImg } = this.props;
 
     return (
-      <>
       <Grid container direction='row' justify='space-evenly' alignItems='center'>
         {this.state.winner !== '' 
           ? this.state.rivalName === 'COMPUTER'
@@ -659,8 +658,6 @@ class Game extends Component {
           tileData={this.tileData}
         />
       </Grid>
-      
-      </>
     );
   }
 }

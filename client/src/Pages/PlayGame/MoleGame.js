@@ -9,7 +9,7 @@ import UserCard from '../../Components/PlayGame/MoleGame/UserCard'
 import RivalCard from '../../Components/PlayGame/MoleGame/RivalCard'
 import Emoji from '../../Components/PlayGame/Emoji';
 
-import { Paper, Button, Grid, Fab, Tooltip, GridList, GridListTile, Typography } from '@material-ui/core';
+import { Paper, Grid, Modal } from '@material-ui/core';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import { withStyles } from '@material-ui/core/styles';
 import { isDeleteExpression } from 'typescript';
@@ -61,7 +61,38 @@ const styles = (theme) => ({
 });
 
 let moles = [];
-let moleTimer
+let moleTimer;
+
+function rand() {
+  return Math.round(Math.random() * 20) - 10;
+}
+
+function getModalStyle() {
+  const top = 50 + rand();
+  const left = 50 + rand();
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+    position: 'absolute',
+    width: 400,
+    backgroundColor: 'white',
+    border: '2px solid #000',
+  };
+}
+
+let modalStyle = getModalStyle()
+
+const body = (
+  <div style={modalStyle}>
+    <h2 id="simple-modal-title">Text in a modal</h2>
+    <p id="simple-modal-description">
+      Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+    </p>
+    {/* <SimpleModal /> */}
+  </div>
+);
 
 class MoleGame extends Component {
   constructor(props) {
@@ -80,6 +111,8 @@ class MoleGame extends Component {
       rivalAvatar: '',
       showEmojis: false,
       isActive: false,
+
+      open: false,
     };
     this.canvas = null;
     this.ctx = null;
@@ -118,6 +151,14 @@ class MoleGame extends Component {
     }
   }
 
+  handleOpen = () => {
+    this.setState({open: true});
+  };
+
+  handleClose = () => {
+    this.setState({open: false});
+  };
+
   componentDidMount() {
     this.canvas = document.getElementById('canvas');
     this.ctx = this.canvas.getContext('2d');
@@ -125,7 +166,21 @@ class MoleGame extends Component {
     this.clickedCursor = document.getElementById('clicked');
 
     // 화면크기 재설정 이벤트
-    // window.addEventListener('resize', this.resize.bind(this), false);
+    window.addEventListener('resize', (() => {
+
+      if (this.state.open === false) {
+        console.log('aaaaaa')
+        this.handleOpen()
+  
+        setTimeout(() => {
+          this.handleClose();
+          console.log('bbb')
+        }, 2000)
+
+      }
+      
+    }), false);
+
     this.resize();
     window.requestAnimationFrame(this.animate.bind(this));
 
@@ -361,12 +416,25 @@ class MoleGame extends Component {
 
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center' style={{ marginTop: `${this.state.width/4}px`}}>
-        {this.state.winner !== '' 
-          ? this.state.opponentUsername === 'COMPUTER'
-            ? <Gameover winner={this.state.winner} isComputer={true}/>
-            : <Gameover winner={this.state.winner} />
-          : null}
+        {this.state.winner !== '' ? (
+          this.state.opponentUsername === 'COMPUTER'
+            ) ? (
+              <Gameover winner={this.state.winner} isComputer={true}/>
+            ) : (
+              <Gameover winner={this.state.winner} />
+          ) : (
+            null
+        )}
 
+        <Modal
+          open={this.state.open}
+          onClose={this.handleClose}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
+          {body}
+        </Modal>
+        
         <Grid item>
           <RivalCard 
             width={this.state.width}

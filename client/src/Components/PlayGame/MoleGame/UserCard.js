@@ -44,7 +44,7 @@ function UserCard({
   }
 
   return (
-    <Paper style={style.root}>
+    <Paper style={document.body.clientWidth < 750 ? style.root : null}>
       <Grid container direction='column' justify='center' alignItems='center'>
         <img src={userAvatar} style={style.avatarImg} />
         <Typography style={style.font}>
