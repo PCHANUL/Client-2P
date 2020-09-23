@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import cookie from 'react-cookies';
 import {
   Paper,
@@ -13,15 +13,34 @@ function UserCard({
   cardTheme,
 }) {
 
+  const [styleName, setStyleName] = useState({});
+
+  useEffect(() => {
+    resize();
+    window.addEventListener('resize', resize, false);
+    return () => {
+      window.removeEventListener('resize', resize, false);
+    }
+  }, [])
+
+  const resize = () => {
+    if (window.innerWidth > 750) {
+      setStyleName(style);
+    } else {
+      setStyleName(mobileStyle);
+    }
+  };
+
+
   const style = {
     root: {
-      backgroundColor: !cardTheme ? 'white' : 'transparent',
-      border: !cardTheme ? null : '2px solid #636363',
+      backgroundColor: !cardTheme ? 'white' : 'black',
+      // border: !cardTheme ? null : '5px solid #fff',
       marginRight: '40px',
       borderRadius: `${width / 10}px`,
       width: `${width / 2}px`,
       height: `${width / 1.2}px`,
-      padding: `${width / 6}px`,
+      padding: `${width / 9}px`,
       boxShadow: `${warningAlert 
         ? '0px 0px 20px 0px #ff5c5c' 
         : myTurn 
@@ -47,31 +66,42 @@ function UserCard({
     root: {
       backgroundColor: !cardTheme ? 'white' : 'transparent',
       border: !cardTheme ? null : '2px solid #636363',
-      marginRight: '40px',
-      borderRadius: `${width / 10}px`,
-      width: `${width / 2}px`,
-      height: `${width / 1.2}px`,
-      padding: `${width / 6}px`,
+      borderRadius: `${width / 20}px`,
+      width: `${width / 4}px`,
+      height: `${width / 2.4}px`,
+      padding: `${width / 12}px`,
       boxShadow: `${warningAlert 
         ? '0px 0px 20px 0px #ff5c5c' 
         : myTurn 
-        ? `0px 0px ${width / 15}px 0px #0067c2`
+        ? `0px 0px ${width / 30}px 0px #0067c2`
         : '0px 0px 0px 0px #d6d6d6'
       }`,
       position: 'fixed',
-      bottom: '10%',
-      right: '10%',
+      bottom: '0%',
+      right: '0%',
     },
+    font: {
+      color: !cardTheme ? '#000' : '#fff',
+      fontSize: `${width/30}px`,
+    },
+    countFont: {
+      color: !cardTheme ? '#000' : '#fff',
+      fontSize: `${width/10}px`,
+    },
+    avatarImg: {
+      width: width/4,
+      height: width/4.4,
+    }
   }
 
   return (
-    <Paper style={document.body.clientWidth > 750 ? style.root : mobileStyle.root}>
+    <Paper style={styleName.root}>
       <Grid container direction='column' justify='center' alignItems='center'>
-        <img src={userAvatar} style={style.avatarImg} />
-        <Typography style={style.font}>
+        <img src={userAvatar} style={styleName.avatarImg} />
+        <Typography style={styleName.font}>
           {cookie.load('username')}
         </Typography>
-        <Typography style={style.countFont}>
+        <Typography style={styleName.countFont}>
           {theNumber}
         </Typography>
         {yellowCard === 1 ? (

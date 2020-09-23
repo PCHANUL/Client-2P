@@ -79,6 +79,8 @@ class NumsGame extends Component {
       opponentUsername: '',
       width: document.body.clientWidth / 4,
       height: document.body.clientWidth / 2,
+      canvasHeight: 0,
+      canvasWidth: 0,
       currentMole: 0,
       clickedNums: 0,
       count: '대기',
@@ -148,6 +150,8 @@ class NumsGame extends Component {
       });
     })();
 
+    this.setState({ canvasHeight: document.querySelector('#numsgame').clientHeight})
+    this.setState({ canvasWidth: document.querySelector('#numsgame').clientWidth})
     this.canvas = document.getElementById('canvas');
     this.ctx = this.canvas.getContext('2d');
 
@@ -579,7 +583,17 @@ class NumsGame extends Component {
     const { classes } = this.props;
 
     return (
-      <Grid container direction='row' justify='space-evenly' alignItems='center'>
+      <Grid container direction='row' justify='space-evenly' alignItems='center' id='numsgame'
+        style={{
+          position: 'fixed',
+          width: '90vw',
+          height: this.state.height * 0.9,
+          top: '50%',
+          right: '50%',
+          marginTop: `-${this.state.canvasHeight / 2}px`,
+          marginRight: `-${this.state.canvasWidth / 2}px`,
+        }}
+      >
         {this.state.winner !== '' 
           ? this.state.rivalName === 'COMPUTER'
             ? <Gameover winner={this.state.winner} isComputer={true}/>

@@ -78,6 +78,9 @@ class Game extends Component {
       width: Math.floor(document.body.clientWidth / 4),
       height: Math.floor(document.body.clientHeight / 1.2),
 
+      canvasHeight: 0,
+      canvasWidth: 0,
+
       // score
       myScore: 100,
       rivalScore: 100,
@@ -271,7 +274,8 @@ class Game extends Component {
       });
     })();
 
-
+    this.setState({ canvasHeight: document.querySelector('#bdman').clientHeight})
+    this.setState({ canvasWidth: document.querySelector('#bdman').clientWidth})
     this.canvas = document.getElementById('canvas');
     this.ctx = this.canvas.getContext('2d');
 
@@ -607,7 +611,17 @@ class Game extends Component {
     const { classes, avatarImg } = this.props;
 
     return (
-      <Grid container direction='row' justify='space-evenly' alignItems='center'>
+      <Grid container direction='row' justify='space-evenly' alignItems='center' id='bdman'
+        style={{
+          position: 'fixed',
+          width: '90vw',
+          height: this.state.height * 1.1,
+          top: '50%',
+          right: '50%',
+          marginTop: `-${this.state.canvasHeight / 2}px`,
+          marginRight: `-${this.state.canvasWidth / 2}px`,
+        }}
+      >
         {this.state.winner !== '' 
           ? this.state.rivalName === 'COMPUTER'
             ? <Gameover winner={this.state.winner} isComputer={true}/>
@@ -631,7 +645,8 @@ class Game extends Component {
             style={{
               width: this.state.width,
               height: this.state.height,
-              boxShadow: '0px 0px 20px 0px #d6d6d6',
+              border: '0.3vw solid #fff',
+              // boxShadow: '0px 0px 200px 0px #616161',
             }}
             className={classes.Paper}
           >

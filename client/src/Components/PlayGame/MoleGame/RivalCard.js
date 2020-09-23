@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import cookie from 'react-cookies';
 import {
   Paper,
@@ -14,15 +14,35 @@ function RivalCard({
   myTurn = true, warningRival,
   cardTheme
 }) {
+
+  const [styleName, setStyleName] = useState({});
+
+  useEffect(() => {
+    resize();
+    window.addEventListener('resize', resize, false);
+    return () => {
+      window.removeEventListener('resize', resize, false);
+    }
+  }, [])
+
+  const resize = () => {
+    if (window.innerWidth > 750) {
+      setStyleName(style);
+    } else {
+      setStyleName(mobileStyle);
+    }
+  };
+
+
   const style = {
     root: {
-      backgroundColor: !cardTheme ? 'white' : 'transparent',
-      border: !cardTheme ? null : '2px solid #636363',
+      backgroundColor: !cardTheme ? 'white' : 'black',
+      // border: !cardTheme ? null : '5px solid #fff',
       marginLeft: '40px',
       borderRadius: `${width / 10}px`,
       width: `${width / 2}px`,
       height: `${width / 1.2}px`,
-      padding: `${width / 6}px`,
+      padding: `${width / 9}px`,
       boxShadow: `${!myTurn 
         ? '0px 0px 20px 0px #0067c2'
         : '0px 0px 0px 0px #d6d6d6' 
@@ -50,41 +70,56 @@ function RivalCard({
     root: {
       backgroundColor: !cardTheme ? 'white' : 'transparent',
       border: !cardTheme ? null : '2px solid #636363',
-      marginLeft: '40px',
-      borderRadius: `${width / 10}px`,
-      width: `${width / 2}px`,
-      height: `${width / 1.2}px`,
-      padding: `${width / 6}px`,
+      borderRadius: `${width / 20}px`,
+      width: `${width / 4}px`,
+      height: `${width / 2.4}px`,
+      padding: `${width / 12}px`,
       boxShadow: `${!myTurn 
         ? '0px 0px 20px 0px #0067c2'
         : '0px 0px 0px 0px #d6d6d6' 
       }`,
       position: 'fixed',
-      bottom: '10%',
-      left: '10%',
+      bottom: '0%',
+      left: '0%',
     },
+    font: {
+      color: !username.length ? null : '#fff',
+      fontSize: `${width/30}px`,
+    },
+    countFont: {
+      color: !cardTheme ? '#000' : '#fff',
+      fontSize: `${width/10}px`,
+    },
+    button: {
+      width: `${width / 4}px`,
+      height: `${width / 4}px`,
+    },
+    avatarImg: {
+      width: width/4,
+      height: width/4.4,
+    }
   }
 
   return (
-    <Paper style={document.body.clientWidth > 750 ? style.root : mobileStyle.root}>
+    <Paper style={styleName.root}>
       <Grid container direction='column' justify='center' alignItems='center'>
 
         {!username.length ? (
-          <Button color="secondary" variant="outlined" style={style.button} onClick={computerModeStart}>
-            <Typography style={style.font}>
+          <Button color="secondary" variant="outlined" style={styleName.button} onClick={computerModeStart}>
+            <Typography style={styleName.font}>
               컴퓨터<br/>대결시작
             </Typography>
           </Button>
         ) : (
           <>
-            <img src={avatar} style={style.avatarImg} />
-            <Typography style={style.font}>
+            <img src={avatar} style={styleName.avatarImg} />
+            <Typography style={styleName.font}>
               {username}
             </Typography>
           </>
         )}
 
-        <Typography style={style.countFont}>
+        <Typography style={styleName.countFont}>
           {theNumber}
         </Typography>
         {warningRival === 1 ? (

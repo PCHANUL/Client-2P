@@ -10,35 +10,21 @@ import NumsGame from './NumsGame';
 import BDman from './BDman';
 import MoleGame from './MoleGame';
 import PongGame from './PongGame';
+import { Translate } from '@material-ui/icons';
 
 
 const styles = (theme) => ({
   paper: {
     backgroundColor: 'transparent',
-    width: theme.shadows[20],
+    position: 'fixed',
+    width: '90vw',
+    height: '40vw',
+    top: '50%',
+    right: '50%',
+    marginTop: '-20vw',
+    marginRight: '-45vw',
     
-  },
-  gameover: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid #000',
-    boxShadow: theme.shadows[5],
-    // padding: theme.spacing(2, 4, 3),
-    alignItems: 'center',
-    justifyContent: 'center',
-    display: 'flex',
-    width: 500,
-    height: 200,
-    margin: theme.spacing(3, 3),
-  },
-  userCard: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid #000',
-    boxShadow: theme.shadows[5],
-    // padding: theme.spacing(2, 4, 3),
-    alignItems: 'center',
-    width: 200,
-    height: 240,
-    margin: theme.spacing(3, 3),
+    
   },
   space: {
     height: document.body.clientHeight,
@@ -47,53 +33,47 @@ const styles = (theme) => ({
     // alignItems: 'center',
     justifyContent: 'center',
   },
-  user1: {
-    height: 200,
-    width: 200,
-  },
-  user2: {
-    height: 200,
-    width: 200,
-  },
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    // flexGrow: 1,
-  },
+  
 });
 
 class PlayGame extends Component {
   constructor(props){
     super(props);
+    this.state = {
+      gameHeight: 0,
+      gameWidth: 0,
+    }
     
     this.games = [
       {},{
         tag: <MoleGame />,
         color: '#00babd',
-        pos: 90,
+        id: '#molegame',
         shadow: '1px 1px 100px 0px #00535c',
       }, {
         tag: <BDman />,
         color: '#000',
-        pos: 90,
-        shadow: '-40px 0px 100px 0px #5c0200, 30px 0px 100px 0px #5e5d00',
+        id: '#bdman',
+        shadow: '-40px -40px 100px 0px #5c0200, 30px 30px 100px 0px #5e5d00',
       }, {
         tag: <NumsGame />,
         color: '#f0f0f0',
-        pos: 60,
+        id: '#numsgame',
         shadow: '1px 1px 100px 0px #d6d6d6',
       }
     ];
   }
 
   componentWillMount() {
+    
     if (!cookie.load('selectedGame')) {
       this.props.history.push('/')
     } 
-    
+  }
+  
+  componentDidMount() {
+    this.setState({ gameHeight: document.querySelector(this.games[cookie.load('selectedGame')]['id']).clientHeight})
+    this.setState({ gameWidth: document.querySelector(this.games[cookie.load('selectedGame')]['id']).clientWidth})
   }
 
   componentWillUnmount() {
@@ -102,6 +82,7 @@ class PlayGame extends Component {
 
   render(){
     const { classes } = this.props;
+
     return (
       <div>
         {
@@ -111,11 +92,19 @@ class PlayGame extends Component {
               style={{ backgroundColor: this.games[cookie.load('selectedGame')]['color'] }}
             >
               <Paper 
-                className={classes.paper} 
                 style={{ 
-                  paddingTop: `${this.games[cookie.load('selectedGame')]['pos']}px`,
-                  height: `${Math.floor(document.body.clientHeight / 1.2) + this.games[cookie.load('selectedGame')]['pos']}px`,
+                  // paddingTop: `${this.games[cookie.load('selectedGame')]['pos']}px`,
+                  // height: `${Math.floor(document.body.clientHeight / 1.2) + this.games[cookie.load('selectedGame')]['pos']}px`,
+                  backgroundColor: 'transparent',
+                  position: 'fixed',
+                  width: `${this.state.gameWidth}px`,
+                  height: `${this.state.gameHeight}px`,
+                  top: '50%',
+                  right: '50%',
+                  marginTop: `-${this.state.gameHeight / 2}px`,
+                  marginRight: `-${this.state.gameWidth / 2}px`,
                   boxShadow: this.games[cookie.load('selectedGame')]['shadow'],
+                  border: cookie.load('selectedGame') === '2' ? '0.1vw solid #fff' : '',
                 }}>
                   { this.games[cookie.load('selectedGame')]['tag'] }
               </Paper> 
