@@ -10,6 +10,7 @@ import Emoji from '../../Components/PlayGame/Emoji';
 import { Paper, Typography, Tooltip, Fab, Grid, GridList, GridListTile, Button } from '@material-ui/core';
 
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import { withStyles } from '@material-ui/core/styles';
 import { Block } from './BDBlock';
@@ -75,8 +76,11 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: Math.floor(document.body.clientWidth / 4),
+      width: Math.floor(document.body.clientWidth / 3.5),
       height: Math.floor(document.body.clientHeight / 1.2),
+
+      canvasHeight: 0,
+      canvasWidth: 0,
 
       // score
       myScore: 100,
@@ -271,7 +275,8 @@ class Game extends Component {
       });
     })();
 
-
+    this.setState({ canvasHeight: document.querySelector('#bdman').clientHeight})
+    this.setState({ canvasWidth: document.querySelector('#bdman').clientWidth})
     this.canvas = document.getElementById('canvas');
     this.ctx = this.canvas.getContext('2d');
 
@@ -441,7 +446,7 @@ class Game extends Component {
     this.stageWidth = document.body.clientWidth;
     this.stageHeight = document.body.clientHeight;
     
-    this.canvas.width = Math.floor(this.stageWidth / 4);
+    this.canvas.width = Math.floor(this.stageWidth / 3.5);
     this.canvas.height = Math.floor(this.stageHeight / 1.2);
 
     this.setState({ width: this.canvas.width, height: this.canvas.height });
@@ -607,13 +612,33 @@ class Game extends Component {
     const { classes, avatarImg } = this.props;
 
     return (
-      <>
-      <Grid container direction='row' justify='space-evenly' alignItems='center'>
-        {this.state.winner !== '' 
-          ? this.state.rivalName === 'COMPUTER'
-            ? <Gameover winner={this.state.winner} isComputer={true}/>
-            : <Gameover winner={this.state.winner} />
-          : null}
+      <Grid container direction='row' justify='space-evenly' alignItems='center' id='bdman'
+        style={{
+          position: 'fixed',
+          width: '80vw',
+          height: this.state.height * 1.1,
+          top: '50%',
+          right: '50%',
+          marginTop: `-${this.state.canvasHeight / 2}px`,
+          marginRight: `-45vw`,
+        }}
+      >
+        {this.state.winner !== '' ? 
+          this.state.rivalName === 'COMPUTER' ? (
+            <Gameover winner={this.state.winner} isComputer={true}/>
+          ) : (
+            <Gameover winner={this.state.winner} />
+          ) : 
+          null
+        }
+
+        <Button style={{
+          position: 'fixed',
+          top: '2%',
+          right: '2%',
+        }}>
+          <ExitToAppIcon style={{ color: '#fff', fontSize: '3vw' }}/>
+        </Button>
 
         <Grid item>
           <RivalCard 
@@ -632,9 +657,10 @@ class Game extends Component {
             style={{
               width: this.state.width,
               height: this.state.height,
-              boxShadow: '0px 0px 20px 0px #d6d6d6',
+              border: '0.3vw solid #fff',
+              // boxShadow: '0px 0px 200px 0px #616161',
             }}
-            className={classes.Paper}
+            // className={classes.Paper}
           >
             <canvas id='canvas' />
           </Paper>
@@ -659,8 +685,6 @@ class Game extends Component {
           tileData={this.tileData}
         />
       </Grid>
-      
-      </>
     );
   }
 }

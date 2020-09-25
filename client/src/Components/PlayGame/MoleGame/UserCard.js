@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import cookie from 'react-cookies';
 import {
   Paper,
@@ -6,40 +6,42 @@ import {
   Typography
 } from '@material-ui/core';
 
+import YellowCard from './YellowCard'
+
 
 function UserCard({ 
-  width, userAvatar, theNumber, warningAlert, 
+  userAvatar, theNumber, warningAlert, 
   myTurn, yellowCard,  // numsGame
   cardTheme,
 }) {
 
+
   const style = {
     root: {
-      backgroundColor: !cardTheme ? 'white' : 'transparent',
-      border: !cardTheme ? null : '2px solid #636363',
-      marginRight: '40px',
-      borderRadius: `${width / 10}px`,
-      width: `${width / 2}px`,
-      height: `${width / 1.2}px`,
-      padding: `${width / 6}px`,
+      backgroundColor: !cardTheme ? 'white' : 'black',
+      marginRight: '7vw',
+      borderRadius: '2vw',
+      width: '13vw',
+      height: '21vw',
+      padding: '2vw',
       boxShadow: `${warningAlert 
         ? '0px 0px 20px 0px #ff5c5c' 
         : myTurn 
-        ? `0px 0px ${width / 15}px 0px #0067c2`
+        ? `0px 0px 2vw 0px #0067c2`
         : '0px 0px 0px 0px #d6d6d6'
       }`,
     },
     font: {
       color: !cardTheme ? '#000' : '#fff',
-      fontSize: `${width/15}px`,
+      fontSize: '1.5vw',
     },
     countFont: {
       color: !cardTheme ? '#000' : '#fff',
-      fontSize: `${width/5}px`,
+      fontSize: '5vw',
     },
     avatarImg: {
-      width: width/2,
-      height: width/2.2,
+      width: '10vw',
+      height: '10vw',
     }
   }
 
@@ -53,25 +55,7 @@ function UserCard({
         <Typography style={style.countFont}>
           {theNumber}
         </Typography>
-        {yellowCard === 1 ? (
-          <div
-            style={{
-              backgroundColor: 'yellow',
-              width: `${document.body.clientWidth/80}px`,
-              height: `${document.body.clientWidth/50}px`,
-              border: `${document.body.clientWidth/400}px solid #000`,
-            }}
-          />
-        ) : yellowCard === 2 ? (
-          <div
-            style={{
-              backgroundColor: 'red',
-              width: `${document.body.clientWidth/80}px`,
-              height: `${document.body.clientWidth/50}px`,
-              border: `${document.body.clientWidth/400}px solid #000`,
-            }}
-          />
-        ) : null}
+        <YellowCard yellowCard={yellowCard} />
       </Grid>
     </Paper>
   )

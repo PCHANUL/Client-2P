@@ -9,7 +9,7 @@ import UserCard from '../../Components/PlayGame/MoleGame/UserCard'
 import RivalCard from '../../Components/PlayGame/MoleGame/RivalCard'
 import Emoji from '../../Components/PlayGame/Emoji';
 
-import { Paper, Button, Grid, Fab, Tooltip, GridList, GridListTile, Typography } from '@material-ui/core';
+import { Paper, Grid, Modal } from '@material-ui/core';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import { withStyles } from '@material-ui/core/styles';
 import { isDeleteExpression } from 'typescript';
@@ -57,11 +57,40 @@ const styles = (theme) => ({
     width: 200,
     height: 450,
   },
-  
 });
 
 let moles = [];
-let moleTimer
+let moleTimer;
+
+function rand() {
+  return Math.round(Math.random() * 20) - 10;
+}
+
+function getModalStyle() {
+  const top = 50 + rand();
+  const left = 50 + rand();
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+    padding: '2px',
+    position: 'absolute',
+    backgroundColor: 'white',
+    border: '2px solid #000',
+  };
+}
+
+let modalStyle = getModalStyle()
+
+const body = (
+  <div style={modalStyle}>
+    <p>
+      게임 중 화면크기 변경은<br />
+      오류를 발생시킬 수 있습니다.
+    </p>
+  </div>
+);
 
 class MoleGame extends Component {
   constructor(props) {
@@ -71,8 +100,8 @@ class MoleGame extends Component {
       myScore: 0,
       opponentScore: 0,
       opponentUsername: '',
-      width: document.body.clientWidth / 4,
-      height: document.body.clientWidth / 4,
+      width: document.body.clientWidth > 750 ? document.body.clientWidth / 3.5 : document.body.clientWidth / 2,
+      height: document.body.clientWidth > 750 ? document.body.clientWidth / 3.5 : document.body.clientWidth / 2,
       currentMole: 0,
 
       // emoji
@@ -80,6 +109,10 @@ class MoleGame extends Component {
       rivalAvatar: '',
       showEmojis: false,
       isActive: false,
+
+      open: false,
+      gameHeight: 0,
+      gameWidth: 0,
     };
     this.canvas = null;
     this.ctx = null;
@@ -118,33 +151,50 @@ class MoleGame extends Component {
     }
   }
 
+  handleOpen = () => {
+    this.setState({open: true});
+  };
+
+  handleClose = () => {
+    this.setState({open: false});
+  };
+
+  resizeAlert = () => {
+    if (this.state.open === false) {
+      this.handleOpen()
+
+      setTimeout(() => {
+        this.handleClose();
+      }, 1000)
+    }
+  }
+
   componentDidMount() {
     this.canvas = document.getElementById('canvas');
     this.ctx = this.canvas.getContext('2d');
     this.hemmer = document.getElementById('hemmer');
     this.clickedCursor = document.getElementById('clicked');
 
-    // 화면크기 재설정 이벤트
-    // window.addEventListener('resize', this.resize.bind(this), false);
     this.resize();
     window.requestAnimationFrame(this.animate.bind(this));
 
-    this.canvas.addEventListener(
-      'mousedown',
-      (e) => {
+    this.setState({ canvasHeight: document.querySelector('#molegame').clientHeight})
+    this.setState({ canvasWidth: document.querySelector('#molegame').clientWidth})
+
+    // 화면크기 재설정 이벤트
+    window.addEventListener('resize', () => {
+      // this.resize
+      this.resizeAlert()
+    }, false);
+
+    this.canvas.addEventListener('mousedown', (e) => {
         this.mousePressed(e.layerX, e.layerY);
         this.cursorClick = true;
-      },
-      false
-    );
+      }, false);
 
-    this.canvas.addEventListener(
-      'mouseup',
-      (e) => {
+    this.canvas.addEventListener('mouseup', (e) => {
         this.cursorClick = false;
-      },
-      false
-    );
+      }, false);
 
     this.canvas.addEventListener('mousemove', (e) => {
       this.cursorEnter = true;
@@ -170,15 +220,6 @@ class MoleGame extends Component {
     });
 
     this.socket.on('updateScore', (data) => {
-      /**
-       * data = {
-       *    index: 0~15,
-       *    score: {
-       *      player1: 0,
-       *      player2: 10,
-       *    }
-       * }
-       */
       moles[data.index].hideMole();
       const [player1, player2] = Object.keys(data.score);
       if (player1 === cookie.load('username')) {
@@ -221,6 +262,11 @@ class MoleGame extends Component {
 
   componentWillUnmount() {
     moles = [];
+    window.addEventListener('resize', () => {
+      this.resize()
+      this.resizeAlert()
+    }, false);
+
     if(cookie.load('selectedRoom') === undefined) {
       this.socket.emit('leaveComputerMode')
       clearInterval(moleTimer);
@@ -273,8 +319,8 @@ class MoleGame extends Component {
     this.stageWidth = document.body.clientWidth;
     this.stageHeight = document.body.clientHeight;
 
-    this.canvas.width = Math.floor(this.stageWidth / 4);
-    this.canvas.height = Math.floor(this.stageWidth / 4);
+    this.canvas.width = Math.floor(document.body.clientWidth > 750 ? this.stageWidth / 3.5 : this.stageWidth / 2);
+    this.canvas.height = Math.floor(document.body.clientWidth > 750 ? this.stageWidth / 3.5 : this.stageWidth / 2);
 
     this.setState({ width: this.canvas.width, height: this.canvas.height });
   }
@@ -360,19 +406,44 @@ class MoleGame extends Component {
     const { classes, avatar } = this.props;
 
     return (
-      <Grid container direction='row' justify='space-evenly' alignItems='center' style={{ marginTop: `${this.state.width/4}px`}}>
-        {this.state.winner !== '' 
-          ? this.state.opponentUsername === 'COMPUTER'
-            ? <Gameover winner={this.state.winner} isComputer={true}/>
-            : <Gameover winner={this.state.winner} />
-          : null}
+      <Grid id='molegame' container direction='row' justify='space-evenly' alignItems='center' 
+        style={{ 
+          position: 'fixed',
+          width: '90vw',
+          height: this.state.height * 1.4,
+          top: '50%',
+          right: '50%',
+          // marginTop: '-20vw',
+          // marginRight: '-45vw',
+          marginTop: `-${this.state.canvasHeight / 2}px`,
+          marginRight: `-45vw`,
+        }}
+      >
+        {this.state.winner !== '' ? (
+          this.state.opponentUsername === 'COMPUTER'
+            ) ? (
+              <Gameover winner={this.state.winner} isComputer={true}/>
+            ) : (
+              <Gameover winner={this.state.winner} />
+          ) : (
+            null
+        )}
 
+        <Modal
+          open={this.state.open}
+          onClose={this.handleClose}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
+          {body}
+        </Modal>
+        
         <Grid item>
           <RivalCard 
             width={this.state.width}
             username={this.state.opponentUsername} 
             theNumber={this.state.opponentScore}
-            rivalAvatar={this.state.rivalAvatar}
+            avatar={this.state.rivalAvatar}
             computerModeStart={this.computerModeStart.bind(this)}
           />
         </Grid>

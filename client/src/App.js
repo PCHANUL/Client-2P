@@ -48,12 +48,16 @@ class App extends Component {
 
 
   render() {
+
     return (
       <div className='App'>
         {
           cookie.load('load')
           ? <div>
-              <Nav />
+              {this.props.history.location.pathname !== '/playgame'
+              ? <Nav /> 
+              : null}
+
               <Switch>
                 <Route exact path='/'>
                   <SelectGame />
