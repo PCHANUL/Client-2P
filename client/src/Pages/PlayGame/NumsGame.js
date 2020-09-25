@@ -159,16 +159,12 @@ class NumsGame extends Component {
     this.resize();
     window.requestAnimationFrame(this.animate.bind(this));
 
+    window.addEventListener('resize', this.resize.bind(this), false);
+
     // 마우스 클릭이벤트
-    this.canvas.addEventListener(
-      'mousedown',
-      (e) => {
-        if (this.state.myTurn) {
-          this.mousePressed(e.layerX, e.layerY);
-        }
-      },
-      false
-    );
+    this.canvas.addEventListener('mousedown', (e) => {
+      if (this.state.myTurn) this.mousePressed(e.layerX, e.layerY);
+    }, false);
 
     this.canvas.addEventListener('mouseup', (e) => {}, false);
 
@@ -268,6 +264,7 @@ class NumsGame extends Component {
   }
 
   componentWillUnmount() {
+    window.removeEventListener('resize', this.resize.bind(this), false);
     this.numPad = [];
     socket.disconnect();
   }
@@ -466,10 +463,17 @@ class NumsGame extends Component {
     this.stageWidth = document.body.clientWidth;
     this.stageHeight = document.body.clientHeight;
 
-    this.canvas.width = Math.floor(this.stageWidth / 4);
-    this.canvas.height = Math.floor(this.stageWidth / 2.4);
+    if (document.body.clientWidth > 750) {
+      this.canvas.width = Math.floor(this.stageWidth / 4);
+      this.canvas.height = Math.floor(this.stageWidth / 2.4);
+    }
 
     this.setState({ width: this.canvas.width, height: this.canvas.height });
+
+    this.numPad = [];
+    for (let i = 0; i < 14; i++) {
+      this.numPad.push(new KeyPad(this.state.width, this.state.height, this.state.width / 10, i));
+    }
   }
 
   turnChange(isMyturn) {
@@ -583,15 +587,16 @@ class NumsGame extends Component {
     const { classes } = this.props;
 
     return (
-      <Grid container direction='row' justify='space-evenly' alignItems='center' id='numsgame'
+      <Grid container direction='row' justify='space-evenly' alignItems='center' 
+        id='numsgame'
         style={{
           position: 'fixed',
           width: '90vw',
-          height: this.state.height * 0.9,
+          height: `${this.state.height * 0.9}px`,
           top: '50%',
           right: '50%',
-          marginTop: `-${this.state.canvasHeight / 2}px`,
-          marginRight: `-${this.state.canvasWidth / 2}px`,
+          marginTop: `-${(this.state.height * 0.9) / 2}px`,
+          marginRight: `-45vw`,
         }}
       >
         {this.state.winner !== '' 
@@ -608,7 +613,7 @@ class NumsGame extends Component {
             avatar={this.state.rivalAvatar}
             computerModeStart={this.computerModeStart.bind(this)}
             myTurn={this.state.myTurn}
-            warningRival={this.state.warningRival}
+            yellowCard={this.state.warningRival}
           />
         </Grid>
 
@@ -634,6 +639,61 @@ class NumsGame extends Component {
             yellowCard={this.state.warning}
           />
         </Grid>
+
+
+        {/* <Paper style={{
+          position: 'fixed',
+          bottom: '0%',
+          width: '100vw',
+          height: '30vw'
+        }}>
+          <Grid container direction='row' justify='center' alignItems='center'>
+            <Grid item>
+              {!this.state.rivalName ? (
+                <Button color="secondary" variant="outlined" style={{width: '15vw', height: '15vw'}} onClick={this.computerModeStart.bind(this)}>
+                  <Typography style={{ fontSize: '2vw' }}>
+                    컴퓨터<br/>대결시작
+                  </Typography>
+                </Button>
+              ) : (
+                <>
+                  <img src={this.state.rivalAvatar} style={{width: '15vw', height: '15vw'}} />
+                  <Typography style={{ fontSize: '2vw' }}>
+                    {this.state.rivalName}
+                  </Typography>
+                </>
+              )}
+          </Grid>
+
+          <Grid item>
+            <Typography style={{ fontSize: '10vw' }}>
+              {this.state.myTurn ? '대기' : this.state.count}
+            </Typography>
+          </Grid>
+
+          <Grid item>
+            <Typography style={{ fontSize: '10vw' }}>
+              {this.state.myTurn ? this.state.count : '대기'}
+            </Typography>
+          </Grid>
+
+
+          <Grid item>
+            <img src={this.state.userAvatar} 
+              style={{
+                width: '15vw',
+                height: '15vw',
+            }} />
+            <Typography style={{ fontSize: '2vw' }}>
+              {this.state.userName}
+            </Typography>
+          </Grid>
+
+          </Grid>
+
+        </Paper> */}
+
+
 
         <Emoji 
           openEmojiList={this.openEmojiList.bind(this)} 

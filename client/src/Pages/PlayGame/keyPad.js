@@ -104,26 +104,26 @@ export class KeyPad {
       ctx.fillStyle = '#fff';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+      ctx.arc(this.x, this.y, (stageWidth / 15), 0, 2 * Math.PI);
       ctx.stroke();
       
       if (index === 10){
         ctx.fillStyle = '#000';
-        ctx.font = `${this.radius}px serif`;
-        ctx.fillText('0', this.x - this.radius/2.5, this.y + this.radius/2.5);
+        ctx.font = `${(stageWidth / 15)}px serif`;
+        ctx.fillText('0', this.x - (stageWidth / 15)/2.5, this.y + (stageWidth / 15)/2.5);
       } else if (index === 11){
-        ctx.drawImage(this.backImg, this.x - this.radius/2.1, this.y - this.radius/2.3, this.radius, this.radius);
+        ctx.drawImage(this.backImg, this.x - (stageWidth / 15)/2.1, this.y - (stageWidth / 15)/2.3, (stageWidth / 15), (stageWidth / 15));
         setTimeout(() => (this.isClicked = false), 300);
       } else if (index === 12) {
-        ctx.drawImage(this.refreshImg, this.x - this.radius/2.1, this.y - this.radius/2.3, this.radius, this.radius);
+        ctx.drawImage(this.refreshImg, this.x - (stageWidth / 15)/2.1, this.y - (stageWidth / 15)/2.3, (stageWidth / 15), (stageWidth / 15));
         setTimeout(() => (this.isClicked = false), 300);
       } else if (index === 13) {
-        ctx.drawImage(this.enterImg, this.x - this.radius/2.1, this.y - this.radius/2.3, this.radius, this.radius);
+        ctx.drawImage(this.enterImg, this.x - (stageWidth / 15)/2.1, this.y - (stageWidth / 15)/2.3, (stageWidth / 15), (stageWidth / 15));
         setTimeout(() => (this.isClicked = false), 300);
       } else {
         ctx.fillStyle = '#000';
-        ctx.font = `${this.radius}px serif`;
-        ctx.fillText(`${this.index}`, this.x - this.radius/2.7, this.y + this.radius/2.7)
+        ctx.font = `${(stageWidth / 15)}px serif`;
+        ctx.fillText(`${this.index}`, this.x - (stageWidth / 15)/2.7, this.y + (stageWidth / 15)/2.7)
       }
     } else {
       ctx.fillStyle = '#fff';
@@ -131,25 +131,25 @@ export class KeyPad {
       ctx.shadowBlur = stageWidth/40;
       ctx.shadowOffsetY = stageWidth/100 * -1;
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+      ctx.arc(this.x, this.y, (stageWidth / 15), 0, 2 * Math.PI);
       ctx.fill();
       ctx.shadowBlur = 0;
       ctx.shadowOffsetY = 0;
 
       if (index === 10){
         ctx.fillStyle = '#000';
-        ctx.font = `${this.radius}px serif`;
-        ctx.fillText('0', this.x - this.radius/2.5, this.y + this.radius/2.5)
+        ctx.font = `${(stageWidth / 15)}px serif`;
+        ctx.fillText('0', this.x - (stageWidth / 15)/2.5, this.y + (stageWidth / 15)/2.5)
       } else if(index === 11){
-        ctx.drawImage(this.backImg, this.x - this.radius/2.1, this.y - this.radius/2.3, this.radius, this.radius)
+        ctx.drawImage(this.backImg, this.x - (stageWidth / 15)/2.1, this.y - (stageWidth / 15)/2.3, (stageWidth / 15), (stageWidth / 15))
       } else if (index === 12) {
-        ctx.drawImage(this.refreshImg, this.x - this.radius/2.1, this.y - this.radius/2.3, this.radius, this.radius)
+        ctx.drawImage(this.refreshImg, this.x - (stageWidth / 15)/2.1, this.y - (stageWidth / 15)/2.3, (stageWidth / 15), (stageWidth / 15))
       } else if (index === 13) {
-        ctx.drawImage(this.enterImg, this.x - this.radius/2.1, this.y - this.radius/2.3, this.radius, this.radius)
+        ctx.drawImage(this.enterImg, this.x - (stageWidth / 15)/2.1, this.y - (stageWidth / 15)/2.3, (stageWidth / 15), (stageWidth / 15))
       } else {
         ctx.fillStyle = '#000';
-        ctx.font = `${this.radius}px serif`;
-        ctx.fillText(`${this.index}`, this.x - this.radius/2.7, this.y + this.radius/2.7)
+        ctx.font = `${(stageWidth / 15)}px serif`;
+        ctx.fillText(`${this.index}`, this.x - (stageWidth / 15)/2.7, this.y + (stageWidth / 15)/2.7)
       }
     }
   }
