@@ -27,6 +27,24 @@ export class KeyPad {
     }
   }
 
+  position(stageWidth, stageHeight, index) {
+    if(index !== 0){
+      if (index < 5) {
+        this.x = stageWidth / 4.9 + (stageWidth / 5) * (index - 1);
+        this.y = stageHeight / 1.5;
+      } else if (index < 9) {
+        this.x = stageWidth / 4.9 + (stageWidth / 5) * (index - 5);
+        this.y = stageHeight / 1.5 + stageHeight / 10;
+      } else if (index < 13) {
+        this.x = stageWidth / 4.9 + (stageWidth / 5) * (index - 9);
+        this.y = stageHeight / 1.5 + (stageHeight / 10) * 2;
+      } else if (index === 13) {
+        this.x = stageWidth / 4.9 + (stageWidth / 5) * (index - 10);
+        this.y = stageHeight / 1.5 - stageHeight / 10;
+      }
+    }
+  }
+
   clicked(mouseX, mouseY, index, limit) {
     let objToMouseX = Math.pow(this.x - mouseX, 2);
     let objToMouseY = Math.pow(this.y - mouseY, 2);
@@ -51,9 +69,6 @@ export class KeyPad {
   }
 
   draw (ctx, stageWidth, stageHeight, index) {
-    // click된 상태
-    // 클릭한 번호
-
     if (this.isClicked) {
       ctx.fillStyle = '#fff';
       ctx.lineWidth = 1;
@@ -81,24 +96,6 @@ export class KeyPad {
       ctx.fillStyle = '#000';
       ctx.font = `${this.radius}px serif`;
       ctx.fillText(`${this.index !== 10 ? this.index : this.keys[index]}`, this.x - this.radius / 3, this.y + this.radius / 3)
-    }
-  }
-
-  position(stageWidth, stageHeight, index) {
-    if(index !== 0){
-      if (index < 5) {
-        this.x = stageWidth / 4.9 + (stageWidth / 5) * (index - 1);
-        this.y = stageHeight / 1.5;
-      } else if (index < 9) {
-        this.x = stageWidth / 4.9 + (stageWidth / 5) * (index - 5);
-        this.y = stageHeight / 1.5 + stageHeight / 10;
-      } else if (index < 13) {
-        this.x = stageWidth / 4.9 + (stageWidth / 5) * (index - 9);
-        this.y = stageHeight / 1.5 + (stageHeight / 10) * 2;
-      } else if (index === 13) {
-        this.x = stageWidth / 4.9 + (stageWidth / 5) * (index - 10);
-        this.y = stageHeight / 1.5 - stageHeight / 10;
-      }
     }
   }
 }
