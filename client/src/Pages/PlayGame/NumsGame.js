@@ -478,7 +478,6 @@ class NumsGame extends Component {
     
     this.setState({ width: this.canvas.width, height: this.canvas.height });
     this.setState({canvasHeight : document.querySelector('#numsgame').clientHeight})
-
   }
 
   turnChange(isMyturn) {

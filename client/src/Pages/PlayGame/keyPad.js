@@ -73,7 +73,7 @@ export class KeyPad {
       ctx.fillStyle = '#fff';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+      ctx.arc(this.x, this.y, (stageWidth / 15), 0, 2 * Math.PI);
       ctx.stroke();
       if ([11, 12, 13].includes(index)) {
         setTimeout(() => this.removed(), 300);
@@ -84,7 +84,7 @@ export class KeyPad {
       ctx.shadowBlur = stageWidth/40;
       ctx.shadowOffsetY = stageWidth/100 * -1;
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+      ctx.arc(this.x, this.y, (stageWidth / 15), 0, 2 * Math.PI);
       ctx.fill();
       ctx.shadowBlur = 0;
       ctx.shadowOffsetY = 0;
