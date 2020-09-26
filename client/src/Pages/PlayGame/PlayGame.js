@@ -23,8 +23,6 @@ const styles = (theme) => ({
     right: '50%',
     marginTop: '-20vw',
     marginRight: '-45vw',
-    
-    
   },
   space: {
     height: document.body.clientHeight,
@@ -73,7 +71,6 @@ class PlayGame extends Component {
   
   componentDidMount() {
     this.setState({ gameHeight: document.querySelector(this.games[cookie.load('selectedGame')]['id']).clientHeight})
-    this.setState({ gameWidth: document.querySelector(this.games[cookie.load('selectedGame')]['id']).clientWidth})
   }
 
   componentWillUnmount() {
@@ -92,17 +89,16 @@ class PlayGame extends Component {
               style={{ backgroundColor: this.games[cookie.load('selectedGame')]['color'] }}
             >
               <Paper 
+                id="gamePaper"
                 style={{ 
-                  // paddingTop: `${this.games[cookie.load('selectedGame')]['pos']}px`,
-                  // height: `${Math.floor(document.body.clientHeight / 1.2) + this.games[cookie.load('selectedGame')]['pos']}px`,
                   backgroundColor: 'transparent',
                   position: 'fixed',
-                  width: `${this.state.gameWidth}px`,
+                  width: `90vw`,
                   height: `${this.state.gameHeight}px`,
                   top: '50%',
                   right: '50%',
                   marginTop: `-${this.state.gameHeight / 2}px`,
-                  marginRight: `-${this.state.gameWidth / 2}px`,
+                  marginRight: `-45vw`,
                   boxShadow: this.games[cookie.load('selectedGame')]['shadow'],
                   border: cookie.load('selectedGame') === '2' ? '0.1vw solid #fff' : '',
                 }}>
@@ -115,6 +111,7 @@ class PlayGame extends Component {
     );
   }
 };
+
 PlayGame.propsTypes = {
   classes: PropTypes.object.isRequired,
 }

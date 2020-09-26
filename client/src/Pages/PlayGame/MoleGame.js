@@ -182,7 +182,10 @@ class MoleGame extends Component {
     this.setState({ canvasWidth: document.querySelector('#molegame').clientWidth})
 
     // 화면크기 재설정 이벤트
-    window.addEventListener('resize', this.resizeAlert, false);
+    window.addEventListener('resize', () => {
+      // this.resize
+      this.resizeAlert()
+    }, false);
 
     this.canvas.addEventListener('mousedown', (e) => {
         this.mousePressed(e.layerX, e.layerY);
@@ -259,7 +262,11 @@ class MoleGame extends Component {
 
   componentWillUnmount() {
     moles = [];
-    window.removeEventListener('resize', this.resizeAlert, false);
+    window.addEventListener('resize', () => {
+      this.resize()
+      this.resizeAlert()
+    }, false);
+
     if(cookie.load('selectedRoom') === undefined) {
       this.socket.emit('leaveComputerMode')
       clearInterval(moleTimer);
@@ -409,7 +416,7 @@ class MoleGame extends Component {
           // marginTop: '-20vw',
           // marginRight: '-45vw',
           marginTop: `-${this.state.canvasHeight / 2}px`,
-          marginRight: `-${this.state.canvasWidth / 2}px`,
+          marginRight: `-45vw`,
         }}
       >
         {this.state.winner !== '' ? (
