@@ -54,6 +54,7 @@ function MobileUserCard({
       fontSize: '10vw'
     },
     image: {
+      margin: '2vw',
       width: '20vw', 
       height: '20vw'
     },

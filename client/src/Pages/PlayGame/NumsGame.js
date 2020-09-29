@@ -469,13 +469,20 @@ class NumsGame extends Component {
 
   // 화면크기 재설정 함수
   resize() {
+    console.log('resize', window.innerHeight - (document.body.clientWidth / 3), Math.floor(this.stageWidth * 1.4));
     this.stageWidth = document.body.clientWidth;
     this.stageHeight = document.body.clientWidth;
 
     if (document.body.clientWidth > 650) {
       this.canvas.width = Math.floor(this.stageWidth / 3.5);
       this.canvas.height = Math.floor(this.stageWidth / 2);
+    } else if (window.innerHeight - (document.body.clientWidth / 3) < Math.floor(this.stageWidth * 1.4)) {
+      // 캔버스가 커서 userCard와 겹치는 경우
+      console.log('겹친다')
+      this.canvas.height = window.innerHeight - (document.body.clientWidth / 2);
+      this.canvas.width = this.canvas.height / 1.8
     } else {
+      // this.canvas.width = Math.floor(this.stageWidth * 0.8);
       this.canvas.width = Math.floor(this.stageWidth * 0.8);
       this.canvas.height = Math.floor(this.stageWidth * 1.4);
     }
