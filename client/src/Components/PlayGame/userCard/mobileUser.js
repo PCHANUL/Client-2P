@@ -17,8 +17,8 @@ function MobileUserCard({
     position: 'fixed',
     bottom: '1vh',
     borderRadius: '5vw',
-    width: '45vw',
-    height: '35vw',
+    width: document.body.clientWidth > 500 ? 220 : '45vw',
+    height: document.body.clientWidth > 500 ? 170 : '35vw',
     backgroundColor: 'white',
   }
 
@@ -41,22 +41,18 @@ function MobileUserCard({
         : '0px 0px 0px 0px #d6d6d6'
       }`,
     },
-    computerButton: {
-      margin: '2vw',
-      width: '20vw',
-      height: '20vw',
-    },
     nameFont: {
-      fontSize: '4vw', 
+      fontSize: document.body.clientWidth > 500 ? 15 : '4vw',
+      marginTop: document.body.clientWidth > 500 ? -15 : null,
       width: '30vw'
     },
     numberFont: {
-      fontSize: '10vw'
+      fontSize: document.body.clientWidth > 500 ? 40 : '10vw'
     },
     image: {
-      margin: '2vw',
-      width: '20vw', 
-      height: '20vw'
+      margin: document.body.clientWidth > 500 ? 10 : '2vw',
+      width: document.body.clientWidth > 500 ? 90 : '20vw', 
+      height: document.body.clientWidth > 500 ? 90 : '20vw'
     },
   }
   return (
@@ -67,7 +63,7 @@ function MobileUserCard({
               style={style.rivalCard}>
               <>
                 {!rivalName ? (
-                  <Button color="secondary" variant="outlined" style={style.computerButton} onClick={computerModeStart}>
+                  <Button color="secondary" variant="outlined" style={style.image} onClick={computerModeStart}>
                     <Typography style={{fontSize: style.nameFont.fontSize}}>
                       컴퓨터<br/>대결시작
                     </Typography>
@@ -85,6 +81,7 @@ function MobileUserCard({
             </Grid>
               
             <Grid container direction='row' justify='center' alignItems='center'
+              id="mobileUser"
               style={style.userCard}>
               <>
                 <Typography style={style.numberFont}>
