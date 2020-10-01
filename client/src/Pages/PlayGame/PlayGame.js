@@ -9,9 +9,6 @@ import { withStyles } from '@material-ui/core/styles';
 import NumsGame from './NumsGame';
 import BDman from './BDman';
 import MoleGame from './MoleGame';
-import PongGame from './PongGame';
-import { Translate } from '@material-ui/icons';
-
 
 const styles = (theme) => ({
   paper: {
@@ -90,13 +87,12 @@ class PlayGame extends Component {
       <div>
         {
           cookie.load('selectedGame')
-          ? <div 
-              className={classes.space} 
+          ? <div className={classes.space} 
               style={{ backgroundColor: this.games[cookie.load('selectedGame')]['color'] }}
             >
               <Paper 
                 id="gamePaper"
-                style={document.body.clientWidth > 650 ? { 
+                style={document.body.clientWidth > 700 ? { 
                   backgroundColor: 'transparent',
                   position: 'fixed',
                   width: `90vw`,

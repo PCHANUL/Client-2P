@@ -115,8 +115,6 @@ class NumsGame extends Component {
 
       warning: 0,
       warningRival: 0,
-
-      canvasHeight: 0,
     };
     this.canvas = null;
     this.ctx = null;
@@ -474,29 +472,29 @@ class NumsGame extends Component {
     this.stageWidth = document.body.clientWidth;
     this.stageHeight = document.body.clientWidth;
 
-    let mobileUserCardHeight = document.querySelector('#mobileUser') ? document.querySelector('#mobileUser').clientHeight : 0;
+    let mobileUserCardHeight = document.querySelector('#mobileUser') ? document.querySelector('#mobileUser').offsetHeight : 0;
 
-    if (document.body.clientWidth > 650) {
-      this.canvas.width = Math.floor(this.stageWidth / 3.5);
-      this.canvas.height = Math.floor(this.stageWidth / 2);
-    } else if (window.innerHeight - mobileUserCardHeight < Math.floor(this.stageWidth * 1.4)) {
-      // 캔버스가 커서 userCard와 겹치는 경우
-      console.log('겹친다')
-      this.canvas.height = window.innerHeight - mobileUserCardHeight * 1.4;
-      this.canvas.width = this.canvas.height / 1.8
+    if (document.body.clientWidth > 700) {
+      this.canvas.width = Math.floor(this.stageWidth / 3.2);
+      this.canvas.height = Math.floor(this.stageWidth / 1.8);
     } else {
-      // this.canvas.width = Math.floor(this.stageWidth * 0.8);
       this.canvas.width = Math.floor(this.stageWidth * 0.8);
       this.canvas.height = Math.floor(this.stageWidth * 1.4);
     }
+    
+    // 캔버스가 커서 userCard와 겹치는 경우
+    if (window.innerHeight - mobileUserCardHeight < this.canvas.height + (window.innerHeight / 15)) {
+      this.canvas.height = window.innerHeight - mobileUserCardHeight * 1.4;
+      this.canvas.width = this.canvas.height / 1.8
+    }
 
+    // 설정된 크기로 numPad 객체를 재생성
     this.numPad = [];
     for (let i = 0; i < 14; i++) {
       this.numPad.push(new KeyPad(this.canvas.width, this.canvas.height, this.canvas.width / 10, i));
     }
     
     this.setState({ width: this.canvas.width, height: this.canvas.height });
-    this.setState({canvasHeight : document.querySelector('#numsgame').clientHeight})
   }
 
   turnChange(isMyturn) {
@@ -622,7 +620,7 @@ class NumsGame extends Component {
       position: 'fixed',
       width: '90vw',
       height: this.state.height,
-      top: '5vh',
+      top: window.innerHeight / 30,
       right: '50%',
       marginRight: `-45vw`,
     }
@@ -630,7 +628,7 @@ class NumsGame extends Component {
     return (
       <Grid container direction='row' justify='space-evenly' alignItems='center' 
         id='numsgame'
-        style={(document.body.clientWidth > 650 ? style : mobileStyle)}
+        style={(document.body.clientWidth > 700 ? style : mobileStyle)}
       >
         {this.state.winner !== '' 
           ? this.state.rivalName === 'COMPUTER'
@@ -638,7 +636,7 @@ class NumsGame extends Component {
             : <Gameover winner={this.state.winner} />
           : null}
 
-        {document.body.clientWidth > 650 ? (
+        {document.body.clientWidth > 700 ? (
           <Grid item>
             <RivalCard 
               width={this.state.width}
@@ -662,6 +660,7 @@ class NumsGame extends Component {
           }}
         >
           <canvas id='canvas' />
+          
           <MobileUserCard 
             myTurn={this.state.myTurn}
             rivalName={this.state.rivalName}
@@ -674,7 +673,7 @@ class NumsGame extends Component {
           />
         </Paper>
 
-        {document.body.clientWidth > 650 ? (
+        {document.body.clientWidth > 700 ? (
           <Grid item>
             <UserCard 
               width={this.state.width} 
@@ -691,7 +690,7 @@ class NumsGame extends Component {
         
 
 
-        {document.body.clientWidth > 650 ? (
+        {document.body.clientWidth > 700 ? (
           <Emoji 
             openEmojiList={this.openEmojiList.bind(this)} 
             showEmojis={this.state.showEmojis}
