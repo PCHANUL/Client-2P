@@ -474,7 +474,10 @@ class NumsGame extends Component {
 
     let mobileUserCardHeight = document.querySelector('#mobileUser') ? document.querySelector('#mobileUser').offsetHeight : 0;
 
-    if (document.body.clientWidth > 700) {
+    if (document.body.clientWidth > 1024) {
+      this.canvas.width = 320;
+      this.canvas.height = 568;
+    } else if(document.body.clientWidth > 700) {
       this.canvas.width = Math.floor(this.stageWidth / 3.2);
       this.canvas.height = Math.floor(this.stageWidth / 1.8);
     } else {
@@ -626,7 +629,7 @@ class NumsGame extends Component {
     }
 
     return (
-      <Grid container direction='row' justify='space-evenly' alignItems='center' 
+      <Grid container direction='row' justify='center' alignItems='center' 
         id='numsgame'
         style={(document.body.clientWidth > 700 ? style : mobileStyle)}
       >
@@ -636,22 +639,17 @@ class NumsGame extends Component {
             : <Gameover winner={this.state.winner} />
           : null}
 
-        {document.body.clientWidth > 700 ? (
-          <Grid item>
-            <RivalCard 
-              width={this.state.width}
-              username={this.state.rivalName} 
-              theNumber={this.state.myTurn ? '대기' : this.state.count}
-              avatar={this.state.rivalAvatar}
-              computerModeStart={this.computerModeStart.bind(this)}
-              myTurn={this.state.myTurn}
-              yellowCard={this.state.warningRival}
-            />
-          </Grid>
-        ) : null }
+        <RivalCard 
+          width={this.state.width}
+          username={this.state.rivalName} 
+          theNumber={this.state.myTurn ? '대기' : this.state.count}
+          avatar={this.state.rivalAvatar}
+          computerModeStart={this.computerModeStart.bind(this)}
+          myTurn={this.state.myTurn}
+          yellowCard={this.state.warningRival}
+        />
 
-        <Paper
-          id='paper'
+        <Paper id='paper'
           style={{
             width: this.state.width,
             height: this.state.height,
@@ -673,22 +671,15 @@ class NumsGame extends Component {
           />
         </Paper>
 
-        {document.body.clientWidth > 700 ? (
-          <Grid item>
-            <UserCard 
-              width={this.state.width} 
-              userAvatar={this.state.userAvatar} 
-              userName={cookie.load('username')}
-              theNumber={this.state.myTurn ? this.state.count : '대기'} 
-              myTurn={this.state.myTurn}
-              warningAlert={this.state.wrongInput}
-              yellowCard={this.state.warning}
-            />
-          </Grid>
-        ) : null }
-
-        
-
+        <UserCard 
+          width={this.state.width} 
+          userAvatar={this.state.userAvatar} 
+          userName={cookie.load('username')}
+          theNumber={this.state.myTurn ? this.state.count : '대기'} 
+          myTurn={this.state.myTurn}
+          warningAlert={this.state.wrongInput}
+          yellowCard={this.state.warning}
+        />
 
         {document.body.clientWidth > 700 ? (
           <Emoji 
