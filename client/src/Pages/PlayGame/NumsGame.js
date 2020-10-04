@@ -86,16 +86,8 @@ class NumsGame extends Component {
 
       resultPad: [],
 
-      RivalNums: [
-        {number: '1234', result: '1S1B'},
-        {number: '1234', result: '1S1B'},
-        {number: '1234', result: '1S1B'},
-      ],
-      myNums: [
-        {number: '1234', result: '1S1B'},
-        {number: '1234', result: '1S1B'},
-        {number: '1234', result: '1S1B'},
-      ],
+      RivalNums: [],
+      myNums: [],
 
       board: true,
       myTurn: true,
