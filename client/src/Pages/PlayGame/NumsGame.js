@@ -9,11 +9,10 @@ import UserCard from '../../Components/PlayGame/userCard/UserCard';
 import RivalCard from '../../Components/PlayGame/userCard/RivalCard';
 import MobileUserCard from '../../Components/PlayGame/userCard/mobileUser';
 import Emoji from '../../Components/PlayGame/Emoji';
+import ExitButton from '../../Components/PlayGame/ExitButton'
 
 import { Grid, Typography, Tooltip, Fab, Button, Paper, GridList, GridListTile, GridListTileBar, Input } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { isDeleteExpression } from 'typescript';
-import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import { KeyPad } from './keyPad';
 
 import ListSubheader from '@material-ui/core/ListSubheader';
@@ -141,11 +140,6 @@ class NumsGame extends Component {
     this.props.gifEmoji.map((item) => {
       this.tileData.push({ img: item });
     });
-
-    // this.numPad = [];
-    // for (let i = 0; i < 14; i++) {
-    //   this.numPad.push(new KeyPad(this.state.width, this.state.height, this.state.width / 10, i));
-    // }
   }
 
   componentDidMount() {
@@ -522,12 +516,21 @@ class NumsGame extends Component {
   }
 
   activeEmoji(gif) {
-    this.setState({ userAvatar: gif });
-    socket.emit('sendEmoji', JSON.stringify(gif));
-
-    setTimeout(() => {
-      this.setState({ userAvatar: this.props.avatarImg[this.userAvatarId], isActive: !this.state.isActive });
-    }, 2500);
+    if (!this.state.isActive) {
+      this.setState({
+        showEmojis: !this.state.showEmojis,
+        isActive: !this.state.isActive,
+      })
+      this.setState({ userAvatar: gif });
+      socket.emit('sendEmoji', JSON.stringify(gif));
+  
+      setTimeout(() => {
+        this.setState({ 
+          userAvatar: this.props.avatarImg[this.userAvatarId], 
+          isActive: !this.state.isActive 
+        });
+      }, 2500);
+    }
   }
 
   activeRivalEmoji(gif) {
@@ -681,14 +684,14 @@ class NumsGame extends Component {
           yellowCard={this.state.warning}
         />
 
-        {document.body.clientWidth > 700 ? (
-          <Emoji 
-            openEmojiList={this.openEmojiList.bind(this)} 
-            showEmojis={this.state.showEmojis}
-            activeEmoji={this.activeEmoji.bind(this)}
-            tileData={this.tileData}
-          />
-        ) : null }
+        <ExitButton />
+
+        <Emoji 
+          openEmojiList={this.openEmojiList.bind(this)} 
+          showEmojis={this.state.showEmojis}
+          activeEmoji={this.activeEmoji.bind(this)}
+          tileData={this.tileData}
+        />
       </Grid>
     );
   }
